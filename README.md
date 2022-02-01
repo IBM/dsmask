@@ -26,7 +26,7 @@ Components of IBM Information Server used:
 - Information Analyzer (IA), a data profiling tool;
 - DataStage, a ETL tool.
 
-![DsMask Architecture](https://github.ibm.com/MZinal/dsmask-publish/blob/master/docs/dsmask-solution-schema.png)
+![DsMask Architecture](https://github.com/IBM/dsmask/raw/main/docs/dsmask-solution-schema.png)
 
 The actual data masking uses the algorithms of IBM InfoSphere Optim
 Data Privacy Providers Library (ODPP), through the Java API.
