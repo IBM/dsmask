@@ -23,6 +23,12 @@ import com.ibm.dsmask.beans.*;
  */
 public class AlFpeTest extends TestResources {
 
+    /*
+      Checked values depend on the key mapping!
+      KEY default -> zztop-key
+        defined in TestResources.getContext()
+    */
+
     public static final String OPTIONS_FPE1 =
             "KEY default\n"
             + "CLASS build-test\n";

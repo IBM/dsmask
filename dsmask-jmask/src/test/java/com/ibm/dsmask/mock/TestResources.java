@@ -39,6 +39,7 @@ public class TestResources {
             context.setDictPath(d.getAbsolutePath());
             context.addKey(new MskKey("default", "zztop-key"));
             context.addKey(new MskKey("qazwsx", "qazwsx"));
+            context.addKey(new MskKey("dateop-test", "ieZahch4 Eepoa7ee ungam5Lu"));
         }
         return context;
     }

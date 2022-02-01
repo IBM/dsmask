@@ -75,8 +75,19 @@ public class AlDateOp implements AlSimpleValue {
         }
         final Calendar cal = Calendar.getInstance();
         cal.setTime(source);
+        // Protect against returning the very same date.
+        final int oldDays = cal.get(Calendar.DAY_OF_YEAR) - 1;
+        int newDays, substep = 0;
+        do {
+            newDays = getHashDays(source, substep);
+            if (++substep > 10000) {
+                throw new RuntimeException("Hang on date value " + source);
+            }
+        } while(oldDays == newDays);
+        // Keep the same year, changing just the date within
         cal.set(cal.get(Calendar.YEAR), 0, 1);
-        cal.add(Calendar.DAY_OF_YEAR, getHashDays(source));
+        cal.add(Calendar.DAY_OF_YEAR, newDays);
+        // Same data type on output
         switch (format) {
             case SqlDate:
                 return new java.sql.Date(cal.getTimeInMillis());
@@ -88,14 +99,19 @@ public class AlDateOp implements AlSimpleValue {
         throw new IllegalStateException(); // unreached
     }
 
-    public int getHashDays(java.util.Date v) {
+    public int getHashDays(java.util.Date v, int substep) {
         if (userKeyBytes==null) {
             userKeyBytes = userKey.getBytes(StandardCharsets.UTF_8);
         }
         final PureJavaCrc32 crc = new PureJavaCrc32();
         crc.update(dateFormat.format(v).getBytes(StandardCharsets.UTF_8));
         crc.update(userKeyBytes);
-        return 1 + (int) (crc.getValue() % 364L);
+        if (substep > 0) {
+            crc.update(Integer.toHexString(substep).getBytes(StandardCharsets.UTF_8));
+        }
+        long crcval = crc.getValue();
+        if (crcval < 0) crcval = -1L * crcval;
+        return 1 + (int) (crcval % 364L);
     }
 
     @Override

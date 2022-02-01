@@ -76,7 +76,8 @@ public class BasicHasher {
         }
         if (userKeyBytes!=null && userKeyBytes.length > 0)
             crc.update(userKeyBytes);
-        return crc.getValue();
+        final long v = crc.getValue();
+        return (v>=0) ? v : (-1L * v);
     }
 
     private static void update(PureJavaCrc32 crc, Object o) {
