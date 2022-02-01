@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<igc-queries>
+
+    <!-- Get the list of dataclasses to be handled -->
+    <select-all-dcs>
+        <![CDATA[
+SELECT dc.CLASSCODE AS dcname,
+       CHAR(SUBSTR(bt.ABBREVIATION,8,1), 1) AS dcmode
+FROM CMVIEWS.DQDATACLASS dc
+INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
+  ON bto.CLASSIFIEDOBJECTRID=dc.RID
+INNER JOIN IGVIEWS.IGBUSINESSTERM bt
+  ON bt.RID=bto.BUSINESSTERMRID 
+ AND bt.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
+  ON bc.RID=bt.OFCATEGORY 
+ AND bc.SHORTDESCRIPTION='DsMask.Mode'
+        ]]>
+    </select-all-dcs>
+
+    <!-- Get the list of terms to be handled -->
+    <select-all-terms>
+        <![CDATA[
+SELECT btx.ABBREVIATION AS dcname,
+       CHAR(SUBSTR(bt.ABBREVIATION,8,1), 1) AS dcmode
+FROM IGVIEWS.IGBUSINESSTERM btx
+INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
+   ON bto.BUSINESSTERMRID=btx.RID
+INNER JOIN IGVIEWS.IGBUSINESSTERM bt
+   ON bt.RID=bto.CLASSIFIEDOBJECTRID
+  AND bt.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
+   ON bc.RID=bt.OFCATEGORY 
+  AND bc.SHORTDESCRIPTION='DsMask.Mode'
+         ]]>
+    </select-all-terms>
+
+    <!-- Load the list of confidential fields + their mapped dataclasses -->
+    <select-field-dcs>
+        <![CDATA[
+SELECT db.name, scm.name, tab.name, fld.name, dc.classcode 
+FROM CMVIEWS.DQCLASSIFICATION q 
+INNER JOIN CMVIEWS.DQDATACLASS dc 
+  ON q.OFDATACLASSRID=dc.rid
+INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
+  ON bto.CLASSIFIEDOBJECTRID=dc.RID
+INNER JOIN IGVIEWS.IGBUSINESSTERM bt
+  ON bt.RID=bto.BUSINESSTERMRID 
+ AND bt.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
+  ON bc.RID=bt.OFCATEGORY 
+ AND bc.SHORTDESCRIPTION='DsMask.Mode'
+INNER JOIN CMVIEWS.PDRDATABASECOLUMN fld 
+  ON q.CLASSIFIESOBJECTRID=fld.rid 
+INNER JOIN CMVIEWS.PDRDATABASETABLE tab 
+  ON tab.rid=fld.OFDATABASETABLERID 
+INNER JOIN CMVIEWS.PDRDATABASESCHEMA scm 
+  ON scm.rid=tab.OFDATASCHEMARID 
+INNER JOIN CMVIEWS.PDRDATABASE db 
+  ON db.rid=scm.OFDATABASERID 
+WHERE COALESCE(q.State, '-') IN ('Approved', '-') 
+ORDER BY db.name, scm.name, tab.name, fld.name, q.Date
+        ]]>
+    </select-field-dcs>
+
+    <!-- Load the list of fields and their assigned terms -->
+    <select-field-terms>
+        <![CDATA[
+SELECT db.name, scm.name, tab.name, fld.name, btx.ABBREVIATION 
+FROM IGVIEWS.IGASSIGNEDFIELDSOFATERM aterm
+INNER JOIN IGVIEWS.IGBUSINESSTERM btx
+   ON aterm.BUSINESSTERMRID=btx.rid
+INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
+   ON bto.BUSINESSTERMRID=btx.RID
+INNER JOIN IGVIEWS.IGBUSINESSTERM bt
+   ON bt.RID=bto.CLASSIFIEDOBJECTRID
+  AND bt.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
+   ON bc.RID=bt.OFCATEGORY 
+  AND bc.SHORTDESCRIPTION='DsMask.Mode'
+INNER JOIN CMVIEWS.PDRDATABASECOLUMN fld 
+  ON aterm.ASSIGNEDFIELDRID=fld.rid 
+INNER JOIN CMVIEWS.PDRDATABASETABLE tab
+  ON tab.rid=fld.OFDATABASETABLERID 
+INNER JOIN CMVIEWS.PDRDATABASESCHEMA scm 
+  ON scm.rid=tab.OFDATASCHEMARID 
+INNER JOIN CMVIEWS.PDRDATABASE db 
+  ON db.rid=scm.OFDATABASERID 
+ORDER BY db.name, scm.name, tab.name, fld.name, btx.name
+        ]]>
+    </select-field-terms>
+</igc-queries>

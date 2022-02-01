@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="test-code">
+        <input dc="TestSuperCode"/>
+        <output dc="TestSuperCode"/>
+        <step name="mask" function="test-fpe">
+            <ref name="$" pos="1"/>
+            <uniq-check provider="test-super-code">
+            <!--
+              <uniq-input index="0"/>
+              <uniq-output index="0"/>
+            -->
+            </uniq-check>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

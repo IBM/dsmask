@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "dsmask-algo"
+		},
+		{
+			"path": "dsmask-beans"
+		},
+		{
+			"path": "dsmask-log4j"
+		},
+		{
+			"path": "dsmask-mock"
+		},
+		{
+			"path": "dsmask-uniq"
+		},
+		{
+			"path": "dsmask-jconf"
+		},
+		{
+			"path": "dsmask-jmask"
+		},
+		{
+			"path": "batcher"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic"
+	}
+}

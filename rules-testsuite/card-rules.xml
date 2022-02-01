@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="card-pan">
+        <input dc="CardPan"/>
+        <output dc="CardPan"/>
+        <step name="norm" function="card-normalize">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="card-fpe">
+            <ref name="norm" pos="1"/>
+            <uniq-check provider="card-pan">
+<!--
+              <uniq-input index="0"/>
+              <uniq-output index="0"/>
+-->
+            </uniq-check>
+        </step>
+        <step name="luhn" function="card-luhn">
+            <ref name="mask" pos="1"/>
+        </step>
+    </rule>
+
+    <rule name="card-code">
+        <input dc="CardCode"/>
+        <output dc="CardCode"/>
+        <step name="mask" function="card-code-fpe">
+            <ref name="$" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

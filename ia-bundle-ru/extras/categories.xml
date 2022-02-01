@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glossary xmlns="http://www.ibm.com/is/bg/importexport"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.ibm.com/is/bg/importexport BGSchema.xsd"
+    version="1.6" exportTime="1643709458039" ignoreAssignedAssets="true"
+    ignoreLabeledAssets="true" ignoreAssetCollections="true" ignoreStewards="true">
+    <categories>
+        <category
+            rid="6662c0f2.ee6a64fe.087ntcupc.hn88eh0.ioaclf.362bjpslj10f6g1cgs81a"
+            name="Метки для маскирования" shortDescription="DsMask.Labels"/>
+        <category
+            rid="6662c0f2.ee6a64fe.087ntbp4a.o8kgtf4.u0de64.q95qm2dl7hueqidnpn4nf"
+            name="Режим маскирования" shortDescription="DsMask.Mode"/>
+    </categories>
+    <terms>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbp56.26gvju4.12ehjc.hu0g40sjcun7akfe2sav8"
+            name="Техническая группа 1" status="ACCEPTED"
+            abbreviation="DsMask.G1" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntcupc.hn88eh0.ioaclf.362bjpslj10f6g1cgs81a" identity="Метки для маскирования"/>
+            <assignedAssets>
+                <termRef
+                    rid="6662c0f2.e1b1ec6c.087ntcuqc.il6aefk.qftqlg.39htkl5uhg54a342qhbjm" identity="Режим маскирования::Группа маскирования"/>
+            </assignedAssets>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbp5d.v62i8vs.ifgqp3.3s0v82rh6linitkhng1ho"
+            name="Техническая группа 2" status="ACCEPTED"
+            abbreviation="DsMask.G2" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntcupc.hn88eh0.ioaclf.362bjpslj10f6g1cgs81a" identity="Метки для маскирования"/>
+            <assignedAssets>
+                <termRef
+                    rid="6662c0f2.e1b1ec6c.087ntcuqc.il6aefk.qftqlg.39htkl5uhg54a342qhbjm" identity="Режим маскирования::Группа маскирования"/>
+            </assignedAssets>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbp6j.8a659hg.7g2nqv.eag5rcgsqqn9keb8pe856"
+            name="Техническая группа 3" status="ACCEPTED"
+            abbreviation="DsMask.G3" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntcupc.hn88eh0.ioaclf.362bjpslj10f6g1cgs81a" identity="Метки для маскирования"/>
+            <assignedAssets>
+                <termRef
+                    rid="6662c0f2.e1b1ec6c.087ntcuqc.il6aefk.qftqlg.39htkl5uhg54a342qhbjm" identity="Режим маскирования::Группа маскирования"/>
+            </assignedAssets>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbp6s.qdhg0pk.uqlubg.32uejhlt9naqcfkhm8d2e"
+            name="Техническая группа 4" status="ACCEPTED"
+            abbreviation="DsMask.G4" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntcupc.hn88eh0.ioaclf.362bjpslj10f6g1cgs81a" identity="Метки для маскирования"/>
+            <assignedAssets>
+                <termRef
+                    rid="6662c0f2.e1b1ec6c.087ntcuqc.il6aefk.qftqlg.39htkl5uhg54a342qhbjm" identity="Режим маскирования::Группа маскирования"/>
+            </assignedAssets>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbp74.m3icr9k.9a55fr.pdbqbqdnt952i0vgpr50u"
+            name="Техническая группа 5" status="ACCEPTED"
+            abbreviation="DsMask.G5" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntcupc.hn88eh0.ioaclf.362bjpslj10f6g1cgs81a" identity="Метки для маскирования"/>
+            <assignedAssets>
+                <termRef
+                    rid="6662c0f2.e1b1ec6c.087ntcuqc.il6aefk.qftqlg.39htkl5uhg54a342qhbjm" identity="Режим маскирования::Группа маскирования"/>
+            </assignedAssets>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbqc2.sr76adk.dhdcm3.eerksrrtmljshoio5iaji"
+            name="Без маскирования" status="ACCEPTED"
+            abbreviation="DsMask.R" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntbp4a.o8kgtf4.u0de64.q95qm2dl7hueqidnpn4nf" identity="Режим маскирования"/>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntcuqc.il6aefk.qftqlg.39htkl5uhg54a342qhbjm"
+            name="Группа маскирования" status="ACCEPTED"
+            abbreviation="DsMask.G" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntbp4a.o8kgtf4.u0de64.q95qm2dl7hueqidnpn4nf" identity="Режим маскирования"/>
+        </term>
+        <term
+            rid="6662c0f2.e1b1ec6c.087ntbp4r.9g2j5ck.nfl5mc.hosb2jma3b860b8rv3v8g"
+            name="Конфиденциально" status="ACCEPTED"
+            abbreviation="DsMask.C" type="NONE">
+            <parentCategory
+                rid="6662c0f2.ee6a64fe.087ntbp4a.o8kgtf4.u0de64.q95qm2dl7hueqidnpn4nf" identity="Режим маскирования"/>
+        </term>
+    </terms>
+</glossary>

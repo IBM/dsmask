@@ -1,0 +1,9 @@
+This rules are defined to support the internal test suite.
+They are copied from the example rules at some point, but may differ,
+and are not intended to be used as an example rule implementation.
+
+Changes in data class names should be synchronized with mock data
+provided by the dsmask-mock package.
+
+Changes in the set of rules should be synchronized with the expected
+test output defined in dsmask-jconf.

@@ -1,0 +1,195 @@
+Usage: 
+IAAdmin 
+-user <UserName> 
+-password <Password> 
+{ -- Choose one of the following URL OR HostName and PortNumber 
+########## URL 
+-url <URL> 
+########## HostName and PortNumber 
+-host <HostName> -- Hostname of the server. 
+-port <PortNumber> 
+}
+[-v ] -- Optional Output information on the HTTP requests sent to the server 
+[-xml | -csv | -xsl <XSLFileName>] -- Optional output format (XML of REST binding API, comma-separated values, or user-provided XSL transformation) 
+[-output <OutputFileName>] -- Optional output file name. 
+( -- Choose one of the following commands. 
+
+########## Projects 
+-listProjects | -- List of the existing projects.  
+-getProject -projectName <ProjectName> | -- Content of a specific project. 
+-getWorkspace -workspaceName <WorkSpaceName> | -- Content of a specific workspace. 
+-listProjectRoles -projectName <ProjectName> | -- List of project roles for users specific to a project. 
+-deleteProject -projectName <ProjectName> | -- Delete one or several projects. 
+
+########## Projects 
+-listVirtualTables  -projectName <ProjectName> | -- List of the existing virtual tables in a specified project.  
+-getVirtualTable -projectName <ProjectName> -virtualTableName <virtualTableName>| -- Content of a virtual table. 
+########## Data Rules 
+-listRuleDefinitions -projectName <ProjectName> | -- List of the existing rule definitions in the specified project. 
+-getRuleDefinition -projectName <ProjectName> -ruleName <RuleName> | -- Content of a rule definition. 
+-deleteRuleDefinition -projectName <ProjectName> -ruleName <RuleName> | -- Delete one or several rule definitions. 
+-listExecutableRules -projectName <ProjectName> | -- List of the existing executable rules in the specified project. 
+-getExecutableRule -projectName <ProjectName> -ruleName <RuleName> | -- Content of an executable rule. 
+-deleteExecutableRule -projectName <ProjectName> -ruleName <RuleName> | -- Delete one or several executable rules. 
+-getExecutionHistory -projectName <ProjectName> -ruleName <RuleName> | -- Get the execution history of an executable rule. 
+-getOutputTable -projectName <ProjectName> -ruleName <RuleName> [-executionID <executionID> -subRule subRule -startIndex StartIndex -nbOfRows <number of rows>] | -- Gets the content of the output table of a rule. 
+-deleteExecutionHistory -projectName <ProjectName> -ruleName <RuleName> -executionID <executionID> | -keepLastRuns <Number of runs to keep> | -olderThanNMonths <Number of months to keep> | -olderThanNWeeks <Number of weeks to keep> | -olderThanDate <date in yyyy-mm-dd format> | -- delete the execution history and output tables of an executable rule. 
+-deleteOutputTable -projectName <ProjectName> -ruleName <RuleName> [-executionID <executionID> | -keepLastRuns <Number of runs to keep> | -olderThanNMonths <Number of months to keep> | -olderThanNWeeks <Number of weeks to keep> | -olderThanDate <date in yyyy-mm-dd format>] [-cleanFailedRules <true|false>] | -- delete the output tables of an executable rule. 
+
+########## Public Rules 
+-publishRule -projectName <projectName> -ruleName <ruleName>  |  publish a rule definition. 
+-getPublicRules  | -- Get the list of public rules. 
+-getPublicRule -ruleName <ruleName> | -- Get the content of a public rule. 
+-deletePublicRule -ruleName <ruleName> | -- Delete a public rule. 
+-copyPublicRule -ruleName <ruleName> -projectName <projectName> [-newRuleName <newRuleName>] | -- Copy a public rule to a project. 
+-deployPredefinedRules <Rule Package File Name> [-locale <locale>] | -- Deploy a package of predefined rules. 
+-updatePredefinedRules <Rule Package File Name> [-locale <locale>] | -- Update a package of predefined rules. 
+-undeployPredefinedRules <Rule Package File Name> [-locale <locale>] | -- Undeploy a package of predefined rules. 
+
+########## Metrics 
+-getMetrics -projectName <ProjectName>  -metricName <MetricName> | -- Get content of a metric. 
+-deleteMetric -projectName <ProjectName>  -metricName <MetricName> | -- Delete a metric. 
+-getMetricExecutionHistory  -projectName <ProjectName> -metricName <MetricName> | -- Get the execution history of a metric. 
+
+########## TaskSequences 
+-deleteTaskSequence -projectName <ProjectName>  -taskSequenceName <TaskSequenceName> | -- Delete a TaskSequence. 
+
+########## Global Variables 
+-listGlobalVariables | -- List of the global variables defined on the system. 
+-deleteGlobalVariables -variable <VariableName> | -- Delete one or several global variables. 
+
+########## Column Analysis 
+-getColumnAnalysisResult -projectName <ProjectName> -columnName <ColumnName> | -- Gets the column analysis results for a column in a project. 
+-getFrequencyDistribution -projectName <ProjectName> -columnName <SingleColumnName> -maxNbOfValues <maxNbOfValues> -startIndex <startIndex> -ordering <ordering> | -- Gets the frequency distribution of a column. 
+-getFormatDistribution -projectName <ProjectName> -columnName <SingleColumnName> | -- Gets the format distribution of a column. 
+-publishResults -content <XMLFileName> | -- Publish analysis results of the tables specified in the given XML file. 
+-getPublishedResults -projectName <ProjectName> | -- Get all tables that have published analysis results for a given project. 
+-deletePublishedResults -projectName <ProjectName> -tableName <FullyQualifiedTableName> | -- Delete published analysis results of a given table. 
+-deleteFrequencyDistribution -projectName <ProjectName> -columnName <FullyQualifiedColumnName> | -olderThanNMonths <Number of months to keep> | -olderThanNWeeks <Number of weeks to keep> | -olderThanDate <date in yyyy-mm-dd format> | -- delete frequency distribution artifacts of a Column. 
+
+######### Data Classification 
+-getDataClassificationResults -projectName <ProjectName> -columnName <ColumnName> | -- Gets the data classification results for a column in a project. 
+
+########## Data Quality Analysis 
+-getDataQualityAnalysisResults -projectName|-workspaceName <ProjectName> -tableName|-datasetName <TableName|FileName> | -- Gets the data quality analysis results for a table / file and its columns / fields in a project. 
+-deleteDataQualityAnalysisTables -projectName <ProjectName> -tableName <FullyQualifiedTableName> | -olderThanNMonths <Number of months to keep> | -olderThanNWeeks <Number of weeks to keep> | -olderThanDate <date in yyyy-mm-dd format> | -- delete data quality analysis artifacts of a table. 
+
+########## Key & Cross Domain Analysis 
+-getKeyAnalysisResults  -projectName <ProjectName> -tableName <TableName> | Get the key analysis results. 
+-getCrossDomainAnalysisResults  -projectName <ProjectName> -columnName <columnName> -percentOverlapThreshold <percentOverlapThreshold> | Get the cross domain analysis results. 
+-getReferentialIntegrityAnalysisResults -projectName <ProjectName> -baseColumnName <baseColumnName> -pairedColumnName <pairedColumnName> | Get the referential integrity results. 
+-acceptPrimaryKey -projectName <ProjectName> -tableName <tableName> -columnName <columnName>. 
+
+########## Bias Analysis 
+-getBiasAnalysisResults  -projectName <ProjectName> -tableName <TableName> | Get the bias analysis results. 
+
+########## Create/Update content in a project 
+-create -projectContent <XMLFileName> | -- Creates new project artifacts defined in the given XML file. 
+-update -projectContent <XMLFileName> | -- Updates new project artifacts defined in the given XML file. 
+
+########## Generate Task XML 
+-generateXML -projectName <ProjectName> -content <TextFileName> [-noDataClasses] | -- Generates the XML from plain text file. This XML can be used as input to -runTasks command. 
+
+########## Execute Tasks 
+-runTasks -content <XMLFileName> [-runSynchronously] [-pollInterval <InSeconds>] [-limitLog]| -- Run the tasks defined in the given XML file. To wait for jobs to complete, use -runSynchronously option. 
+
+########## Execute batch analysis 
+-batchAnalysis -projectName <ProjectName> -content <TextFileName> [-registerIfRequired] [-nbOfConcurrentTables <Number of Tables to analyze concurrently>] [-noDataClasses] 
+
+########## Get analysis status of scheduled task 
+-getStatus -scheduleID <Schedule ID> | -- Get the analysis status of scheduled task. 
+
+########## Cancel the scheduled task 
+-cancelTask -scheduleID <Schedule ID> | -- Cancel the scheduled task. 
+
+########## Set/Get the engine and analysis database parameters 
+-setIADBParams -iaDBHost <HostSystemName> -iaDBDataConnection <DataConnectionName> -iaDataSource <JNDINameDefinedForDataSource> [-fdOutputType <CAPTUREN | CAPTUREALL | CAPTURENONE>] [-minFDRecords <MinimumRecordsToBeStoredInIADB>] [-maxFDRecords <MaximumRecordsToBeStoredInIADB>] [-registerUserDefinedTables <TRUE|FALSE>] [-hiveHDFSPath <path>] [-bucketsInHiveTable <NumberOfBucketsInHiveTable>] [-projectName <ProjectName>] | --if -projectName is omitted, the global settings will be set. 
+-setDSParams  [-projectName <ProjectName>] -dsHost <DataStageHostName> [-dsUser <DataStageUserName> -dsPassword <DataStagePassword> -dsPort <DataStagePortNumber> -dsProject <DataStageProjectName> -retainOSH <TRUE|FALSE> -arraySize <Arraysize> -autoCommitMode <0|1> -autoCommitModeForRules <0|1> -defaultElseValueForRules <TRUE|FALSE|NA> -useCredentialMapping <TRUE|FALSE>] | -- if -projectName is omitted, the global settings will be set. 
+-getIADBParams [-projectName <ProjectName>] 
+-getDSParams [-projectName <ProjectName>] 
+
+########## Set/Get/Delete the credential mapping of a data connection 
+-setCredentialMapping [-projectName <ProjectName>] -dataConnectionName <DataConnectionName> -dataConnectionUser <DataConnectionUserName> -dataConnectionPassword <DataConnectionPassword> -v | --if -projectName is omitted, the credential mapping is set at the global level. 
+-resetCredentialMapping [-projectName <ProjectName>] -dataConnectionName <DataConnectionName> | --if -projectName is omitted, the global level credential mapping for the specified data connection is reset. 
+-getCredentialMapping [-projectName <ProjectName>]  | --if -projectName is omitted, the global level credential mapping(if any) for all data connections are returned. 
+
+########## Register/Get/Delete a Livy/Spark server for a HDFS data connection 
+-registerLivyServer -dataConnectionName <DataConnectionName> -livyHost <hostName> -livyPort <port> -livyMaxNbOfSessions <maxNbOfSessions> -livyAuthID <authID> -livyKeytabPath <keytabPath> -livyProxyUser <proxyUser> -executorMemory <executorMemory> -numExecutors <NumberOfExecutors> -executorCores <CoresPerExecutor> -driverMemory <driverMemory> -driverCores <numberOfDriverCores> -queue <YarnQueue> -sparkConfProperties <Comma separated configuration properties> -addSparkConfProperty <Add or Update one of the spark configuration property> -keepConnectionAlive <Keep the livy session alive in session pool>| --if -livyHost is omitted, the data connection host is used. If -livyPort is omitted, port 8998 is used. Other parameters are optional. Default for maxNbOfSessions is 6. 
+-getLivyServer -dataConnectionName <DataConnectionName> | --get the livy server registration from the HDFS data connection. 
+-unregisterLivyServer -dataConnectionName <DataConnectionName> | --remove the livy server registration from the HDFS data connection. 
+
+########## Register/Get/Delete a Oozie server for a HDFS data connection 
+-registerOozieServer -dataConnectionName <DataConnectionName> -properties <JSON file containing properties>| --Register oozie server properties provided in json file against the HDFS data connection. 
+-getOozieServer -dataConnectionName <DataConnectionName> | --get the oozie server registration from the HDFS data connection. 
+-unregisterOozieServer -dataConnectionName <DataConnectionName> | --remove the oozie server registration from the HDFS data connection. 
+
+########## Set/Get data quality configuration. 
+-setDataQualityConfig [-projectName <projectName> -tableName <tableName> -columnName <columnName>] -content <JSON file Name> ---- Sets data quality configuration for the particular asset. If optional parameters are omitted, configuration is set to global level. 
+-getDataQualityConfig [-projectName <projectName> -tableName <tableName> -columnName <columnName>] ---- Gets data quality configuration for the particular asset. If optional parameters are omitted, configuration of global level is returned. 
+
+########## Set/Get column analysis configuration. 
+-setColumnAnalysisConfig [-projectName <projectName>] -content <JSON file Name> ---- Sets column analysis configuration for the particular project. If projectName is omitted, configuration is set to global level. 
+-getColumnAnalysisConfig [-projectName <projectName>] ---- Gets column analysis configuration for the particular project. If projectName is omitted, configuration of global level is returned. 
+
+########## Set/Get/Delete data quality configuration rule. 
+-setDataQualityConfigurationRule [-ruleType <ruleType>] -content <JSON file Name> ---- Creates new data quality configuration rule. If no ruleType parameter passed then default will be taken as automation_rule. 
+-getDataQualityConfigurationRule [-ruleType <ruleType>] [-rule <ruleName>] ---- Gets data quality configuration rule with 'ruleName' and 'ruleType' mentioned. If 'ruleName' is omitted, then this returns all available configuration rules based on ruleType. If ruleType also omitted then all automation configuration rules will be returned. 
+-deleteDataQualityConfigurationRule [-ruleType <ruleType>] [-rule <ruleName>] [-allRules]---- Delete data quality configuration rule based on 'ruleName' and 'ruleType' input given. If 'ruleName' is omitted, then this deletes all available configuration rules based on ruleType parameter. If ruleType is also omitted then all automation configuration rules will be deleted. -allRules is mandatory parameter to delete all Rules at once. 
+
+########## Set/Get/Delete ODF configuration. 
+-setODFParams [-projectName <projectName>] -content <JSON file Name> ---- Creates or updates ODF configuration. If -projectName is omitted, the ODF configuration is set at the global level. 
+-getODFParams [-projectName <projectName>] ---- Gets ODF configuration. If -projectName is omitted, the ODF configuration is retrieved at the global level. 
+-deleteODFParams [-projectName <projectName>] ---- Deletes ODF configuration. If -projectName is omitted, the ODF configuration is deleted at the global level. 
+
+########## Export/Deploy/Undeploy DataClasses 
+-getDataClasses [-selectedDataClass <dataClassCodes separated by comma(,)>] [-output <output XML fileName>]  | -- Exports selected data classes. If selectedDataClass options is not specified it exports all the data classes available in IGC. 
+-deployDataClasses <Data Classes Package File Name> [-locale <locale>] | -- Deploy a package of data classes. 
+-updateDataClasses <Data Classes File Name> [-locale <locale>] | -- Update a package of data classes. 
+-undeployDataClasses <Data Classes File Name> [-locale <locale>] | -- Undeploy a package of data classes. 
+-createColumnSimilarityDataClass -classCode <classcode of new class> -className <name of new class> [-classDescription <description of new class>] -projectName <project of reference column> -referenceColumn <name of reference column> [-confidenceThreshold <confidence threshold of new class>] | -- Create a new data class based on the similarity of the data to classify with the data of a reference column. 
+
+########## Deploy/Undeploy quality scanners 
+-listLibraries -- Lists all deployed libraries. 
+-deployLibrary <Package File Name> [-locale <locale>] [-isDummy] | -- Deploy a package. If the library is not related to Scanners and Rule functions, then use -isDummy flag 
+-updateLibrary <Package File Name> [-locale <locale>] | -- Update a package. If package is not already deployed, then it deploys otherwise it updates. 
+-undeployLibrary <Package File Name | Library Name> [-isDummy] | -- Undeploy a package. If the library is not related to Scanners and Rule functions, then use -isDummy flag 
+
+########## IADB SQL API 
+-installIADBProcedures 
+-rebuildIADBMaps -projectName <ProjectName> -- Rebuild the mapping tables for the given project. 
+
+########## Export project 
+-getExportForOptimResults -projectName <ProjectName> [-output <output zip file name>] [-dataClassConfidenceThreshold <dataClassConfidenceThreshold>] | -- Export the full project for Optim. If output option is specified, the specified output file must be a zip file. If output option is not specified, the export results is output to <ProjectName>.zip file in the user's current working directory.
+-getExportForGuardiumResults -projectName <ProjectName> [-output <output csv file name>] [-dataClassConfidenceThreshold <dataClassConfidenceThreshold>] | -- Export the full project for Guardium. If output option is specified, the specified output file must be a csv file. If output option is not specified, the export results is output to <ProjectName>.csv file in the user's current working directory.
+
+########## Set / Get the Sample Options 
+-setSampleOptions [-useSample <TRUE|FALSE>] [-size <size>] [-sampleType <RANDOM | SEQUENTIAL | EVERY_NTH>] [-seed <seed>] [-percent <percent>] [-interval <interval>] [-projectName <ProjectName>] | --if -projectName is omitted, the global settings will be set.
+-getSampleOptions [-projectName <ProjectName>] 
+-unsetSampleOptions [-projectName <ProjectName>] | --if -projectName is omitted, the global settings will be unset.
+########## Set / Get the key column filter 
+-setKeyColumnFilter [-projectName <ProjectName>] -action <include|exclude> [-columnName <column name pattern list>] [-columnType <column type list>] [-maxNbOfColumns <max number of columns>] | --if -projectName is omitted, the global settings will be set. Lists are separated by commas, column type is numeric, string, date, time or timestamp.
+-getKeyColumnFilter [-projectName <ProjectName>] 
+-unsetKeyColumnFilter [-projectName <ProjectName>] | --if -projectName is omitted, the global settings will be unset.
+########## reset analysis status of the IA job. 
+-resetAnalysisStatus [-projectName|-workspaceName <ProjectName>] [-tableName|-datasetName <fully qualified tableName|fileName>] [-columnName <fully qualified column name>] [-ruleName <rule executable name>] [-all <if specified, will reset all inprogress/queued jobs to error state>] ---- resets analysis status from Inprogress to Error.
+
+########## Get/Update project user roles. 
+-getWorkspaceUserRoles [-projectName <projectName list>] ---- Gets project user role. Lists are separated by commas 
+-updateWorkspaceUserRoles -content <JSON file Name> ---- Updates project user role. 
+
+########## Get/Update projects group roles. 
+-getWorkspaceGroupRoles [-projectName <projectName list>] ---- Gets project group role. Lists are separated by commas 
+-updateWorkspaceGroupRoles -content <JSON file Name> ---- Updates project group role. 
+
+########## Get/Set global and project drill down security option. 
+-getDrillDownSecurity [-projectName <projectName list>]  ---- Gets global or project drill down security option. If -projectName is omitted, the drill down enabled security is retrieved at the global level. Lists are separated by commas 
+-setDrillDownSecurity [-projectName <projectName list>] [-value <TRUE|FALSE>] ---- Set global or project option. If -projectName is omitted, the drill down enabled security is set at the global level. Lists are separated by commas 
+
+########## Get/Set global and project data classes. 
+-getDataClassSettings [-projectName <projectName list>] ---- Gets global and project data classes. Lists are separated by commas 
+-setDataClassSettings -content <JSON file Name> ---- Set global and project data classes. 
+
+########## Update the workspace name. 
+-updateWorkspaceName -oldWorkspaceName <oldWorkSpaceName> -newWorkspaceName <newWorkspaceName>| -- Updates the name of the specific workspace. 
+
+)

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="vu-single">
+        <input dc="DriverLicenseRus"/>
+        <output dc="DriverLicenseRus"/>
+        <step name="norm" function="vu-norm">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="vu-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="restore" function="vu-restore">
+            <ref name="mask" pos="1"/>
+            <ref name="norm" pos="2"/>
+        </step>
+    </rule>
+
+    <rule name="vu-split">
+        <input dc="DriverLicenseSeriesRus"/>
+        <input dc="DriverLicenseNumberRus"/>
+        <output dc="DriverLicenseSeriesRus"/>
+        <output dc="DriverLicenseNumberRus"/>
+        <step name="concat" function="vu-concat">
+            <ref name="$" pos="1"/>
+            <ref name="$" pos="2"/>
+        </step>
+        <step name="norm" function="vu-norm">
+            <ref name="concat" pos="1"/>
+        </step>
+        <step name="mask" function="vu-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="split" function="vu-split">
+            <ref name="mask" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

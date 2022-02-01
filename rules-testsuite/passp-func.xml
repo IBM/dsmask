@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <function name="passp-concat" type="Concat"/>
+
+    <function name="passp-split" type="Split"/>
+
+    <function name="passp-fpe" type="FPE">
+        <![CDATA[
+            KEY default
+            CLASS russian-simple
+            SKIP-BEFORE 4
+        ]]>
+    </function>
+
+    <function name="passp-frn-fpe" type="FPE">
+        <![CDATA[
+            KEY default
+            CLASS russian-simple
+            SKIP-BEFORE 2
+        ]]>
+    </function>
+
+    <function name="passp-norm" type="GroovyScript">
+      <text><![CDATA[
+def invoke(String input) {
+  if ( input == null )
+    return [ null, null ] as Object[];
+  input = input.trim();
+  if ( input.length() == 0 )
+    return [ '', 'Y' ] as Object[];
+  def nb = input =~ /[0-9]/;
+  def val = nb.grep().join();
+  def retval = val.substring(0,4) + ' ' + val.substring(4);
+//  dsmask.logMessage('passp-norm', 10, retval);
+  return [ retval, input.contains(' ') ? 'Y' : 'N' ] as Object[];
+}
+      ]]></text>
+      <text-input><![CDATA[
+  return '1234567890'
+      ]]></text-input>
+    </function>
+
+    <function name="passp-restore" type="GroovyScript">
+      <text><![CDATA[
+def invoke(String num, String sign) {
+  if (num==null)
+    return null;
+  if ( 'Y'.equalsIgnoreCase(sign) )
+    return num;
+  def nb = num =~ /[0-9]/;
+  def val = nb.grep().join();
+  return val;
+}
+      ]]></text>
+      <text-input><![CDATA[
+  return [ '1234 567890', 'N' ] as Object[]
+      ]]></text-input>
+    </function>
+
+    <function name="passp-frn-norm" type="GroovyScript">
+      <text><![CDATA[
+def invoke(String input) {
+  if ( input == null )
+    return [ null, null ] as Object[];
+  input = input.trim();
+  if ( input.length() == 0 )
+    return [ '', 'Y' ] as Object[];
+  def nb = input =~ /[0-9]/;
+  def val = nb.grep().join();
+  def retval = val.substring(0,2) + ' ' + val.substring(2);
+//  dsmask.logMessage('passp-frn-norm', 10, retval);
+  return [ retval, input.contains(' ') ? 'Y' : 'N' ] as Object[];
+}
+      ]]></text>
+      <text-input><![CDATA[
+  return '123456789'
+      ]]></text-input>
+    </function>
+
+    <function name="passp-frn-restore" type="GroovyScript">
+      <text><![CDATA[
+def invoke(String num, String sign) {
+  if (num==null)
+    return null;
+  if ( 'Y'.equalsIgnoreCase(sign) )
+    return num;
+  def nb = num =~ /[0-9]/;
+  def val = nb.grep().join();
+  return val;
+}
+      ]]></text>
+      <text-input><![CDATA[
+  return [ '12 3456789', 'N' ] as Object[]
+      ]]></text-input>
+    </function>
+
+</dsmask-masking-rules>

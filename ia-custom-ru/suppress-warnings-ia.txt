@@ -1,0 +1,8 @@
+The following warning types should be suppressed or converted to informational:
+
+IIS-CONN-DB2-00027
+IIS-CONN-NGBR-00072
+IIS-CONN-DAAPI-00398
+IIS-DSEE-TFIP-00063
+IIS-DSEE-TFIP-00095
+IIS-DSEE-USBP-00002

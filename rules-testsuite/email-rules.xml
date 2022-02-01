@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="email">
+        <input dc="EA,EmailRus"/>
+        <output dc="EA,EmailRus"/>
+        <step name="split" function="email-split">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="email-fpe">
+            <ref name="split" pos="1"/>
+        </step>
+        <step name="restore" function="email-restore">
+            <ref name="mask" pos="1"/>
+            <ref name="split" pos="2"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

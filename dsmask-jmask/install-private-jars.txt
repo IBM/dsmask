@@ -1,0 +1,26 @@
+Maven@MacOS
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+MVN="/Applications/NetBeans/NetBeans 8.2.app/Contents/Resources/NetBeans/java/maven/bin/mvn"
+"$MVN" --version
+
+# DataStage Java Integration Stage API
+"$MVN" install:install-file -Dfile=`pwd`/ccjava-api.jar \
+ -DgroupId=com.ibm.datastage -DartifactId=ccjava-api -Dversion=11.7.1 -Dpackaging=jar
+"$MVN" install:install-file -Dfile=`pwd`/JavaIntegration_API_Document.zip \
+ -DgroupId=com.ibm.datastage -DartifactId=ccjava-api -Dversion=11.7.1 -Dpackaging=jar -Dclassifier=javadoc
+
+# Runtime implementation of Java Integration Stage API - for mock tests
+"$MVN" install:install-file -Dfile=`pwd`/ccjava.jar \
+ -DgroupId=com.ibm.datastage -DartifactId=ccjava -Dversion=11.7.1 -Dpackaging=jar
+"$MVN" install:install-file -Dfile=`pwd`/ccapi.jar \
+ -DgroupId=com.ibm.datastage -DartifactId=ccapi -Dversion=11.7.1 -Dpackaging=jar
+
+# ODPP Java interface
+"$MVN" install:install-file -Dfile=`pwd`/ODPPJava.jar \
+ -DgroupId=com.ibm.odpp -DartifactId=odpp-java -Dversion=11.3.6 -Dpackaging=jar
+"$MVN" install:install-file -Dfile=`pwd`/ODPPJavaDoc.zip \
+ -DgroupId=com.ibm.odpp -DartifactId=odpp-java -Dversion=11.3.6 -Dpackaging=zip -Dclassifier=javadoc
+
+# ODPP post-install configuration
+bash createODPPsymboliclinks.sh /opt/ODPP/bin 11.3 11.3.0.7 113

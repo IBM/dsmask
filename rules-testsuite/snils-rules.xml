@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="snils">
+        <input dc="SnilsRus,SNILS_Rus"/>
+        <output dc="SnilsRus,SNILS_Rus"/>
+        <step name="norm" function="snils-normalize">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="snils-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="fix" function="snils-fix">
+            <ref name="mask" pos="1"/>
+        </step>
+        <step name="reformat" function="snils-reformat">
+            <ref name="fix" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <function name="phone-fpe" type="FPE">
+        <![CDATA[
+            KEY default
+            CLASS russian-simple
+        ]]>
+    </function>
+
+</dsmask-masking-rules>

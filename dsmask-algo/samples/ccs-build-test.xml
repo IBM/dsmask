@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<char-class-set name="build-test">
+  <char-class name="numbers">
+    <char-range begin-char="0" end-char="9"/>
+  </char-class>
+  <char-class name="small-latin">
+    <char-range begin-char="a" end-char="z"/>
+  </char-class>
+  <char-class name="large-latin">
+    <char-range begin-char="A" end-char="Z"/>
+  </char-class>
+  <char-class name="small-cyrillic">
+    <char-range begin-char="а" end-char="я"/>
+    <char-range begin-char="ё" end-char="ё"/>
+  </char-class>
+  <char-class name="large-cyrillic">
+    <char-range begin-char="А" end-char="Я"/>
+    <char-range begin-char="Ё" end-char="Ё"/>
+  </char-class>
+</char-class-set>

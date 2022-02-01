@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Sample job file for DsMask UniqService</comment>
+<entry key="workDir">uniq-shards</entry>
+<entry key="shardCount">100</entry>
+<entry key="cacheSizeMB">20</entry>
+<entry key="lazyCommitPeriod">60</entry>
+<entry key="svcPort">27500</entry>
+<entry key="svcHost">127.0.0.1</entry>
+<entry key="svcSecret">qazwsx</entry>
+</properties>

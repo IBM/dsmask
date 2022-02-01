@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+    <function name="project" type="GroovyScript">
+      <text><![CDATA[
+        def invoke(Object[] input) {
+          return input;
+        }
+      ]]></text>
+      <text-input><![CDATA[
+        return [ 123, 'Abc', new Date() ] as Object[]
+      ]]></text-input>
+    </function>
+</dsmask-masking-rules>

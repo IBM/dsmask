@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Sample job file for dsmask-jconf program</comment>
+
+<!-- Read metadata from the file
+<entry key="in.tab.type">file</entry>
+<entry key="in.tab.file.name">sample-metadata.xml</entry>
+<entry key="in.dc.rules">rules/sample-dataclass.xml</entry>
+-->
+<!-- Read metadata from IBM InfoSphere Governance Catalog database -->
+<entry key="in.tab.type">igc</entry>
+<entry key="in.tab.igc.url">jdbc:db2://localhost:50000/xmeta</entry>
+<entry key="in.tab.igc.username">xmeta</entry>
+<entry key="in.tab.igc.password">P@ssw0rd</entry>
+
+<!-- Masking rules directory or XML file name -->
+<entry key="in.masking.rules">./rules</entry>
+<!-- Masking context name -->
+<entry key="in.masking.context"></entry>
+<!-- Output directory for the generated configuration -->
+<entry key="out.dir">../config</entry>
+<!-- Output configuration name -->
+<entry key="out.config">demo1</entry>
+<!-- Diagnostical dump output filename, to produce two dump files
+   * XXX.tables.xml - table structure dump, compatible with in.tab.file.name
+   * XXX.dcs.txt - list of all confidential data classes applied
+<entry key="out.dump">demo1-dump</entry>
+-->
+</properties>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="phone">
+        <input dc="PN,PhoneNumber_Rus"/>
+        <output dc="PN,PhoneNumber_Rus"/>
+        <step name="mask" function="phone-fpe">
+            <ref name="$" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

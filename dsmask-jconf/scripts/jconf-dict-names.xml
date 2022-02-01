@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Sample job file for dictionary builder</comment>
+<entry key="NamesMale">./names-data/names_m.txt</entry>
+<entry key="NamesFemale">./names-data/names_f.txt</entry>
+<entry key="FamMale">./names-data/fam_m.txt</entry>
+<entry key="FamFemale">./names-data/fam_f.txt</entry>
+<entry key="SaltKey">qazwsx</entry>
+<entry key="DbName">../dict/dict-names</entry>
+<entry key="TotalNames">50000000</entry>
+</properties>

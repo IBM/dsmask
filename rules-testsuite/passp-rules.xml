@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="passp-split">
+        <input dc="PassportSeriesRus"/>
+        <input dc="PassportNumberRus"/>
+        <output dc="PassportSeriesRus"/>
+        <output dc="PassportNumberRus"/>
+        <step name="concat" function="passp-concat">
+            <ref name="$" pos="1"/>
+            <ref name="$" pos="2"/>
+        </step>
+        <step name="norm" function="passp-norm">
+            <ref name="concat" pos="1"/>
+        </step>
+        <step name="mask" function="passp-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="split" function="passp-split">
+            <ref name="mask" pos="1"/>
+        </step>
+    </rule>
+
+    <rule name="passp-single">
+        <input dc="Passport_Rus,NID_Dom_Rus"/>
+        <output dc="Passport_Rus,NID_Dom_Rus"/>
+        <step name="norm" function="passp-norm">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="passp-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="restore" function="passp-restore">
+            <ref name="mask" pos="1"/>
+            <ref name="norm" pos="2"/>
+        </step>
+    </rule>
+
+    <rule name="passp-frn-single">
+        <input dc="NID_Frn_Rus"/>
+        <output dc="NID_Frn_Rus"/>
+        <step name="norm" function="passp-frn-norm">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="passp-frn-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="restore" function="passp-frn-restore">
+            <ref name="mask" pos="1"/>
+            <ref name="norm" pos="2"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

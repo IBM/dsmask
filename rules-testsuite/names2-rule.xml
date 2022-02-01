@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="name-3part-sex-hash">
+            <input dc="GEN"/>
+            <input dc="NameLast_Rus"/>
+            <input dc="NameFirst_Rus"/>
+            <input dc="NameMiddle_Rus"/>
+        <output dc="NameLast_Rus"/>
+        <output dc="NameFirst_Rus"/>
+        <output dc="NameMiddle_Rus"/>
+        <step name="merge" function="name-concat">
+            <ref pos="2"/><ref pos="3"/><ref pos="4"/>
+        </step>
+        <step name="norm" function="name-norm">
+            <ref pos="1"/>
+        </step>
+        <step name="hash-male" function="name-male-hash">
+            <predicate><![CDATA[
+return 'M'.equalsIgnoreCase(input[1])
+            ]]></predicate>
+            <predicate-input><![CDATA[
+return ['Пагосян Гагик Спартакович', 'M'] as Object[]
+            ]]></predicate-input>
+            <ref name="norm" pos="1"/>
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="hash-female" function="name-female-hash">
+            <predicate><![CDATA[
+return 'F'.equalsIgnoreCase(input[1])
+            ]]></predicate>
+            <predicate-input><![CDATA[
+return ['Смирнова Анна Теодоровна', 'F'] as Object[]
+            ]]></predicate-input>
+            <ref name="norm" pos="1"/>
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="project" function="name-get-3">
+            <ref name="$" pos="1"/>
+            <ref name="hash-male" pos="2"/>
+            <ref name="hash-male" pos="3"/>
+            <ref name="hash-male" pos="4"/>
+            <ref name="hash-female" pos="2"/>
+            <ref name="hash-female" pos="3"/>
+            <ref name="hash-female" pos="4"/>
+        </step>
+    </rule>
+
+    <rule name="name-full-sex-hash">
+            <input dc="GEN"/>
+            <input dc="NameFull_Rus"/>
+        <output dc="NameFull_Rus"/>
+        <step name="norm" function="name-norm">
+            <ref pos="2"/>
+        </step>
+        <step name="hash-male" function="name-male-hash">
+            <predicate><![CDATA[
+return 'M'.equalsIgnoreCase(input[1])
+            ]]></predicate>
+            <predicate-input><![CDATA[
+return ['Пагосян Гагик Спартакович', 'M'] as Object[]
+            ]]></predicate-input>
+            <ref name="norm" pos="1"/>
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="hash-female" function="name-female-hash">
+            <predicate><![CDATA[
+return 'F'.equalsIgnoreCase(input[1])
+            ]]></predicate>
+            <predicate-input><![CDATA[
+return ['Смирнова Анна Теодоровна', 'F'] as Object[]
+            ]]></predicate-input>
+            <ref name="norm" pos="1"/>
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="project" function="name-get-1">
+            <ref name="$" pos="1"/>
+            <ref name="hash-male" pos="1"/>
+            <ref name="hash-female" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

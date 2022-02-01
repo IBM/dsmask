@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<char-trans-table name='ge-x2u'>
+<char-map
+src='ÀÁÂÃÄÅÆÈÉÊËÌÍÏÐÕÒÓÔÖ×ØÙÚÛÜÝÞßàáãä'
+dst='აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
+/>
+</char-trans-table>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="INN">
+        <input dc="InnRus,INN_Rus"/>
+        <output dc="InnRus,INN_Rus"/>
+        <step name="norm" function="inn-normalize">
+            <ref name="$" pos="1"/>
+        </step>
+        <step name="mask" function="inn-fpe">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="fix" function="inn-fix">
+            <ref name="mask" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

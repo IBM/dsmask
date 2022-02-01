@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <function name="name-concat" type="Concat"/>
+
+    <function name="name-norm" type="StringOp">
+        <![CDATA[
+            SpaceNorm
+            Capitalize
+        ]]>
+    </function>
+
+    <function name="name-translit" type="StringOp">
+        <![CDATA[
+            Translit
+        ]]>
+    </function>
+
+    <function name="name-hash" type="HashLookup">
+        <![CDATA[
+            DB dict-names
+            TABLE dict_fio
+            ID id
+            OUT nfull nlast nfirst nmiddle
+            KEY default
+            INDEXES 1
+        ]]>
+    </function>
+
+    <function name="name-initials" type="GroovyScript">
+      <text><![CDATA[
+        class Skip {
+          static String[] skipLines = [
+            "аб",
+            "абу",
+            "ибн",
+            "тер",
+            "аль"
+          ];
+          static def check(String part) {
+            for (String p : skipLines) {
+              if (p.length()==0)
+                return true;
+              if (p.equalsIgnoreCase(part))
+                return true;
+            }
+            return false;
+          }
+        }
+        def invoke(String input) {
+          if (input==null || input.length()==0) return input;
+          String[] parts = input.split("[ \\-]");
+          StringBuilder sb = new StringBuilder();
+          for (String p : parts) {
+            if (Skip.check(p)) continue;
+            if (sb.length()==0)
+              sb.append(p);
+            else
+              sb.append(" ").append(p.substring(0,1)).append(".");
+          }
+          return sb.toString();
+        }
+      ]]></text>
+      <text-input><![CDATA[
+        return 'Иванов Пётр Сергеевич';
+      ]]></text-input>
+    </function>
+
+</dsmask-masking-rules>

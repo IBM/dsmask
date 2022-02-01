@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <function name="email-fpe" type="FPE">
+        <![CDATA[
+            KEY default
+            CLASS russian-simple
+        ]]>
+    </function>
+
+    <function name="email-split" type="GroovyScript">
+      <text><![CDATA[
+def invoke(String input) {
+  if ( input == null )
+    return [ null, null ] as Object[];
+  if ( input.contains('@') ) {
+    String[] parts = input.split('[@]');
+    return [ parts[0], parts[1] ] as Object[];
+  } else {
+    return [ input, null ] as Object[];
+  }
+}
+      ]]></text>
+      <text-input><![CDATA[
+  return 'pushking@zztop.net'
+      ]]></text-input>
+    </function>
+
+    <function name="email-restore" type="GroovyScript">
+      <text><![CDATA[
+def invoke(String login, String domain) {
+  if (login==null)
+    return null;
+  if (domain==null)
+    return login;
+  return login + '@' + domain;
+}
+      ]]></text>
+      <text-input><![CDATA[
+  return [ 'pushking', 'zztop.net' ] as Object[]
+      ]]></text-input>
+    </function>
+
+</dsmask-masking-rules>

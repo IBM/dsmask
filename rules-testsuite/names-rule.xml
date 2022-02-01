@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="name-full">
+        <input dc="NameFull_Rus"/>
+        <output dc="NameFull_Rus"/>
+        <step name="norm" function="name-norm">
+            <ref pos="1"/>
+        </step>
+        <step name="hash" function="name-hash">
+            <ref name="norm" pos="1"/>
+        </step>
+    </rule>
+
+    <rule name="name-full-initials">
+        <input dc="NameFull_Rus"/>
+        <input dc="NameInit_Rus"/>
+        <output dc="NameInit_Rus"/>
+        <step name="norm" function="name-norm">
+            <ref pos="1"/>
+        </step>
+        <step name="hash" function="name-hash">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="init" function="name-initials">
+            <ref name="hash" pos="1"/>
+        </step>
+    </rule>
+
+    <rule name="name-full-lat">
+        <input dc="NameFull_Rus"/>
+        <input dc="NameFull_Lat"/>
+        <output dc="NameFull_Lat"/>
+        <step name="norm" function="name-norm">
+            <ref pos="1"/>
+        </step>
+        <step name="hash" function="name-hash">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="trans" function="name-translit">
+            <ref name="hash" pos="1"/>
+        </step>
+    </rule>
+
+    <rule name="name-3part">
+        <input dc="NameLast_Rus"/>
+        <input dc="NameFirst_Rus"/>
+        <input dc="NameMiddle_Rus"/>
+        <output dc="NameLast_Rus"/>
+        <output dc="NameFirst_Rus"/>
+        <output dc="NameMiddle_Rus"/>
+        <step name="merge" function="name-concat">
+            <ref pos="1"/><ref pos="2"/><ref pos="3"/>
+        </step>
+        <step name="norm" function="name-norm">
+            <ref name="merge" pos="1"/>
+        </step>
+        <step name="hash" function="name-hash">
+            <ref name="norm" pos="1"/>
+        </step>
+        <step name="project" function="project">
+            <ref name="hash" pos="2"/>
+            <ref name="hash" pos="3"/>
+            <ref name="hash" pos="4"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

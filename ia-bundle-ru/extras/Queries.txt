@@ -1,0 +1,11 @@
+# REST API explorer
+https://optim-engine.local:19443/ibm/iis/igc-rest-explorer/
+
+# Find all terms
+https://optim-engine.local:19443/ibm/iis/igc-rest/v1/search/?types=term
+
+# Find all data classes
+https://optim-engine.local:19443/ibm/iis/igc-rest/v1/search?types=data_class&pageSize=100&begin=0
+
+# Retrieve the built-in asset (Data Class "Email")
+https://optim-engine.local:19443/ibm/iis/igc-rest/v1/assets/f4951817.e469fa50.25inn8f57.ko46598.b1a47h.o1uem9khm0393n5515t8l

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <function name="snils-normalize" type="Groovy">
+        <text><![CDATA[
+// Exclude all non-numeric characters from the input
+Object invoke(Object input) {
+    if (input==null)
+        return null;
+    String str = input.toString().trim();
+    str = str.replaceAll("[^\\d]", "");
+    return str;
+}
+        ]]></text>
+        <text-input><![CDATA[
+return "112-233-445 95";
+        ]]></text-input>
+    </function>
+
+    <function name="snils-fpe" type="FPE">
+        <![CDATA[
+            KEY default
+            CLASS russian-simple
+        ]]>
+    </function>
+
+    <function name="snils-fix" type="Groovy">
+        <text><![CDATA[
+class Globals {
+    static final int[] SNILS_POS = [ 9,8,7,6,5,4,3,2,1 ];
+}
+
+// Convert a string of numbers to numerical digit values
+int[] makeDigits(String str) {
+    int[] digits = new int[str.length()];
+    for (int i=0; i<str.length(); ++i)
+        digits[i] = Character.getNumericValue(str.charAt(i));
+    return digits;
+}
+
+// control character for Russian SNILS
+String fixSNILS(String snils) {
+    int[] digits = makeDigits(snils);
+    int control = 0;
+    for (int i=0; i<Globals.SNILS_POS.length; ++i) {
+        control += digits[i] * Globals.SNILS_POS[i];
+    }
+    if (control > 101) {
+        control = control % 101;
+    }
+    if (control == 100 || control == 101)
+        control = 0;
+    String suf = String.valueOf(control);
+    if (suf.length()==1)
+        suf = "0" + suf;
+    return snils.substring(0,9) + suf;
+}
+
+// Compute the control characters for Russian SNILS
+Object invoke(Object input) {
+    if (input==null)
+        return null;
+    String snils = input.toString();
+    if (snils.length()==0)
+        return input;
+    return fixSNILS(snils);
+}
+        ]]></text>
+        <text-input><![CDATA[
+return "11223344595";
+        ]]></text-input>
+    </function>
+
+    <function name="snils-reformat" type="Groovy">
+        <text><![CDATA[
+// Convert the SNILS value to standard delimited format
+Object invoke(Object input) {
+    if (input==null)
+        return null;
+    String str = input.toString().trim();
+    str = str.replaceAll("[^\\d]", "");
+    if (str.length() > 11)
+        str = str.substring(0,11);
+    while (str.length()<11)
+        str = "0" + str;
+    return (str.substring(0,3) + "-" + str.substring(3,6) + "-" +
+            str.substring(6,9) + " " + str.substring(9));
+}
+        ]]></text>
+        <text-input><![CDATA[
+return "112-233-445 95";
+        ]]></text-input>
+    </function>
+
+</dsmask-masking-rules>

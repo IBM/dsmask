@@ -1,0 +1,14 @@
+[dsadm@isenge01 InformationServer]$ pwd
+/opt/IBM/InformationServer
+[dsadm@iseng01 InformationServer]$ cat ./Server/DSEngine/JavaStage.config
+classpath:com.ibm.dsmask.DsMask = /opt/IBM/dsmask/dsmask-jmask/lib/*
+[dsadm@iseng01 InformationServer]$ 
+
+localedef -c -i ru_RU -f CP1251 ru_RU.cp1251
+localedef -c -i en_US -f CP1251 en_US.cp1251
+
+Project NLS setting: windows-1251
+
+dsenv: LANG, LC_ALL
+
+datastage API jar (ccjava-api.jar) must NOT be in the classpath!

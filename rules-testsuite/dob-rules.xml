@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <rule name="DOB">
+        <input dc="DOB"/>
+        <output dc="DOB"/>
+        <step name="mask" function="date-simple">
+            <ref name="$" pos="1"/>
+        </step>
+    </rule>
+
+    <rule name="DocDate">
+        <input dc="DocDate_Rus"/>
+        <output dc="DocDate_Rus"/>
+        <step name="mask" function="date-simple">
+            <ref name="$" pos="1"/>
+        </step>
+    </rule>
+
+</dsmask-masking-rules>

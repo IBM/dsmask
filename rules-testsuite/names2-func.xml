@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dsmask-masking-rules>
+
+    <function name="name-male-hash" type="HashLookup">
+        <![CDATA[
+            DB dict-names
+            TABLE dict_fio_male
+            ID id
+            OUT nfull nlast nfirst nmiddle
+            KEY default
+            INDEXES 1
+        ]]>
+    </function>
+
+    <function name="name-female-hash" type="HashLookup">
+        <![CDATA[
+            DB dict-names
+            TABLE dict_fio_female
+            ID id
+            OUT nfull nlast nfirst nmiddle
+            KEY default
+            INDEXES 1
+        ]]>
+    </function>
+
+    <function name="name-get-3" type="GroovyScript">
+      <text><![CDATA[
+Object[] invoke(String sign, String m1, String m2, String m3, String f1, String f2, String f3) {
+  if ( "M".equalsIgnoreCase(sign) )
+    return [ m1, m2, m3 ] as Object[]
+  return [ f1, f2, f3 ] as Object[]
+}
+      ]]></text>
+      <text-input><![CDATA[
+return [ 'M', 'Ivanov', 'Petr', 'Segreyevich', 'Fanova', 'Anna', 'Ivanovna'] as Object[]
+      ]]></text-input>
+    </function>
+
+    <function name="name-get-1" type="GroovyScript">
+      <text><![CDATA[
+String invoke(String sign, String m, String f) {
+  if ( "M".equalsIgnoreCase(sign) )
+    return m
+  return f
+}
+      ]]></text>
+      <text-input><![CDATA[
+return [ 'M', 'Ivanov Petr Segreyevich', 'Fanova Anna Ivanovna' ] as Object[]
+      ]]></text-input>
+    </function>
+
+</dsmask-masking-rules>
