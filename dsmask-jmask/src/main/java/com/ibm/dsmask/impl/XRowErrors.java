@@ -61,6 +61,22 @@ public class XRowErrors {
         addText(sb);
     }
 
+    public void addOperUnmodified(MskOp op, String fieldName,
+            int position, Object originalValue) {
+        if (originalValue==null)
+            originalValue = "?";
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Row in table [").append(op.getTable().getTableInfo())
+                .append("], rule [").append(op.getRule().getName())
+                .append("] failed with error:");
+        sb.append(Utils.EOL).append("\t")
+                .append("Unmodified output for column[")
+                .append(fieldName).append("] at @").append(position)
+                .append(" for original value [")
+                .append(originalValue.toString()).append("]");
+        addText(sb);
+    }
+
     public void addAlgoError(XWorkspace ws, XVector input, Throwable ex) {
         if (ex==null) return;
         final StringBuilder sb = new StringBuilder();

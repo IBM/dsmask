@@ -82,23 +82,22 @@ public class XOperState {
         int pos = 0;
         for (int index : operation.getOutputIndexes()) {
             Object value = vec.values[pos];
-            if (value==null) {
-                // Nulls can indicate a problem with masking.
-                // A null value should not be generated for column
-                //   which was not null on input.
-                if ( rowState.checkNull(index, operation) )
+            if (rowState.checkValue(index, operation, value)) {
+                // If the value is allowed, we set it to the output.
+                if (value==null) {
                     record.setValue(index, null);
-            } else {
-                // Minimal handling of data type conversion
-                if (value instanceof String ||
-                        value instanceof Integer ||
-                        value instanceof Long) {
-                    record.setValueAsString(index, value.toString());
-                } else if (value instanceof Double) {
-                    record.setValueAsString(index,
-                            BigDecimal.valueOf((Double)value).toString());
                 } else {
-                    record.setValue(index, value);
+                    // Minimal handling of data type conversion
+                    if (value instanceof String ||
+                            value instanceof Integer ||
+                            value instanceof Long) {
+                        record.setValueAsString(index, value.toString());
+                    } else if (value instanceof Double) {
+                        record.setValueAsString(index,
+                                BigDecimal.valueOf((Double)value).toString());
+                    } else {
+                        record.setValue(index, value);
+                    }
                 }
             }
             ++pos;

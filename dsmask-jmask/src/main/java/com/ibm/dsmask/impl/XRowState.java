@@ -93,7 +93,8 @@ public class XRowState {
      */
     public XRowOutput writeRow() {
         if (!errors.hasError()) {
-            // only apply operations if there were no errors
+            // Only apply futher operations if there were no errors.
+            // Otherwise the older error should be reported to the reject link.
             for (XOperState oper : opers) {
                 oper.writeRow(output);
             }
@@ -110,23 +111,38 @@ public class XRowState {
 
     /**
      * The callback, invoked from XOperState.writeRow(),
-     * to check whether null values are acceptable for the output.
+     * to check whether the masked value acceptable.
      * Sets the internal failure flag if no.
      * @param outputIndex Index of output NULL column
      * @param operation Masking operation, resulting in setting NULL value
-     * @return true, if null is allowed due to input also null, false otherwise
+     * @param value
+     * @return true, if the value is acceptable, false otherwise
      */
-    public boolean checkNull(int outputIndex, MskOp operation) {
+    public boolean checkValue(int outputIndex, MskOp operation, Object value) {
         XColumnInfo inCol = bulkState.getIndexMap().get(outputIndex);
-        if (inCol==null)
-            return true; // strange, but let's skip it...
-        Object v = input.getValue(inCol.getIndex());
-        if (v==null)
-            return true; // okay, that's expected
-        // So we have an output NULL value with the corresponding
-        // non-NULL input value, and we need to reject the row.
-        errors.addOperNull(operation, inCol.getName(), outputIndex, v);
-        return false;
+        if (inCol==null) {
+            // strange, but let's skip it...
+            return true;
+        }
+        Object original = input.getValue(inCol.getIndex());
+        if (original==null) {
+            // if the input was null, we allow any output
+            return true;
+        }
+        if (value==null) {
+            // We have an output NULL value with the corresponding
+            // non-NULL input value, and we need to reject the row.
+            errors.addOperNull(operation, inCol.getName(), outputIndex, original);
+            return false;
+        }
+        String temp1 = original.toString().trim();
+        String temp2 = value.toString().trim();
+        if (temp1.equalsIgnoreCase(temp2)) {
+            // Input equals output - bad masking.
+            errors.addOperUnmodified(operation, inCol.getName(), outputIndex, original);
+            return false;
+        }
+        return true;
     }
 
     public String formatRejectData() {
