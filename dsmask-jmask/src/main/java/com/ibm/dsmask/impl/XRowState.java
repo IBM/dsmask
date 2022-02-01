@@ -135,12 +135,15 @@ public class XRowState {
             errors.addOperNull(operation, inCol.getName(), outputIndex, original);
             return false;
         }
-        String temp1 = original.toString().trim();
-        String temp2 = value.toString().trim();
-        if (temp1.equalsIgnoreCase(temp2)) {
-            // Input equals output - bad masking.
-            errors.addOperUnmodified(operation, inCol.getName(), outputIndex, original);
-            return false;
+        if (operation.getOutputIndexes().length == 1) {
+            // Value validation is performed only for single-value masking operations.
+            String temp1 = original.toString().trim();
+            String temp2 = value.toString().trim();
+            if (temp1.equalsIgnoreCase(temp2)) {
+                // Input equals output - bad masking.
+                errors.addOperUnmodified(operation, inCol.getName(), outputIndex, original);
+                return false;
+            }
         }
         return true;
     }

@@ -82,6 +82,7 @@ public class XOperState {
         int pos = 0;
         for (int index : operation.getOutputIndexes()) {
             Object value = vec.values[pos];
+            // Validate the output value.
             if (rowState.checkValue(index, operation, value)) {
                 // If the value is allowed, we set it to the output.
                 if (value==null) {
