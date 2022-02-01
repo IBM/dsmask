@@ -45,6 +45,7 @@
     <profiles>
     <profile>
       <id>release-profile</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
       <build>
         <plugins>
             <plugin>
