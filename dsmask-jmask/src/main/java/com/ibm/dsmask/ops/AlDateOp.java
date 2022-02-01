@@ -95,7 +95,7 @@ public class AlDateOp implements AlSimpleValue {
         final PureJavaCrc32 crc = new PureJavaCrc32();
         crc.update(dateFormat.format(v).getBytes(StandardCharsets.UTF_8));
         crc.update(userKeyBytes);
-        return (int) (crc.getValue() % 365L);
+        return 1 + (int) (crc.getValue() % 364L);
     }
 
     @Override

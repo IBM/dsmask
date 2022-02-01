@@ -32,7 +32,7 @@ public class MaskingMockData {
     private final String tableName;
     private final List<MaskingMockColumn> columns;
     private List<Object[]> data;
-    
+
     private final RandomStringGenerator randomCodes =
             new RandomStringGenerator.Builder().withinRange(
                     new char[][] { {'a', 'z'}, {'A', 'Z'}, {'0', '9'}})
@@ -99,7 +99,7 @@ public class MaskingMockData {
 
     private List<Object[]> dataTable3() {
         final List<Object[]> retval = new ArrayList<>();
-        for (int i=0; i<10000; ++i) {
+        for (int i=0; i<100000; ++i) {
             retval.add(new Object[] { i+1, randomCodes.generate(3) });
         }
         return retval;
@@ -121,7 +121,7 @@ public class MaskingMockData {
         cols.add(new MaskingMockColumn(12, "card_code", dcs(MockDCS.CARD_CODE, MockDCS.CODE)));
         return cols;
     }
-    
+
     private java.sql.Date makePassportDate(Calendar dob, int posNum) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(dob.getTimeInMillis());

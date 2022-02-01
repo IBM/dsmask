@@ -101,14 +101,27 @@ public class MaskFPE {
         String value = in.toString();
         if (value.length()==0)
             return value; // Empty string on input, same object on output
+        // Protect against equal input and output
+        int substep = 0;
+        while (true) {
+            String retval = algo(value, iteration, substep);
+            if (! retval.equalsIgnoreCase(value))
+                return retval;
+            if ( ++substep > 10000 )
+                throw new RuntimeException("Hanged FPE on input value [" + value + "]");
+        }
+    }
 
+    private String algo(String value, int iteration, int substep) {
         int[] codePoints = value.codePoints().toArray();
         if (codePoints.length <= skipBefore + skipAfter)
             return value; // Nothing to mask, value is too short
 
         int lastIndex = codePoints.length - skipAfter;
 
-        final IndexGenFPE ig = new IndexGenFPE(value, mac, iteration);
+        final String indexData = (substep==0) ? value :
+                ( value + "." + Integer.toHexString(substep) );
+        final IndexGenFPE ig = new IndexGenFPE(indexData, mac, iteration);
         final StringBuilder retval = new StringBuilder();
 
         // prepend with the skipped characters

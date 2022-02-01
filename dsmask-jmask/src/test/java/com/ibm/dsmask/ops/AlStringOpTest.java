@@ -83,7 +83,6 @@ public class AlStringOpTest {
         in.values[0] = "+7(4822)55-18-20";
         XVector out = null;
         out = getOp3().exec(in, out);
-        System.out.println(out);
         assertEquals(1, out.values.length);
         assertEquals("74822551820", out.values[0]);
     }
