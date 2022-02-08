@@ -1,0 +1,24 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+*.txt text
+*.sql text
+*.c text
+*.h text
+*.java text
+*.groovy text
+*.xml text
+*.properties text
+*.json text
+
+*.sln text eol=crlf
+*.dsx text eol=crlf
+
+*.pdf binary
+*.doc binary
+*.docx binary
+*.ppt binary
+*.pptx binary
+*.jpg binary
+*.jpeg binary
+*.png binary
