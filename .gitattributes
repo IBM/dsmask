@@ -1,6 +1,7 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text=auto
 
+*.md
 *.txt text
 *.sql text
 *.c text
@@ -13,6 +14,8 @@
 
 *.sln text eol=crlf
 *.dsx text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
 
 *.pdf binary
 *.doc binary
