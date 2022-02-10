@@ -21,18 +21,19 @@ INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
     <!-- Get the list of terms to be handled -->
     <select-all-terms>
         <![CDATA[
-SELECT btx.ABBREVIATION AS dcname,
-       CHAR(SUBSTR(bt.ABBREVIATION,8,1), 1) AS dcmode
-FROM IGVIEWS.IGBUSINESSTERM btx
-INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
-   ON bto.BUSINESSTERMRID=btx.RID
-INNER JOIN IGVIEWS.IGBUSINESSTERM bt
-   ON bt.RID=bto.CLASSIFIEDOBJECTRID
-  AND bt.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+SELECT bt.ABBREVIATION AS dcname,
+       CHAR(SUBSTR(btx.ABBREVIATION,8,1), 1) AS dcmode
+FROM IGVIEWS.IGBUSINESSTERM bt
 INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
-   ON bc.RID=bt.OFCATEGORY 
-  AND bc.SHORTDESCRIPTION='DsMask.Mode'
-         ]]>
+  ON bc.RID=bt.OFCATEGORY
+ AND bc.SHORTDESCRIPTION='DsMask.Labels'
+INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM aot
+  ON bt.RID=aot.BUSINESSTERMRID
+INNER JOIN IGVIEWS.IGBUSINESSTERM btx
+  ON btx.RID=aot.CLASSIFIEDOBJECTRID
+ AND btx.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+WHERE bt.ABBREVIATION NOT IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+        ]]>
     </select-all-terms>
 
     <!-- Load the list of confidential fields + their mapped dataclasses -->
@@ -66,27 +67,85 @@ ORDER BY db.name, scm.name, tab.name, fld.name, q.Date
     <!-- Load the list of fields and their assigned terms -->
     <select-field-terms>
         <![CDATA[
-SELECT db.name, scm.name, tab.name, fld.name, btx.ABBREVIATION 
-FROM IGVIEWS.IGASSIGNEDFIELDSOFATERM aterm
-INNER JOIN IGVIEWS.IGBUSINESSTERM btx
-   ON aterm.BUSINESSTERMRID=btx.rid
-INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
-   ON bto.BUSINESSTERMRID=btx.RID
-INNER JOIN IGVIEWS.IGBUSINESSTERM bt
-   ON bt.RID=bto.CLASSIFIEDOBJECTRID
-  AND bt.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+SELECT db.name, scm.name, tab.name, fld.name, term.ABBREVIATION 
+FROM IGVIEWS.IGASSIGNEDFIELDSOFATERM aterm 
+INNER JOIN IGVIEWS.IGBUSINESSTERM term 
+  ON aterm.BUSINESSTERMRID=term.rid
 INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
-   ON bc.RID=bt.OFCATEGORY 
-  AND bc.SHORTDESCRIPTION='DsMask.Mode'
+  ON bc.RID=term.OFCATEGORY
+ AND bc.SHORTDESCRIPTION='DsMask.Labels'
+INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM aot
+  ON term.RID=aot.BUSINESSTERMRID
+INNER JOIN IGVIEWS.IGBUSINESSTERM btx
+  ON btx.RID=aot.CLASSIFIEDOBJECTRID
+ AND btx.ABBREVIATION IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
 INNER JOIN CMVIEWS.PDRDATABASECOLUMN fld 
   ON aterm.ASSIGNEDFIELDRID=fld.rid 
-INNER JOIN CMVIEWS.PDRDATABASETABLE tab
+INNER JOIN CMVIEWS.PDRDATABASETABLE tab 
   ON tab.rid=fld.OFDATABASETABLERID 
 INNER JOIN CMVIEWS.PDRDATABASESCHEMA scm 
   ON scm.rid=tab.OFDATASCHEMARID 
 INNER JOIN CMVIEWS.PDRDATABASE db 
-  ON db.rid=scm.OFDATABASERID 
-ORDER BY db.name, scm.name, tab.name, fld.name, btx.name
+  ON db.rid=scm.OFDATABASERID
+WHERE term.ABBREVIATION NOT IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+ORDER BY db.name, scm.name, tab.name, fld.name, term.ABBREVIATION
         ]]>
     </select-field-terms>
+
+    <!-- The list of tables with confidential tables in a particular database -->
+    <select-confidential-tables>
+        <![CDATA[
+WITH dctabs(dbname, scmname, tabname) AS (
+    SELECT db.name, scm.name, tab.name
+    FROM CMVIEWS.DQCLASSIFICATION q 
+    INNER JOIN CMVIEWS.DQDATACLASS dc 
+      ON q.OFDATACLASSRID=dc.rid
+    INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM bto
+      ON bto.CLASSIFIEDOBJECTRID=dc.RID
+    INNER JOIN IGVIEWS.IGBUSINESSTERM bt
+      ON bt.RID=bto.BUSINESSTERMRID 
+     AND bt.ABBREVIATION='DsMask.C'
+    INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
+      ON bc.RID=bt.OFCATEGORY 
+     AND bc.SHORTDESCRIPTION='DsMask.Mode'
+    INNER JOIN CMVIEWS.PDRDATABASECOLUMN fld 
+      ON q.CLASSIFIESOBJECTRID=fld.rid 
+    INNER JOIN CMVIEWS.PDRDATABASETABLE tab 
+      ON tab.rid=fld.OFDATABASETABLERID 
+    INNER JOIN CMVIEWS.PDRDATABASESCHEMA scm 
+      ON scm.rid=tab.OFDATASCHEMARID 
+    INNER JOIN CMVIEWS.PDRDATABASE db 
+      ON db.rid=scm.OFDATABASERID 
+    WHERE COALESCE(q.State, '-') IN ('Approved', '-')
+), termtabs(dbname, scmname, tabname) AS (
+    SELECT db.name, scm.name, tab.name
+    FROM IGVIEWS.IGASSIGNEDFIELDSOFATERM aterm 
+    INNER JOIN IGVIEWS.IGBUSINESSTERM term 
+      ON aterm.BUSINESSTERMRID=term.rid
+    INNER JOIN IGVIEWS.IGBUSINESSCATEGORY bc
+      ON bc.RID=term.OFCATEGORY
+     AND bc.SHORTDESCRIPTION='DsMask.Labels'
+    INNER JOIN IGVIEWS.IGASSIGNEDOBJECTSOFATERM aot
+      ON term.RID=aot.BUSINESSTERMRID
+    INNER JOIN IGVIEWS.IGBUSINESSTERM btx
+      ON btx.RID=aot.CLASSIFIEDOBJECTRID
+     AND btx.ABBREVIATION='DsMask.C'
+    INNER JOIN CMVIEWS.PDRDATABASECOLUMN fld 
+      ON aterm.ASSIGNEDFIELDRID=fld.rid 
+    INNER JOIN CMVIEWS.PDRDATABASETABLE tab 
+      ON tab.rid=fld.OFDATABASETABLERID 
+    INNER JOIN CMVIEWS.PDRDATABASESCHEMA scm 
+      ON scm.rid=tab.OFDATASCHEMARID 
+    INNER JOIN CMVIEWS.PDRDATABASE db 
+      ON db.rid=scm.OFDATABASERID
+    WHERE term.ABBREVIATION NOT IN ('DsMask.C', 'DsMask.R', 'DsMask.G')
+) SELECT DISTINCT scmname, tabname
+  FROM (
+(SELECT * FROM dctabs) UNION ALL
+(SELECT * FROM termtabs) ) x
+WHERE dbname=?
+ORDER BY scmname, tabname
+        ]]>
+    </select-confidential-tables>
+
 </igc-queries>
