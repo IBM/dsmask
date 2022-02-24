@@ -18,7 +18,7 @@ import java.util.Objects;
  * Name of a single table.
  * @author zinal
  */
-public class TableName {
+public class TableName implements Comparable<TableName> {
 
     protected String database;
     protected String name;
@@ -29,8 +29,8 @@ public class TableName {
     }
 
     public TableName(String database, String name) {
-        this.database = Utils.lower(database);
-        this.name = Utils.lower(name);
+        this.database = Utils.safe(database);
+        this.name = Utils.safe(name);
     }
 
     /**
@@ -41,7 +41,7 @@ public class TableName {
     }
 
     public void setDatabase(String database) {
-        this.database = Utils.lower(database);
+        this.database = Utils.safe(database);
     }
 
     /**
@@ -52,7 +52,7 @@ public class TableName {
     }
 
     public void setName(String name) {
-        this.name = Utils.lower(name);
+        this.name = Utils.safe(name);
     }
 
     /**
@@ -100,6 +100,17 @@ public class TableName {
     @Override
     public String toString() {
         return "TableName{" + database + "." + name + '}';
+    }
+
+    @Override
+    public int compareTo(TableName o) {
+        if ( this == o )
+            return 0;
+        int cmp = this.database.compareTo(o.database);
+        if (cmp != 0)
+            return cmp;
+        cmp = this.name.compareTo(o.name);
+        return cmp;
     }
 
 }

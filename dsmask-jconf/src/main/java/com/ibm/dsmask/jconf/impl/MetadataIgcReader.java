@@ -186,18 +186,17 @@ public class MetadataIgcReader implements AutoCloseable {
                 ps.setNull(1, java.sql.Types.VARCHAR);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    readOneMaskedTable(retval, rs);
+                    readOneMaskedTable(dbname, retval, rs);
                 }
             }
         }
         return retval;
     }
 
-    private void readOneMaskedTable(List<TableName> retval, ResultSet rs)
+    private void readOneMaskedTable(String dbname, List<TableName> retval, ResultSet rs)
             throws Exception {
-        String dbname = rs.getString(1);
-        String scmname = rs.getString(2);
-        String tabname = rs.getString(3);
+        String scmname = rs.getString(1);
+        String tabname = rs.getString(2);
         if (scmname!=null && scmname.trim().length() > 0)
             retval.add( new TableName(dbname, scmname + "." + tabname) );
         else

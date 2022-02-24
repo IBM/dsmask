@@ -16,7 +16,11 @@ import java.io.FileInputStream;
 import java.util.Properties;
 import com.ibm.dsmask.jconf.beans.*;
 import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
+import com.ibm.dsmask.jconf.impl.TableSetManager;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Data masking batch job executor (entry point).
@@ -37,16 +41,17 @@ public class MaskBatcher implements Runnable, AutoCloseable {
 
     private final Mode mode;
     private final Properties props;
-    private final String tableSet;
+    private final String tableSetName;
     private final String[] dbNames;
 
     private MetadataIgcReader igcReader = null;
+    private TableSetManager tsManager = null;
 
-    public MaskBatcher(Mode mode, Properties props, String tableSet,
+    public MaskBatcher(Mode mode, Properties props, String tableSetName,
             String[] dbNames) {
         this.mode = mode;
         this.props = props;
-        this.tableSet = tableSet;
+        this.tableSetName = tableSetName;
         this.dbNames = (dbNames==null) ? new String[]{} : dbNames;
     }
 
@@ -106,6 +111,9 @@ public class MaskBatcher implements Runnable, AutoCloseable {
             igcReader.close();
             igcReader = null;
         }
+        if (tsManager!=null) {
+            tsManager = null;
+        }
     }
 
     @Override
@@ -141,19 +149,62 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     private void runKill() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     private void runRefresh() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<TableName> allTables = new ArrayList<>();
+        for (String dbName : dbNames) {
+            LOG.info("Reading the list of tables for database {}...", dbName);
+            final List<TableName> curTables = grabIgcReader().listMaskedTables(dbName);
+            LOG.info("\tfound {} confidential tables", curTables.size());
+            allTables.addAll(curTables);
+        }
+        LOG.info("Number of tables before dedup: {}", allTables.size());
+        allTables = removeDuplicates(allTables);
+        LOG.info("Number of tables before dedup: {}", allTables.size());
+        grabTsManager().writeTableSet(tableSetName, allTables);
+        LOG.info("Table list written to tableSet {}", tableSetName);
+    }
+
+    /**
+     * Remove the duplicates from the list of table names.
+     * @param input Input list
+     * @return Output list without duplicates, order is not preserved
+     */
+    private List<TableName> removeDuplicates(List<TableName> input) {
+        final List<TableName> retval = new ArrayList<>();
+        TableName prev = null;
+        for ( TableName tn : new TreeSet<TableName>(input) ) {
+            if ( prev == null || tn.compareTo(prev)!=0 ) {
+                prev = tn;
+                retval.add(tn);
+            }
+        }
+        return retval;
+    }
+
+    private String getConfig(String name) {
+        String v = props.getProperty(name);
+        if (v==null) {
+            throw new RuntimeException("Missing property " + name + " in the job file");
+        }
+        return v;
     }
 
     private MetadataIgcReader grabIgcReader() throws Exception {
         if (igcReader!=null)
             return igcReader;
         igcReader = new MetadataIgcReader(
-                props.getProperty(CONF_XMETA_URL), 
-                props.getProperty(CONF_XMETA_USER),
-                props.getProperty(CONF_XMETA_PASS));
+                getConfig(CONF_XMETA_URL),
+                getConfig(CONF_XMETA_USER),
+                getConfig(CONF_XMETA_PASS));
         return igcReader;
+    }
+
+    private TableSetManager grabTsManager() {
+        if (tsManager!=null)
+            return tsManager;
+        tsManager = new TableSetManager(getConfig(CONF_TABSET_DIR));
+        return tsManager;
     }
 
     public static enum Mode {

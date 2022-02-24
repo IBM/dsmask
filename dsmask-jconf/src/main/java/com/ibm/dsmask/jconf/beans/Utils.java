@@ -30,8 +30,12 @@ public class Utils {
         return org.slf4j.LoggerFactory.getLogger(clazz);
     }
 
+    public static String safe(String s) {
+        return (s==null) ? "" : s.trim();
+    }
+
     public static String lower(String s) {
-        return (s==null) ? "" : s.trim().toLowerCase();
+        return safe(s).toLowerCase();
     }
 
     public static <T> T getLast(final List<T> list) {
