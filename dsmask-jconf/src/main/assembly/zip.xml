@@ -65,7 +65,7 @@
         </includes>
     </fileSet>
     <fileSet>
-        <directory>${basedir}/../rules-testsuite</directory>
+        <directory>${basedir}/../testsuite/rules</directory>
         <outputDirectory>sample-rules</outputDirectory>
         <includes>
             <include>*.xml</include>
