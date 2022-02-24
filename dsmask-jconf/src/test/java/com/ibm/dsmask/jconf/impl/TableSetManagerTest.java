@@ -50,6 +50,19 @@ public class TableSetManagerTest {
         Assert.assertTrue("table set sample1 not empty", !ts1.isEmpty());
         Assert.assertTrue("table set sample2 not empty", !ts2.isEmpty());
         Assert.assertEquals("table sets equal", ts1, ts2);
+
+        final String copyName = "sample1-copy";
+        grabManager().writeTableSet(copyName, ts1);
+        List<TableName> ts1copy = grabManager().readTableSet(copyName);
+        Assert.assertEquals("table sets equal", ts1, ts1copy);
+
+        tableSets = grabManager().enumTableSets();
+        Assert.assertTrue("table set " + copyName + " exists", tableSets.contains(copyName));
+
+        grabManager().deleteTableSet(copyName);
+
+        tableSets = grabManager().enumTableSets();
+        Assert.assertTrue("table set " + copyName + " deleted", !tableSets.contains(copyName));
     }
 
 }

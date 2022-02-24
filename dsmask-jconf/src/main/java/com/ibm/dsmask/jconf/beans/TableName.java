@@ -33,6 +33,9 @@ public class TableName {
         this.name = Utils.lower(name);
     }
 
+    /**
+     * @return Database name
+     */
     public String getDatabase() {
         return database;
     }
@@ -41,6 +44,9 @@ public class TableName {
         this.database = Utils.lower(database);
     }
 
+    /**
+     * @return Table name (with schema, no database name)
+     */
     public String getName() {
         return name;
     }
@@ -49,6 +55,9 @@ public class TableName {
         this.name = Utils.lower(name);
     }
 
+    /**
+     * @return Full table name, including both schema and database name.
+     */
     public String getFullName() {
         if (database==null || database.length()==0)
             return "default." + name;
