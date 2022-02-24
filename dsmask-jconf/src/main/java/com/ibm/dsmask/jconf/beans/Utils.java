@@ -55,9 +55,14 @@ public class Utils {
     }
 
     public static void close(Connection con) {
+        if (con==null)
+            return;
         try {
-            if (con!=null)
-                con.close();
+            if (! con.getAutoCommit())
+                con.rollback();
+        } catch(Exception ex) {}
+        try {
+            con.close();
         } catch(Exception ex) {}
     }
 

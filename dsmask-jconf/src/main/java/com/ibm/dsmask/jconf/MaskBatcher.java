@@ -15,13 +15,14 @@ package com.ibm.dsmask.jconf;
 import java.io.FileInputStream;
 import java.util.Properties;
 import com.ibm.dsmask.jconf.beans.*;
+import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
 import java.util.Arrays;
 
 /**
  * Data masking batch job executor (entry point).
  * @author zinal
  */
-public class MaskBatcher implements Runnable {
+public class MaskBatcher implements Runnable, AutoCloseable {
 
     private static final org.slf4j.Logger LOG = Utils.logger(MaskBatcher.class);
 
@@ -38,6 +39,8 @@ public class MaskBatcher implements Runnable {
     private final Properties props;
     private final String tableSet;
     private final String[] dbNames;
+
+    private MetadataIgcReader igcReader = null;
 
     public MaskBatcher(Mode mode, Properties props, String tableSet,
             String[] dbNames) {
@@ -74,9 +77,11 @@ public class MaskBatcher implements Runnable {
                     Arrays.copyOfRange(args, 3, args.length) :
                     null;
 
-            new MaskBatcher(mode, props, tableSet, dbNames).runImpl();
+            try (MaskBatcher mb = new MaskBatcher(mode, props, tableSet, dbNames)) {
+                mb.run();
+            }
 
-        } catch(Exception ex) {
+        } catch(Throwable ex) {
             LOG.error("FATAL: operation failed", ex);
             System.exit(1);
         }
@@ -96,18 +101,61 @@ public class MaskBatcher implements Runnable {
     }
 
     @Override
+    public void close() throws Exception {
+        if (igcReader!=null) {
+            igcReader.close();
+            igcReader = null;
+        }
+    }
+
+    @Override
     public void run() {
         try {
-            runImpl();
+            switch (mode) {
+                case STATUS:
+                    runStatus();
+                     break;
+                case RUN:
+                    runRun();
+                    break;
+                case KILL:
+                    runKill();
+                    break;
+                case REFRESH:
+                    runRefresh();
+                    break;
+            }
         } catch(Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private void runImpl() throws Exception {
+    private void runStatus() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    private void runRun() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private void runKill() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private void runRefresh() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private MetadataIgcReader grabIgcReader() throws Exception {
+        if (igcReader!=null)
+            return igcReader;
+        igcReader = new MetadataIgcReader(
+                props.getProperty(CONF_XMETA_URL), 
+                props.getProperty(CONF_XMETA_USER),
+                props.getProperty(CONF_XMETA_PASS));
+        return igcReader;
+    }
+
     public static enum Mode {
         STATUS,
         RUN,
