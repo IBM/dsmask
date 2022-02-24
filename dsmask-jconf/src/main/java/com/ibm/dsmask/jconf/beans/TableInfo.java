@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -26,50 +26,23 @@ import java.util.Set;
  * Here a table is treated as a named collection of fields.
  * @author zinal
  */
-public class TableInfo {
+public class TableInfo extends TableName {
 
-    private String database;
-    private String name;
     private final Map<String, FieldInfo> fields = new HashMap<>();
 
     public TableInfo() {
-        this.database = Utils.NONE;
-        this.name = Utils.NONE;
+        super();
     }
 
     public TableInfo(String database, String name) {
-        this.database = Utils.lower(database);
-        this.name = Utils.lower(name);
+        super(database, name);
     }
 
     public TableInfo(String database, String name,
             Collection<FieldInfo> fields) {
-        this.database = Utils.lower(database);
-        this.name = Utils.lower(name);
+        super(database, name);
         for (FieldInfo fi : fields)
             this.fields.put(fi.getName(), fi);
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(String database) {
-        this.database = Utils.lower(database);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = Utils.lower(name);
-    }
-
-    public String getFullName() {
-        if (database==null || database.length()==0)
-            return "default." + name;
-        return database + "." + name;
     }
 
     public List<FieldInfo> getFields() {
@@ -128,8 +101,9 @@ public class TableInfo {
         return retval;
     }
 
+    @Override
     public boolean isValid() {
-        return name!=null && name.length()>0 && !fields.isEmpty();
+        return super.isValid() && !fields.isEmpty();
     }
 
     @Override

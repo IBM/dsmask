@@ -31,8 +31,21 @@ import com.ibm.dsmask.jconf.beans.*;
  */
 public class MetadataIgcReader implements AutoCloseable {
 
+    private static final org.slf4j.Logger LOG =
+            org.slf4j.LoggerFactory.getLogger(MetadataIgcReader.class);
+
     private final Connection conn;
     private final SqlText sqlText;
+
+    public MetadataIgcReader(Connection conn, SqlText sqlText) {
+        this.conn = conn;
+        this.sqlText = sqlText;
+    }
+
+    public MetadataIgcReader(Connection conn) throws Exception {
+        this.conn = conn;
+        this.sqlText = newSqlText();
+    }
 
     public MetadataIgcReader(String url, String userName, String password)
             throws Exception {
@@ -40,7 +53,9 @@ public class MetadataIgcReader implements AutoCloseable {
         try {
             this.conn.setAutoCommit(false);
             this.conn.setReadOnly(true);
-        } catch(Exception ex) {}
+        } catch(Exception ex) {
+            LOG.debug("Failed to configure IGC connection", ex);
+        }
         this.sqlText = newSqlText();
     }
 
@@ -154,12 +169,47 @@ public class MetadataIgcReader implements AutoCloseable {
         }
     }
 
+    /**
+     * Retrieve the list of tables to be masked
+     * (only names, no field information)
+     * for the particular database.
+     * @param dbname Name of the database
+     * @return List of table names to be masked.
+     * @throws Exception
+     */
+    public List<TableName> listMaskedTables(String dbname) throws Exception {
+        final List<TableName> retval = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sqlText.confidTables)) {
+            if (dbname!=null && dbname.length() > 0)
+                ps.setString(1, dbname);
+            else
+                ps.setNull(1, java.sql.Types.VARCHAR);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    readOneMaskedTable(retval, rs);
+                }
+            }
+        }
+        return retval;
+    }
+
+    private void readOneMaskedTable(List<TableName> retval, ResultSet rs)
+            throws Exception {
+        String dbname = rs.getString(1);
+        String scmname = rs.getString(2);
+        String tabname = rs.getString(3);
+        if (scmname!=null && scmname.trim().length() > 0)
+            retval.add( new TableName(dbname, scmname + "." + tabname) );
+        else
+            retval.add( new TableName(dbname, tabname) );
+    }
+
     @Override
     public void close() {
         Utils.close(conn);
     }
 
-    private SqlText newSqlText() throws Exception {
+    public static SqlText newSqlText() throws Exception {
         try (InputStream stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("igc-queries.xml")) {
             Element root = new SAXBuilder().build(stream).getRootElement();
@@ -167,22 +217,26 @@ public class MetadataIgcReader implements AutoCloseable {
             String allTerms = root.getChildTextTrim("select-all-terms");
             String fieldDCS = root.getChildTextTrim("select-field-dcs");
             String fieldTerms = root.getChildTextTrim("select-field-terms");
-            return new SqlText(allDCS, allTerms, fieldDCS, fieldTerms);
+            String confidTables = root.getChildTextTrim("select-confidential-tables");
+            return new SqlText(allDCS, allTerms, fieldDCS, fieldTerms, confidTables);
         }
     }
 
-    private static class SqlText {
-        final String allDCS;
-        final String allTerms;
-        final String fieldDCS;
-        final String fieldTerms;
+    public static class SqlText {
+        public final String allDCS;
+        public final String allTerms;
+        public final String fieldDCS;
+        public final String fieldTerms;
+        public final String confidTables;
 
         public SqlText(String allDCS, String allTerms,
-                String fieldDCS, String fieldTerms) {
+                String fieldDCS, String fieldTerms,
+                String confidTables) {
             this.allDCS = allDCS;
             this.allTerms = allTerms;
             this.fieldDCS = fieldDCS;
             this.fieldTerms = fieldTerms;
+            this.confidTables = confidTables;
         }
     }
 
