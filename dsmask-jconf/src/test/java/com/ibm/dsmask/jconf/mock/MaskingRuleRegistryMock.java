@@ -29,7 +29,9 @@ public class MaskingRuleRegistryMock {
     public static MaskingRuleRegistry load() {
         if ( registry == null ) {
             try {
-                File path = new File(new File(".."), "rules-testsuite");
+                File path = new File("..");
+                path = new File(path, "testsuite");
+                path = new File(path, "rules");
                 String strPath = path.getCanonicalPath();
                 LOG.info("Rules directory: {}", strPath);
                 registry = new MaskingRulesXmlReader().readBulk(strPath);

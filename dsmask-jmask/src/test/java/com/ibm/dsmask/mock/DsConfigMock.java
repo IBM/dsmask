@@ -99,7 +99,9 @@ public class DsConfigMock implements Configuration, AutoCloseable {
     @Override
     public Properties getUserProperties() {
         final Properties props = new Properties();
-        File path = new File(new File(".."), "rules-testsuite");
+        File path = new File("..");
+        path = new File(path, "testsuite");
+        path = new File(path, "rules");
         props.setProperty(DsMask.PROP_PATH_CONF, path.getAbsolutePath());
         path = new File(new File(new File(".."), "dict-data"), "ru");
         props.setProperty(DsMask.PROP_PATH_DICT, path.getAbsolutePath());

@@ -46,7 +46,9 @@ public class DbManagerTest {
      */
     @Test
     public void testMultiSave() throws Exception {
-        File path = new File(new File(".."), "rules-testsuite");
+        File path = new File("..");
+        path = new File(path, "testsuite");
+        path = new File(path, "rules");
         File filePath = new File(path, "dsmask-testsuite");
         final String fname = filePath.getAbsolutePath();
         System.out.println("Saving configuration as " + fname);
