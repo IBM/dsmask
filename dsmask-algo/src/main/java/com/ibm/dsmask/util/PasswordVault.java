@@ -140,6 +140,21 @@ public class PasswordVault {
     }
 
     /**
+     * Calculates the offset to store the key, based
+     * on two first bytes at the beginning of a random byte array.
+     * The key of size KEY_SZ should fit into the AREA_SZ,
+     * and it should not overwrite the first two bytes used
+     * to compute the offset itself.
+     * @param b0 First byte
+     * @param b1 Second byte
+     * @return Offset to store the key
+     */
+    private static int calcKeyOffset(byte b0, byte b1) {
+        return 2 + ( ( (b0 & 0xFF) + 256 * (b1 & 0xFF) )
+                      % (AREA_SZ - KEY_SZ - 2) );
+    }
+
+    /**
      * Stashing a secret key.
      * The idea is to make the key hard to grab by eyes.
      * @param fstash Stash file to store the secret key
@@ -160,9 +175,7 @@ public class PasswordVault {
         rand.nextBytes(ba2);
         // Put the secret key into the second array at offset
         // defined by the first two (random) bytes of the second array.
-        final int offset = 2 +
-                ( ( (ba2[0] & 0xFF) + 256 * (ba2[1] & 0xFF) )
-                    % (AREA_SZ - KEY_SZ - 2) );
+        final int offset = calcKeyOffset(ba2[0], ba2[1]);
         for (int pos = 0; pos < KEY_SZ; ++pos) {
             ba2[pos + offset] = data[pos];
         }
@@ -190,20 +203,22 @@ public class PasswordVault {
         try (FileInputStream fis = new FileInputStream(fstash)) {
             int count;
             count = fis.read(ba1);
-            if (count!=AREA_SZ)
-                throw new Exception("[1] Illegal read count: " + count + ", expected: " + AREA_SZ);
+            if (count!=AREA_SZ) {
+                throw new Exception("[1] Illegal read count: " 
+                        + count + ", expected: " + AREA_SZ);
+            }
             count = fis.read(ba3);
-            if (count!=AREA_SZ)
-                throw new Exception("[2] Illegal read count: " + count + ", expected: " + AREA_SZ);
+            if (count!=AREA_SZ) {
+                throw new Exception("[2] Illegal read count: " 
+                        + count + ", expected: " + AREA_SZ);
+            }
         }
         // Restore the second array as the the XOR product of the third and first arrays
         for (int pos = 0; pos < AREA_SZ; ++pos) {
             ba2[pos] = (byte)( (ba3[pos] & 0xFF) ^ (ba1[pos] & 0xFF) );
         }
         // Recover the key storage offset
-        final int offset = 2 +
-                ( ( (ba2[0] & 0xFF) + 256 * (ba2[1] & 0xFF) )
-                    % (AREA_SZ - KEY_SZ - 2) );
+        final int offset = calcKeyOffset(ba2[0], ba2[1]);
         // Recover the secret key data
         final byte[] data = new byte[KEY_SZ];
         for (int pos = 0; pos < KEY_SZ; ++pos) {
@@ -238,7 +253,8 @@ public class PasswordVault {
         // Validate the file size
         final long fileSize = file.length();
         if (fileSize > 10*1024*1024) {
-            throw new UnsupportedOperationException("Password files larger than 10M are not supported");
+            throw new UnsupportedOperationException("Password files larger "
+                    + "than 10M are not supported");
         }
         if (fileSize==0L)
             return new HashMap<>();
@@ -247,8 +263,10 @@ public class PasswordVault {
         final byte[] encryptedData = new byte[bytes];
         try (FileInputStream fis = new FileInputStream(file)) {
             int count = fis.read(encryptedData);
-            if (count != encryptedData.length)
-                throw new Exception("[3] Illegal read count: " + count + ", expected: " + encryptedData.length);
+            if (count != encryptedData.length) {
+                throw new Exception("[3] Illegal read count: " 
+                        + count + ", expected: " + encryptedData.length);
+            }
         }
         // Decrypt the data
         final Cipher c = Cipher.getInstance(ENCRYPT_ALGO);
