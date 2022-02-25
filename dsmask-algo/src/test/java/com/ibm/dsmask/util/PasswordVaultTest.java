@@ -20,7 +20,7 @@ import org.junit.Test;
  *
  * @author zinal
  */
-public class SimplePasswordVaultTest {
+public class PasswordVaultTest {
 
     @Test
     public void test() throws Exception {
@@ -33,7 +33,7 @@ public class SimplePasswordVaultTest {
             String key4 = "key4", login4 = "zotoFF", password4 = "";
             String key5 = "key5", login5 = "", password5 = "";
             do {
-                SimplePasswordVault spv = new SimplePasswordVault(temp);
+                PasswordVault spv = new PasswordVault(temp);
                 spv.putEntry(key1, login1, password1);
                 spv.putEntry(key2, login2, password2);
                 spv.putEntry(key3, login2, password2);
@@ -43,11 +43,11 @@ public class SimplePasswordVaultTest {
                 spv.putEntry(key5, login5, password5);
                 spv.save();
 
-                SimplePasswordVault.Entry e1 = spv.getEntry(key1);
-                SimplePasswordVault.Entry e2 = spv.getEntry(key2);
-                SimplePasswordVault.Entry e3 = spv.getEntry(key3);
-                SimplePasswordVault.Entry e4 = spv.getEntry(key4);
-                SimplePasswordVault.Entry e5 = spv.getEntry(key5);
+                PasswordVault.Entry e1 = spv.getEntry(key1);
+                PasswordVault.Entry e2 = spv.getEntry(key2);
+                PasswordVault.Entry e3 = spv.getEntry(key3);
+                PasswordVault.Entry e4 = spv.getEntry(key4);
+                PasswordVault.Entry e5 = spv.getEntry(key5);
 
                 Assert.assertNotNull(e1);
                 Assert.assertNotNull(e2);
@@ -68,10 +68,10 @@ public class SimplePasswordVaultTest {
                 Assert.assertEquals(password5, e5.password);
             } while (false);
             do {
-                SimplePasswordVault spv = new SimplePasswordVault(temp);
-                SimplePasswordVault.Entry e1 = spv.getEntry(key1);
-                SimplePasswordVault.Entry e2 = spv.getEntry(key2);
-                SimplePasswordVault.Entry e3 = spv.getEntry(key3);
+                PasswordVault spv = new PasswordVault(temp);
+                PasswordVault.Entry e1 = spv.getEntry(key1);
+                PasswordVault.Entry e2 = spv.getEntry(key2);
+                PasswordVault.Entry e3 = spv.getEntry(key3);
 
                 Assert.assertNotNull(e1);
                 Assert.assertNotNull(e2);
@@ -86,7 +86,7 @@ public class SimplePasswordVaultTest {
                 Assert.assertEquals(password3, e3.password);
             } while (false);
         } finally {
-            //DsMaskUtil.deleteFiles(temp);
+            DsMaskUtil.deleteFiles(temp);
         }
     }
 

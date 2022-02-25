@@ -1,0 +1,15 @@
+=== Call example statements ===
+
+Working directory example: /home/zinal/Projects/dsmask/dsmask-jconf/scripts
+
+
+*** MaskBatcher:
+com.ibm.dsmask.jconf.MaskBatcher
+REFRESH jconf-batcher.xml db_DB2DEMO1 DB2DEMO1
+
+-Dcom.ibm.dsmask.passwords=/tmp/dsmask-passwords
+
+
+*** PasswordTool:
+com.ibm.dsmask.jconf.PasswordTool
+

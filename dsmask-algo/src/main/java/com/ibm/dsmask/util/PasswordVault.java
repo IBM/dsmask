@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,36 +20,36 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * A very basic password vault for storing passwords in the encrypted form.
  * @author zinal
  */
-public class SimplePasswordVault {
+public class PasswordVault {
 
     private static final org.slf4j.Logger LOG =
-            org.slf4j.LoggerFactory.getLogger(SimplePasswordVault.class);
+            org.slf4j.LoggerFactory.getLogger(PasswordVault.class);
 
     public static final String PROP_STORAGE = "com.ibm.dsmask.passwords";
 
     private static final String ENCRYPT_ALGO = "AES";
-    private static final int AREA_SZ = 1024;
+    private static final int AREA_SZ = 512;
     private static final int KEY_SZ = 256 / 8;
 
     private final File file;
     private final SecretKey secretKey;
     private final Map<String, Entry> data;
 
-    public SimplePasswordVault(File file) {
+    public PasswordVault(File file) {
         this.file = file;
         this.secretKey = readOrGenerate(file);
         try {
@@ -60,12 +60,16 @@ public class SimplePasswordVault {
         LOG.debug("Loaded password storage at {}", file);
     }
 
-    public SimplePasswordVault() {
+    public PasswordVault() {
         this(getDefaultStorage());
     }
 
     public File getStorage() {
         return file;
+    }
+
+    public List<String> enumKeys() {
+        return new ArrayList<>(data.keySet());
     }
 
     public Entry getEntry(String key) {
