@@ -14,13 +14,14 @@ package com.ibm.dsmask.jconf;
 
 import java.io.FileInputStream;
 import java.util.Properties;
-import com.ibm.dsmask.jconf.beans.*;
-import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
-import com.ibm.dsmask.jconf.impl.TableSetManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
+import com.ibm.dsmask.jconf.beans.*;
+import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
+import com.ibm.dsmask.jconf.impl.TableSetManager;
+import com.ibm.dsmask.util.PasswordVault;
 
 /**
  * Data masking batch job executor (entry point).
@@ -35,6 +36,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     public static final String CONF_XMETA_URL = "xmeta.url";
     public static final String CONF_XMETA_USER = "xmeta.username";
     public static final String CONF_XMETA_PASS = "xmeta.password";
+    public static final String CONF_XMETA_VAULT = "xmeta.vault";
     public static final String CONF_DSJOB_EXEC = "dsjob.exec";
     public static final String CONF_DSJOB_PATT_RESET = "dsjob.patt.reset";
     public static final String CONF_DSJOB_PATT_RUN = "dsjob.patt.run";
@@ -193,10 +195,25 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     private MetadataIgcReader grabIgcReader() throws Exception {
         if (igcReader!=null)
             return igcReader;
-        igcReader = new MetadataIgcReader(
-                getConfig(CONF_XMETA_URL),
-                getConfig(CONF_XMETA_USER),
-                getConfig(CONF_XMETA_PASS));
+        final String jdbcUrl = getConfig(CONF_XMETA_URL);
+        final String username;
+        final String password;
+        final String vaultKey = props.getProperty(CONF_XMETA_VAULT);
+        if (vaultKey!=null && vaultKey.length() > 0) {
+            final PasswordVault.Entry e = new PasswordVault().getEntry(vaultKey);
+            if (e == null) {
+                throw new RuntimeException("Missing password vault "
+                        + "entry for key " + vaultKey
+                        + ", please check property " + CONF_XMETA_VAULT
+                        + " in the job file");
+            }
+            username = e.login;
+            password = e.password;
+        } else {
+            username = getConfig(CONF_XMETA_USER);
+            password = getConfig(CONF_XMETA_PASS);
+        }
+        igcReader = new MetadataIgcReader(jdbcUrl, username, password);
         return igcReader;
     }
 

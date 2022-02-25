@@ -6,7 +6,10 @@
 <entry key="tableSet.dir">../../testsuite/tablesets</entry>
 
 <entry key="xmeta.url">jdbc:db2://192.168.56.101:50000/xmeta</entry>
+<entry key="xmeta.vault">xmeta</entry>
+<!--
 <entry key="xmeta.username">xmeta</entry>
 <entry key="xmeta.password">P@ssw0rd</entry>
+-->
 
 </properties>
