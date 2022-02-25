@@ -32,13 +32,16 @@ public class SimplePasswordVaultTest {
             String key3 = "key3", login3 = "sidoroff", password3 = "password3";
             String key4 = "key4", login4 = "zotoFF", password4 = "";
             String key5 = "key5", login5 = "", password5 = "";
-            try (SimplePasswordVault spv = new SimplePasswordVault(temp, false)) {
+            do {
+                SimplePasswordVault spv = new SimplePasswordVault(temp);
                 spv.putEntry(key1, login1, password1);
                 spv.putEntry(key2, login2, password2);
                 spv.putEntry(key3, login2, password2);
+                spv.save();
                 spv.putEntry(key3, login3, password3);
                 spv.putEntry(key4, login4, password4);
                 spv.putEntry(key5, login5, password5);
+                spv.save();
 
                 SimplePasswordVault.Entry e1 = spv.getEntry(key1);
                 SimplePasswordVault.Entry e2 = spv.getEntry(key2);
@@ -63,8 +66,9 @@ public class SimplePasswordVaultTest {
                 Assert.assertEquals(password3, e3.password);
                 Assert.assertEquals(password4, e4.password);
                 Assert.assertEquals(password5, e5.password);
-            }
-            try (SimplePasswordVault spv = new SimplePasswordVault(temp, true)) {
+            } while (false);
+            do {
+                SimplePasswordVault spv = new SimplePasswordVault(temp);
                 SimplePasswordVault.Entry e1 = spv.getEntry(key1);
                 SimplePasswordVault.Entry e2 = spv.getEntry(key2);
                 SimplePasswordVault.Entry e3 = spv.getEntry(key3);
@@ -80,9 +84,9 @@ public class SimplePasswordVaultTest {
                 Assert.assertEquals(password1, e1.password);
                 Assert.assertEquals(password2, e2.password);
                 Assert.assertEquals(password3, e3.password);
-            }
+            } while (false);
         } finally {
-            DsMaskUtil.deleteFiles(temp);
+            //DsMaskUtil.deleteFiles(temp);
         }
     }
 

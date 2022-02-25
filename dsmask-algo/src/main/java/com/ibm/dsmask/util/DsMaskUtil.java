@@ -115,4 +115,12 @@ public class DsMaskUtil {
         return "jdbc:h2:" + resolvePath(pathname).replaceAll("\\\\", "/");
     }
 
+    public static RuntimeException toRE(String message, Throwable ex) {
+        String msg = message + ": "
+                + ( (ex.getMessage() == null) ?
+                    ex.getClass().getSimpleName() :
+                    ex.getMessage() );
+        return new RuntimeException(msg, ex);
+    }
+
 }

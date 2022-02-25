@@ -204,22 +204,4 @@ public class Utils extends DsMaskUtil {
         return retval;
     }
 
-    /**
-     * Convert the code point to a string representation
-     * @param cp Code point to be converted
-     * @return String representation of the code point on input
-     */
-    public static String fromCodepoint(int cp) {
-        StringBuilder sb = new StringBuilder();
-        if (Character.isBmpCodePoint(cp)) {
-            sb.append((char) cp);
-        } else if (Character.isValidCodePoint(cp)) {
-            sb.append(Character.highSurrogate(cp));
-            sb.append(Character.lowSurrogate(cp));
-        } else {
-            sb.append('?');
-        }
-        return sb.toString();
-    }
-
 }
