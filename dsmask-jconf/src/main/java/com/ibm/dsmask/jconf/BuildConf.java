@@ -14,6 +14,7 @@ package com.ibm.dsmask.jconf;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import com.ibm.dsmask.jconf.impl.*;
 import com.ibm.dsmask.jconf.beans.*;
-import java.io.PrintWriter;
+import com.ibm.dsmask.util.PasswordVault;
 
 /**
  * dsmask-jconf driver program (entry point).
@@ -35,6 +36,7 @@ public class BuildConf implements Runnable {
     public static final String CONF_TAB_TYPE = "in.tab.type";
     public static final String CONF_TAB_FNAME = "in.tab.file.name";
     public static final String CONF_IGC_URL = "in.tab.igc.url";
+    public static final String CONF_IGC_VAULT = "in.tab.igc.vault";
     public static final String CONF_IGC_USER = "in.tab.igc.username";
     public static final String CONF_IGC_PASS = "in.tab.igc.password";
     public static final String CONF_DC_RULES = "in.dc.rules";
@@ -85,6 +87,14 @@ public class BuildConf implements Runnable {
         } catch(Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private String getConfig(String name) {
+        String v = props.getProperty(name);
+        if (v==null) {
+            throw new RuntimeException("Missing property " + name + " in the job file");
+        }
+        return v;
     }
 
     private void runImpl() throws Exception {
@@ -177,11 +187,26 @@ public class BuildConf implements Runnable {
         }
 
         if (useIGC) {
-            final String url = props.getProperty(CONF_IGC_URL);
-            final String userName = props.getProperty(CONF_IGC_USER);
-            final String password = props.getProperty(CONF_IGC_PASS);
+            final String url = getConfig(CONF_IGC_URL);
+            final String username;
+            final String password;
+            final String vaultKey = props.getProperty(CONF_IGC_VAULT);
+            if (vaultKey==null) {
+                username = getConfig(CONF_IGC_USER);
+                password = getConfig(CONF_IGC_PASS);
+            } else {
+                final PasswordVault.Entry e = new PasswordVault().getEntry(vaultKey);
+                if (e == null) {
+                    throw new RuntimeException("Missing password vault "
+                            + "entry for key " + vaultKey
+                            + ", please check property " + CONF_IGC_VAULT
+                            + " in the job file");
+                }
+                username = e.login;
+                password = e.password;
+            }
             try (MetadataIgcReader reader
-                    = new MetadataIgcReader(url, userName, password)) {
+                    = new MetadataIgcReader(url, username, password)) {
                 for ( TableInfo ti :  reader.readTables() ) {
                     tableInfo.put(ti.getFullName().toLowerCase(), ti);
                 }

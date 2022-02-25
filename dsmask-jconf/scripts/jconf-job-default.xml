@@ -11,8 +11,11 @@
 <!-- Read metadata from IBM InfoSphere Governance Catalog database -->
 <entry key="in.tab.type">igc</entry>
 <entry key="in.tab.igc.url">jdbc:db2://localhost:50000/xmeta</entry>
+<entry key="in.tab.igc.vault">xmeta</entry>
+<!--
 <entry key="in.tab.igc.username">xmeta</entry>
 <entry key="in.tab.igc.password">P@ssw0rd</entry>
+-->
 
 <!-- Masking rules directory or XML file name -->
 <entry key="in.masking.rules">./rules</entry>
