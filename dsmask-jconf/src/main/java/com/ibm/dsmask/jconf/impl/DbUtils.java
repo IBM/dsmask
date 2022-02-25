@@ -12,45 +12,15 @@
  */
 package com.ibm.dsmask.jconf.impl;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.sql.Connection;
 import java.sql.Statement;
+import com.ibm.dsmask.util.DsMaskUtil;
 
 /**
  *
  * @author zinal
  */
-public class DbUtils {
-
-    public static String resolvePath(String path) {
-        if (path.startsWith("~/"))
-            return System.getProperty("user.home") + path.substring(1);
-        return path;
-    }
-
-    public static void deleteFiles(String pathname) {
-        pathname = resolvePath(pathname);
-        final File pn = new File(pathname).getAbsoluteFile();
-        final String fullName = pn.getAbsolutePath();
-        final String fullStart = fullName + ".";
-        File[] victims = pn.getParentFile().listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                final String cur = pathname.getAbsolutePath();
-                return (fullName.equals(cur)
-                        || cur.startsWith(fullStart));
-            }
-        });
-        if (victims!=null) {
-            for (File v : victims)
-                v.delete();
-        }
-    }
-
-    public static String makeConnectionUrl(String pathname) {
-        return "jdbc:h2:" + resolvePath(pathname).replaceAll("\\\\", "/");
-    }
+public class DbUtils extends DsMaskUtil {
 
     public static void createTables(Connection con, String[] cmds)
             throws Exception {

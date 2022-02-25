@@ -12,6 +12,9 @@
  */
 package com.ibm.dsmask.util;
 
+import java.io.File;
+import java.io.FileFilter;
+
 /**
  * Miscellaneous utility methods which are hard to put elsewhere.
  * @author zinal
@@ -59,6 +62,57 @@ public class DsMaskUtil {
         return ('1'==c)
                 || ('Y'==c) || ('y'==c)
                 || ('T'==c) || ('t'==c);
+    }
+
+    /**
+     * Resolve pathname potentially starting with "~/".
+     * @param path Input path
+     * @return Resolved path
+     */
+    public static String resolvePath(String path) {
+        if (path.startsWith("~/"))
+            return System.getProperty("user.home") + path.substring(1);
+        return path;
+    }
+
+    /**
+     * Delete H2 database files denoted by some pathname
+     * @param pathname H2 database pathname
+     */
+    public static void deleteFiles(String pathname) {
+        pathname = resolvePath(pathname);
+        deleteFiles(new File(pathname));
+    }
+
+    /**
+     * Delete H2 database files denoted by some pathname
+     * @param pathname H2 database pathname
+     */
+    public static void deleteFiles(File pathname) {
+        final File pn = pathname.getAbsoluteFile();
+        final String fullName = pn.getAbsolutePath();
+        final String fullStart = fullName + ".";
+        File[] victims = pn.getParentFile().listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File x) {
+                final String cur = x.getAbsolutePath();
+                return (fullName.equals(cur)
+                        || cur.startsWith(fullStart));
+            }
+        });
+        if (victims!=null) {
+            for (File v : victims)
+                v.delete();
+        }
+    }
+
+    /**
+     * Generate H2 database URL based on pathname
+     * @param pathname H2 database pathname
+     * @return H2 database URL
+     */
+    public static String makeConnectionUrl(String pathname) {
+        return "jdbc:h2:" + resolvePath(pathname).replaceAll("\\\\", "/");
     }
 
 }
