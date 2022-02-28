@@ -16,7 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.collections.map.LRUMap;
 import com.ibm.dsmask.impl.*;
 import com.ibm.dsmask.beans.MskFunc;
 import com.ibm.dsmask.algo.BasicHasher;
@@ -42,7 +42,8 @@ public class AlHashLookup implements AlSimpleVector {
     private long maxHash = -1;
     private BasicHasher hasher = null;
 
-    private final LRUMap<Long, XVector> valueCache = new LRUMap<>(10000);
+    // Long -> XVector
+    private final LRUMap valueCache = new LRUMap(10000);
 
     public AlHashLookup(XKeeper ctx, MskFunc function) {
         this.keeper = ctx;
@@ -105,7 +106,7 @@ public class AlHashLookup implements AlSimpleVector {
         // Try to grab the value from the cache
         final long hashVal = calcHash(in, iteration);
         { // Perform cache lookup
-            XVector val = valueCache.get(hashVal);
+            XVector val = (XVector) valueCache.get(hashVal);
             if (val!=null) {
                 // Return a cached value, no need to query DB
                 return XVector.inPlaceCopy(out, val);

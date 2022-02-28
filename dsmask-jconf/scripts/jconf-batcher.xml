@@ -12,4 +12,6 @@
 <entry key="xmeta.password">P@ssw0rd</entry>
 -->
 
+<entry key="job.dsjob">ssh -p 2204 admin@dsmask1 C:\\IBM\\InformationServer\\Server\\DSEngine\\bin\\dsjob.exe</entry>
+
 </properties>
