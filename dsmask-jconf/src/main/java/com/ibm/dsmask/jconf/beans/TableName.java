@@ -13,6 +13,7 @@
 package com.ibm.dsmask.jconf.beans;
 
 import java.util.Objects;
+import org.apache.commons.text.StringTokenizer;
 
 /**
  * Name of a single table.
@@ -21,16 +22,61 @@ import java.util.Objects;
 public class TableName implements Comparable<TableName> {
 
     protected String database;
-    protected String name;
+    protected String schema;
+    protected String table;
 
     public TableName() {
         this.database = Utils.NONE;
-        this.name = Utils.NONE;
+        this.schema = Utils.NONE;
+        this.table = Utils.NONE;
+    }
+
+    public TableName(String database, String schema, String table) {
+        this.database = Utils.safe(database);
+        this.schema = Utils.safe(schema);
+        this.table = Utils.safe(table);
+    }
+
+    public TableName(String v) {
+        final String[] items = 
+                new StringTokenizer(Utils.safe(v), '.').getTokenArray();
+        if (items.length == 0) {
+            this.database = Utils.NONE;
+            this.schema = Utils.NONE;
+            this.table = Utils.NONE;
+        } else if (items.length == 1) {
+            this.database = Utils.NONE;
+            this.schema = Utils.NONE;
+            this.table = items[0];
+        } else if (items.length == 2) {
+            this.database = Utils.NONE;
+            this.schema = items[0];
+            this.table = items[1];
+        } else if (items.length == 3) {
+            this.database = items[0];
+            this.schema = items[1];
+            this.table = items[2];
+        } else {
+            throw new IllegalArgumentException("Incorrect full table name: " + v);
+        }
     }
 
     public TableName(String database, String name) {
         this.database = Utils.safe(database);
-        this.name = Utils.safe(name);
+        final String[] items = 
+                new StringTokenizer(Utils.safe(name), '.').getTokenArray();
+        if (items.length == 0) {
+            this.schema = Utils.NONE;
+            this.table = Utils.NONE;
+        } else if (items.length == 1) {
+            this.schema = Utils.NONE;
+            this.table = items[0];
+        } else if (items.length == 2) {
+            this.schema = items[0];
+            this.table = items[1];
+        } else {
+            throw new IllegalArgumentException("Incorrect table name: " + name);
+        }
     }
 
     /**
@@ -45,14 +91,50 @@ public class TableName implements Comparable<TableName> {
     }
 
     /**
+     * @return Schema name
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = Utils.safe(schema);
+    }
+
+    /**
+     * @return Table name
+     */
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = Utils.safe(table);
+    }
+
+    /**
      * @return Table name (with schema, no database name)
      */
     public String getName() {
-        return name;
+        return (schema!=null && schema.length() > 0) ?
+                (schema + "." + table ) : table;
     }
 
     public void setName(String name) {
-        this.name = Utils.safe(name);
+        final String[] items = 
+                new StringTokenizer(Utils.safe(name), '.').getTokenArray();
+        if (items.length == 0) {
+            this.schema = Utils.NONE;
+            this.table = Utils.NONE;
+        } else if (items.length == 1) {
+            this.schema = Utils.NONE;
+            this.table = items[0];
+        } else if (items.length == 2) {
+            this.schema = items[0];
+            this.table = items[1];
+        } else {
+            throw new IllegalArgumentException("Incorrect table name: " + name);
+        }
     }
 
     /**
@@ -60,19 +142,20 @@ public class TableName implements Comparable<TableName> {
      */
     public String getFullName() {
         if (database==null || database.length()==0)
-            return "default." + name;
-        return database + "." + name;
+            return "default." + getName();
+        return database + "." + getName();
     }
 
     public boolean isValid() {
-        return name!=null && name.length()>0;
+        return table!=null && table.length()>0;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + Objects.hashCode(this.database);
-        hash = 67 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.schema);
+        hash = 67 * hash + Objects.hashCode(this.table);
         return hash;
     }
 
@@ -91,7 +174,10 @@ public class TableName implements Comparable<TableName> {
         if (!Objects.equals(this.database, other.database)) {
             return false;
         }
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(this.schema, other.schema)) {
+            return false;
+        }
+        if (!Objects.equals(this.table, other.table)) {
             return false;
         }
         return true;
@@ -99,7 +185,7 @@ public class TableName implements Comparable<TableName> {
 
     @Override
     public String toString() {
-        return "TableName{" + database + "." + name + '}';
+        return "TableName{" + getFullName() + '}';
     }
 
     @Override
@@ -109,7 +195,10 @@ public class TableName implements Comparable<TableName> {
         int cmp = this.database.compareTo(o.database);
         if (cmp != 0)
             return cmp;
-        cmp = this.name.compareTo(o.name);
+        cmp = this.schema.compareTo(o.schema);
+        if (cmp != 0)
+            return cmp;
+        cmp = this.table.compareTo(o.table);
         return cmp;
     }
 

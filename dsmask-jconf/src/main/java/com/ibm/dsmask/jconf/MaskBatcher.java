@@ -44,17 +44,16 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     private final Mode mode;
     private final Properties props;
     private final String tableSetName;
-    private final String[] dbNames;
+    private final String dbName;
 
     private MetadataIgcReader igcReader = null;
     private TableSetManager tsManager = null;
 
-    public MaskBatcher(Mode mode, Properties props, String tableSetName,
-            String[] dbNames) {
+    public MaskBatcher(Mode mode, Properties props, String tableSetName, String dbName) {
         this.mode = mode;
         this.props = props;
         this.tableSetName = tableSetName;
-        this.dbNames = (dbNames==null) ? new String[]{} : dbNames;
+        this.dbName = dbName;
     }
 
     public MaskBatcher(Mode mode, Properties props, String tableSet) {
@@ -77,14 +76,8 @@ public class MaskBatcher implements Runnable, AutoCloseable {
                 props.loadFromXML(fis);
             }
 
-            final String tableSet = args[2];
-
-            final String[] dbNames = 
-                    (args.length > 3) ?
-                    Arrays.copyOfRange(args, 3, args.length) :
-                    null;
-
-            try (MaskBatcher mb = new MaskBatcher(mode, props, tableSet, dbNames)) {
+            try (MaskBatcher mb = new MaskBatcher(mode, props, args[2],
+                    (args.length > 3) ? args[3] : null)) {
                 mb.run();
             }
 
@@ -103,7 +96,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
         System.out.println("\t\t" + MaskBatcher.class.getName()
                 + " KILL    jobfile.xml tableSet");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " REFRESH jobfile.xml tableSet [dbName ...]");
+                + " REFRESH jobfile.xml tableSet dbName");
         System.exit(1);
     }
 
@@ -154,15 +147,12 @@ public class MaskBatcher implements Runnable, AutoCloseable {
 
     private void runRefresh() throws Exception {
         List<TableName> allTables = new ArrayList<>();
-        for (String dbName : dbNames) {
-            LOG.info("Reading the list of tables for database {}...", dbName);
-            final List<TableName> curTables = grabIgcReader().listMaskedTables(dbName);
-            LOG.info("\tfound {} confidential tables", curTables.size());
-            allTables.addAll(curTables);
-        }
-        LOG.info("Number of tables before dedup: {}", allTables.size());
+        LOG.info("Reading the list of tables for database {}...", dbName);
+        final List<TableName> curTables = grabIgcReader().listMaskedTables(dbName);
+        LOG.info("\tfound {} confidential tables", curTables.size());
+        allTables.addAll(curTables);
         allTables = removeDuplicates(allTables);
-        LOG.info("Number of tables before dedup: {}", allTables.size());
+        LOG.info("Number of tables after dedup: {}", allTables.size());
         grabTsManager().writeTableSet(tableSetName, allTables);
         LOG.info("Table list written to tableSet {}", tableSetName);
     }

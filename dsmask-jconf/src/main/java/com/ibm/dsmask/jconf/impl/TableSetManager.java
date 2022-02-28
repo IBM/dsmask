@@ -16,9 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -83,21 +81,17 @@ public class TableSetManager {
      * @return List of table names.
      */
     public List<TableName> convertTableSet(Element root) {
-        final List<Element> dbs = root.getChildren("db");
-        if (dbs==null || dbs.isEmpty())
+        final String dbname = root.getAttributeValue("db");
+        final List<Element> tables = root.getChildren("item");
+        if (tables==null || tables.isEmpty())
             return Collections.emptyList();
         final List<TableName> retval = new ArrayList<>();
-        for (Element db : dbs) {
-            final List<Element> tables = db.getChildren("table");
-            if (tables==null || tables.isEmpty())
-                continue;
-            final String dbname = db.getAttributeValue("name");
-            for (Element tab : tables) {
-                final TableName tn = new TableName(
-                        dbname, tab.getAttributeValue("name") );
-                if (tn.isValid())
-                    retval.add(tn);
-            }
+        for (Element tab : tables) {
+            final TableName tn = new TableName( dbname,
+                    tab.getAttributeValue("schema"),
+                    tab.getAttributeValue("table") );
+            if (tn.isValid())
+                retval.add(tn);
         }
         return retval;
     }
@@ -128,29 +122,17 @@ public class TableSetManager {
         final Element root = new Element("tableSet");
         if (tableSet.length() > 0)
             root.setAttribute("name", tableSet);
-        // Group the entries by the database name
-        final Map<String, List<TableName>> dbs = new HashMap<>();
-        for (TableName tn : entries) {
-            if (!tn.isValid())
-                continue;
-            List<TableName> l = dbs.get(tn.getDatabase());
-            if (l==null) {
-                l = new ArrayList<>();
-                dbs.put(tn.getDatabase(), l);
-            }
-            l.add(tn);
-        }
         // Write the entries
-        for (Map.Entry<String, List<TableName>> me : dbs.entrySet()) {
-            Element elDb = new Element("db");
-            elDb.setAttribute("name", me.getKey());
-            for (TableName tn : me.getValue()) {
-                final Element el = new Element("table");
-                el.setAttribute("db", tn.getDatabase());
-                el.setAttribute("name", tn.getName());
-                elDb.addContent(el);
+        for (TableName tn : entries) {
+            // All tables should belong to the same database.
+            // That is not checked here, we just use the first table's db name.
+            if (root.getAttribute("db") == null) {
+                root.setAttribute("db", tn.getDatabase());
             }
-            root.addContent(elDb);
+            final Element el = new Element("item");
+            el.setAttribute("schema", tn.getSchema());
+            el.setAttribute("table", tn.getTable());
+            root.addContent(el);
         }
         return root;
     }

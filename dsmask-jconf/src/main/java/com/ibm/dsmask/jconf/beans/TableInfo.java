@@ -72,7 +72,7 @@ public class TableInfo extends TableName {
             FieldInfo fi = fields.get(Utils.lower(fn));
             if (fi==null) {
                 throw new IllegalArgumentException("Unknown field name ["
-                        + fn + "] in table [" + name + "]");
+                        + fn + "] in table [" + getName() + "]");
             }
             retval.add(fi);
         }
@@ -110,7 +110,8 @@ public class TableInfo extends TableName {
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + Objects.hashCode(this.database);
-        hash = 67 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.schema);
+        hash = 67 * hash + Objects.hashCode(this.table);
         hash = 67 * hash + Objects.hashCode(this.fields);
         return hash;
     }
@@ -130,7 +131,10 @@ public class TableInfo extends TableName {
         if (!Objects.equals(this.database, other.database)) {
             return false;
         }
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(this.schema, other.schema)) {
+            return false;
+        }
+        if (!Objects.equals(this.table, other.table)) {
             return false;
         }
         if (!Objects.equals(this.fields, other.fields)) {
@@ -141,7 +145,7 @@ public class TableInfo extends TableName {
 
     @Override
     public String toString() {
-        return "TableInfo{" + database + "." + name + ", " + fields.keySet() + '}';
+        return "TableInfo{" + getFullName() + '}';
     }
 
 }
