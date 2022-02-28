@@ -15,10 +15,10 @@ package com.ibm.dsmask.jconf;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import com.ibm.dsmask.jconf.beans.*;
+import com.ibm.dsmask.jconf.impl.JobManager;
 import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
 import com.ibm.dsmask.jconf.impl.TableSetManager;
 import com.ibm.dsmask.util.PasswordVault;
@@ -37,9 +37,9 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     public static final String CONF_XMETA_USER = "xmeta.username";
     public static final String CONF_XMETA_PASS = "xmeta.password";
     public static final String CONF_XMETA_VAULT = "xmeta.vault";
-    public static final String CONF_DSJOB_EXEC = "dsjob.exec";
-    public static final String CONF_DSJOB_PATT_RESET = "dsjob.patt.reset";
-    public static final String CONF_DSJOB_PATT_RUN = "dsjob.patt.run";
+    public static final String CONF_JOB_CMD = "job.cmd";
+    public static final String CONF_JOB_PROJ = "job.project";
+    public static final String CONF_JOB_NAME = "job.name";
 
     private final Mode mode;
     private final Properties props;
@@ -90,11 +90,11 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     private static void usageAndDie() {
         System.out.println("USAGE:");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " STATUS  jobfile.xml tableSet");
+                + " STATUS  jobfile.xml { tableSet | - }");
         System.out.println("\t\t" + MaskBatcher.class.getName()
                 + " RUN     jobfile.xml tableSet");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " KILL    jobfile.xml tableSet");
+                + " KILL    jobfile.xml { tableSet | - }");
         System.out.println("\t\t" + MaskBatcher.class.getName()
                 + " REFRESH jobfile.xml tableSet dbName");
         System.exit(1);
@@ -117,7 +117,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
             switch (mode) {
                 case STATUS:
                     runStatus();
-                     break;
+                    break;
                 case RUN:
                     runRun();
                     break;
@@ -128,13 +128,22 @@ public class MaskBatcher implements Runnable, AutoCloseable {
                     runRefresh();
                     break;
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
     private void runStatus() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final JobManager jm = new JobManager(
+                getConfig(CONF_JOB_PROJ),
+                getConfig(CONF_JOB_NAME),
+                getConfig(CONF_JOB_CMD)
+        );
+
+        final List<JobInfo> jobs = jm.listJobs();
+        for (JobInfo ji : jobs) {
+            LOG.info("Job {} is {} at {}", ji.getJobId(), ji.getJobState(), ji.getStartTime());
+        }
     }
     
     private void runRun() throws Exception {

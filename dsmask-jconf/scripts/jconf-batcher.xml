@@ -29,15 +29,15 @@
 <!-- Parameter set member with global settings -->
 <entry key="globals.name">default</entry>
 
-<!-- Profile database name -->
-<entry key="dbname.profile">DB2DEMO1</entry>
 <!-- Source and target connection names -->
 <entry key="dbname.source">DB2DEMO1</entry>
 <entry key="dbname.target">DB2DEMO1</entry>
 
 <!-- Source to target table name mapper -->
-<entry key="tabname.target">{schema}.{table}</entry>
+<entry key="tabname.source">OPTIM1.{table}</entry>
+<!-- Source to target table name mapper -->
+<entry key="tabname.target">OPTIM2.{table}</entry>
 <!-- Source to profile name mapper -->
-<entry key="tabname.profile">{profdb}.{schema}.{table}</entry>
+<entry key="tabname.profile">{db}.{schema}.{table}</entry>
 
 </properties>
