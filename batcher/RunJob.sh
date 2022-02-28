@@ -35,7 +35,7 @@ statusCode=$?
 
 if [ $statusCode -ne 0 ]; then
     resetJob
-	runJob
+    runJob
 fi
 
 # End Of File
