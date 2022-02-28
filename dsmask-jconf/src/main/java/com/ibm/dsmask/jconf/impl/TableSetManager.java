@@ -80,7 +80,7 @@ public class TableSetManager {
      * @param root Root of XML DOM tree
      * @return List of table names.
      */
-    public List<TableName> convertTableSet(Element root) {
+    public static List<TableName> convertTableSet(Element root) {
         final String dbname = root.getAttributeValue("db");
         final List<Element> tables = root.getChildren("item");
         if (tables==null || tables.isEmpty())
@@ -117,7 +117,7 @@ public class TableSetManager {
      * @param entries Table set entries
      * @return XML DOM tree
      */
-    public Element convertTableSet(String tableSet, List<TableName> entries) {
+    public static Element convertTableSet(String tableSet, List<TableName> entries) {
         tableSet = safeName(tableSet);
         final Element root = new Element("tableSet");
         if (tableSet.length() > 0)

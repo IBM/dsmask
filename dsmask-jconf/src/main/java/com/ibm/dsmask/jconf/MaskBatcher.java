@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 import com.ibm.dsmask.jconf.beans.*;
 import com.ibm.dsmask.jconf.impl.JobManager;
 import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
@@ -40,29 +42,33 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     public static final String CONF_JOB_CMD = "job.cmd";
     public static final String CONF_JOB_PROJ = "job.project";
     public static final String CONF_JOB_NAME = "job.name";
+    public static final String CONF_DB_LOGICAL = "dbname.logical";
+    public static final String CONF_DB_SOURCE = "dbname.source";
+    public static final String CONF_DB_TARGET = "dbname.target";
 
     private final Mode mode;
     private final Properties props;
     private final String tableSetName;
-    private final String dbName;
 
     private MetadataIgcReader igcReader = null;
     private TableSetManager tsManager = null;
 
-    public MaskBatcher(Mode mode, Properties props, String tableSetName, String dbName) {
+    private String confJobCmd;
+    private String confJobName;
+    private String confJobProject;
+    private String confDbLogical;
+    private String confDbSource;
+    private String confDbTarget;
+
+    public MaskBatcher(Mode mode, Properties props, String tableSetName) {
         this.mode = mode;
         this.props = props;
         this.tableSetName = tableSetName;
-        this.dbName = dbName;
-    }
-
-    public MaskBatcher(Mode mode, Properties props, String tableSet) {
-        this(mode, props, tableSet, null);
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length < 3) {
+            if (args.length != 3) {
                 usageAndDie();
             }
 
@@ -76,8 +82,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
                 props.loadFromXML(fis);
             }
 
-            try (MaskBatcher mb = new MaskBatcher(mode, props, args[2],
-                    (args.length > 3) ? args[3] : null)) {
+            try (MaskBatcher mb = new MaskBatcher(mode, props, args[2])) {
                 mb.run();
             }
 
@@ -86,17 +91,17 @@ public class MaskBatcher implements Runnable, AutoCloseable {
             System.exit(1);
         }
     }
-    
+
     private static void usageAndDie() {
         System.out.println("USAGE:");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " STATUS  jobfile.xml { tableSet | - }");
+                + " REFRESH jobfile.xml tableSet");
         System.out.println("\t\t" + MaskBatcher.class.getName()
                 + " RUN     jobfile.xml tableSet");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " KILL    jobfile.xml { tableSet | - }");
+                + " STATUS  jobfile.xml { tableSet | - }");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " REFRESH jobfile.xml tableSet dbName");
+                + " KILL    jobfile.xml { tableSet | - }");
         System.exit(1);
     }
 
@@ -114,6 +119,8 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     @Override
     public void run() {
         try {
+            LOG.info("Starting operation {} on tableSet '{}'...",
+                    mode, tableSetName);
             switch (mode) {
                 case STATUS:
                     runStatus();
@@ -128,33 +135,128 @@ public class MaskBatcher implements Runnable, AutoCloseable {
                     runRefresh();
                     break;
             }
+            LOG.info("Operation complete.");
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
+    private String configJobCmd() {
+        if (confJobCmd==null)
+            confJobCmd = getConfig(CONF_JOB_CMD);
+        return confJobCmd;
+    }
+
+    private String configJobName() {
+        if (confJobName==null)
+            confJobName = getConfig(CONF_JOB_NAME);
+        return confJobName;
+    }
+
+    private String configJobProject() {
+        if (confJobProject==null)
+            confJobProject = getConfig(CONF_JOB_PROJ);
+        return confJobProject;
+    }
+
+    private String configDbLogical() {
+        if (confDbLogical==null)
+            confDbLogical = getConfig(CONF_DB_LOGICAL);
+        return confDbLogical;
+    }
+
+    private String configDbSource() {
+        if (confDbSource==null)
+            confDbSource = getConfig(CONF_DB_SOURCE);
+        return confDbSource;
+    }
+
+    private String configDbTarget() {
+        if (confDbTarget==null)
+            confDbTarget = getConfig(CONF_DB_TARGET);
+        return confDbTarget;
+    }
+
+    /**
+     * STATUS subcommand
+     * @throws Exception
+     */
     private void runStatus() throws Exception {
         final JobManager jm = new JobManager(
-                getConfig(CONF_JOB_PROJ),
-                getConfig(CONF_JOB_NAME),
-                getConfig(CONF_JOB_CMD)
+                configJobProject(),
+                configJobName(),
+                configJobCmd()
         );
 
         final List<JobInfo> jobs = jm.listJobs();
+        LOG.info("Total active jobs found: {}", jobs.size());
+
+        if (tableSetName==null || tableSetName.length()==0
+                || "-".equalsIgnoreCase(tableSetName)) {
+            // Unfiltered output of running and queued jobs.
+            for (JobInfo ji : jobs) {
+                LOG.info("\t{}\t{}\t{}",
+                        ji.getJobState(),
+                        ji.getStartTime(),
+                        ji.getJobId());
+            }
+            return;
+        }
+
+        // We need a table set to filter the output.
+        List<TableName> tables = grabTsManager().readTableSet(tableSetName);
+        // So that we can generate possible job IDs.
+        Set<String> jobIds = makeJobIds(tables);
+        // Filtered output of running and queued jobs.
         for (JobInfo ji : jobs) {
-            LOG.info("Job {} is {} at {}", ji.getJobId(), ji.getJobState(), ji.getStartTime());
+            if (jobIds.contains(ji.getJobId())) {
+                LOG.info("\t{}\t{}\t{}",
+                        ji.getJobState(),
+                        ji.getStartTime(),
+                        ji.getJobId());
+            }
         }
     }
-    
+
+    private Set<String> makeJobIds(List<TableName> tables) {
+        final Set<String> jobIds = new HashSet<String>();
+        for (TableName tn : tables) {
+            tn.setDatabase(configDbSource());
+            jobIds.add(makeJobId(tn));
+        }
+        return jobIds;
+    }
+
+    private String makeJobId(TableName tn) {
+        return configJobName() + "." + safeInvocation(tn.getFullName());
+    }
+
+    private static String safeInvocation(String table) {
+        return table.replace('.', '-');
+    }
+
+    /**
+     * RUN subcommand
+     * @throws Exception
+     */
     private void runRun() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    /**
+     * KILL subcommand
+     * @throws Exception
+     */
     private void runKill() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * REFRESH subcommand
+     * @throws Exception
+     */
     private void runRefresh() throws Exception {
+        final String dbName = getConfig(CONF_DB_LOGICAL);
         List<TableName> allTables = new ArrayList<>();
         LOG.info("Reading the list of tables for database {}...", dbName);
         final List<TableName> curTables = grabIgcReader().listMaskedTables(dbName);

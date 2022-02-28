@@ -55,9 +55,10 @@ public class JobManager {
         // Command output:
         //   one row per job invocation ID
         initCommand()
-            .addCommandItem("-linvocations")
-            .addCommandItem(project)
-            .addCommandItem(jobType)
+            .setDescription("List job invocations")
+            .addCommand("-linvocations")
+            .addCommand(project)
+            .addCommand(jobType)
             .executeCommand();
         final List<JobInfo> retval = new ArrayList<>();
         final List<String> invocations = new ArrayList<>(workOutput);
@@ -72,13 +73,60 @@ public class JobManager {
             // Command output:
             //   Job Status	: RUN OK (1)
             initCommand()
-                .addCommandItem("-jobinfo")
-                .addCommandItem(project)
-                .addCommandItem(invocation)
+                .setDescription("Retrieve job info")
+                .addCommand("-jobinfo")
+                .addCommand(project)
+                .addCommand(invocation)
                 .executeCommand();
             final JobInfo ji = grabJobInfo(invocation, workOutput);
             if (ji != null)
                 retval.add(ji);
+        }
+        return retval;
+    }
+
+    public String startJob(String jobType, String jobInst, String batchId,
+            String globals, String dbIn, String dbOut,
+            String tabIn, String tabOut, String profileId) {
+        final String retval = jobType + "." + jobInst;
+        // Command format:
+	// $DSJOB -run -param BatchId="$BATCH_ID" -param Globals=default
+	//  -param DbParams="$DB_SRC" -param DbOutParams="$DB_DST"
+	//  -param InputTable="$TABNAME" -param OutputTable="$TABNAME"
+	//  -param MaskingProfile="$TABPROF"
+	//  dstage1 MaskJdbc."$INSTID"
+        initCommand()
+            .setDescription("Start new job")
+            .addCommand("-run")
+            .addParam("BatchId", batchId)
+            .addParam("Globals", globals)
+            .addParam("DbParams", dbIn)
+            .addParam("DbOutParams", dbOut)
+            .addParam("InputTable", tabIn)
+            .addParam("OutputTable", tabOut)
+            .addParam("MaskingProfile", profileId)
+            .addCommand(project)
+            .addCommand(retval);
+        final List<String> backupCommand = new ArrayList<>(currentCommand);
+        int exitCode = executeCommand(true);
+        if (exitCode != 0) {
+            // Job might need a reset.
+            // Command format:
+            //   dsjob -run -mode RESET -wait dstage1 MaskJdbc."$INSTID"
+            initCommand()
+                .setDescription("Reset a failed job")
+                .addCommand("-run")
+                .addCommand("-mode")
+                .addCommand("RESET")
+                .addCommand("-wait")
+                .addCommand(project)
+                .addCommand(retval)
+                .executeCommand();
+            // Re-running the original job
+            currentCommand.clear();
+            currentCommand.addAll(backupCommand);
+            setDescription("Start new job")
+                .executeCommand();
         }
         return retval;
     }
@@ -136,12 +184,18 @@ public class JobManager {
         return this;
     }
 
-    private JobManager addCommandItem(String v) {
+    private JobManager addCommand(String v) {
         currentCommand.add(v);
         return this;
     }
 
-    private void executeCommand() {
+    private JobManager addParam(String k, String v) {
+        currentCommand.add("-param");
+        currentCommand.add(k + "=" + v);
+        return this;
+    }
+
+    private int executeCommand(boolean allowFailure) {
         workOutput.clear();
         workErrors.clear();
         int exitCode = 0;
@@ -149,7 +203,6 @@ public class JobManager {
         if (currentDescription==null) {
             currentDescription = Arrays.toString(cmd);
         }
-        boolean failure = false;
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running command {}", Arrays.toString(cmd));
@@ -158,19 +211,26 @@ public class JobManager {
             exitCode = waitForProcess(proc, workOutput, workErrors);
         } catch(Exception ex) {
             LOG.error("{} has FAILED to start", currentDescription, ex);
-            failure = true;
+            throw new RuntimeException("Command for "
+                    + currentDescription + " cannot be started");
         }
-        if (! failure) {
-            if (exitCode != 0) {
-                LOG.error("{} has FAILED with status code {}",
-                        currentDescription, exitCode);
-                dumpOutput("OUT>", workOutput);
-                dumpOutput("ERR>", workErrors);
-            }
+        if (exitCode == 0)
+            return 0;
+        if (allowFailure) {
+            LOG.debug("{} has FAILED with status code {}",
+                    currentDescription, exitCode);
+            return exitCode;
         }
-        if (failure) {
-            throw new RuntimeException("Command for " + currentDescription + " has FAILED");
-        }
+        LOG.error("{} has FAILED with status code {}",
+                currentDescription, exitCode);
+        dumpOutput("OUT>", workOutput);
+        dumpOutput("ERR>", workErrors);
+        throw new RuntimeException("Command for " + currentDescription
+                + " has FAILED with status code " + exitCode);
+    }
+
+    private void executeCommand() {
+        executeCommand(false);
     }
 
     /**

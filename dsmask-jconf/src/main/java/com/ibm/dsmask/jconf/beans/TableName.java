@@ -31,6 +31,12 @@ public class TableName implements Comparable<TableName> {
         this.table = Utils.NONE;
     }
 
+    public TableName(TableName tn) {
+        this.database = tn.database;
+        this.schema = tn.schema;
+        this.table = tn.table;
+    }
+
     public TableName(String database, String schema, String table) {
         this.database = Utils.safe(database);
         this.schema = Utils.safe(schema);

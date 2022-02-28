@@ -29,6 +29,8 @@
 <!-- Parameter set member with global settings -->
 <entry key="globals.name">default</entry>
 
+<!-- Logical source database name -->
+<entry key="dbname.logical">DB2DEMO1</entry>
 <!-- Source and target connection names -->
 <entry key="dbname.source">DB2DEMO1</entry>
 <entry key="dbname.target">DB2DEMO1</entry>
