@@ -26,6 +26,10 @@ import com.ibm.dsmask.jconf.impl.JobManager;
 import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
 import com.ibm.dsmask.jconf.impl.TableSetManager;
 import com.ibm.dsmask.util.PasswordVault;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import org.apache.commons.text.StringSubstitutor;
 
 /**
  * Data masking batch job executor (entry point).
@@ -39,9 +43,13 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     public static final String JOB_CONF_FILE = "config.file";
     public static final String JOB_PROJ = "job.project";
     public static final String JOB_NAME = "job.name";
+    public static final String JOB_GLOBALS = "globals.name";
     public static final String JOB_DB_LOGICAL = "dbname.logical";
     public static final String JOB_DB_SOURCE = "dbname.source";
     public static final String JOB_DB_TARGET = "dbname.target";
+    public static final String JOB_TAB_SOURCE = "tabname.source";
+    public static final String JOB_TAB_TARGET = "tabname.target";
+    public static final String JOB_TAB_PROFILE = "tabname.profile";
     // property keys for configuration
     public static final String CONF_TABSET_DIR = "tableSet.dir";
     public static final String CONF_XMETA_URL = "xmeta.url";
@@ -62,6 +70,9 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     private String confDbLogical;
     private String confDbSource;
     private String confDbTarget;
+    private String confTabSource;
+    private String confTabTarget;
+    private String confTabProfile;
 
     public MaskBatcher(Mode mode, File jobFile, String tableSetName) {
         this.mode = mode;
@@ -148,7 +159,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     @Override
     public void run() {
         try {
-            LOG.info("Starting operation {} on tableSet '{}'...",
+            LOG.info("Starting operation {} on tableSet '{}'",
                     mode, tableSetName);
             switch (mode) {
                 case STATUS:
@@ -189,15 +200,42 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     }
 
     private String configDbSource() {
-        if (confDbSource==null)
-            confDbSource = getOption(JOB_DB_SOURCE);
+        if (confDbSource==null) {
+            confDbSource = propsJob.getProperty(JOB_DB_SOURCE);
+            if (confDbSource==null)
+                confDbSource = configDbLogical();
+        }
         return confDbSource;
     }
 
     private String configDbTarget() {
-        if (confDbTarget==null)
-            confDbTarget = getOption(JOB_DB_TARGET);
+        if (confDbTarget==null) {
+            confDbTarget = propsJob.getProperty(JOB_DB_TARGET);
+            if (confDbTarget==null)
+                confDbTarget = configDbSource();
+        }
         return confDbTarget;
+    }
+
+    private String configTabSource() {
+        if (confTabSource==null) {
+            confTabSource = getOption(JOB_TAB_SOURCE);
+        }
+        return confTabSource;
+    }
+
+    private String configTabTarget() {
+        if (confTabTarget==null) {
+            confTabTarget = getOption(JOB_TAB_TARGET);
+        }
+        return confTabTarget;
+    }
+
+    private String configTabProfile() {
+        if (confTabProfile==null) {
+            confTabProfile = getOption(JOB_TAB_PROFILE);
+        }
+        return confTabProfile;
     }
 
     /**
@@ -251,11 +289,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     }
 
     private String makeJobId(TableName tn) {
-        return configJobName() + "." + safeInvocation(tn.getFullName());
-    }
-
-    private static String safeInvocation(String table) {
-        return table.replace('.', '-');
+        return configJobName() + "." + JobManager.safeInvocation(tn.getFullName());
     }
 
     /**
@@ -263,7 +297,64 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
      * @throws Exception
      */
     private void runRun() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // The job manager
+        final JobManager jm = new JobManager(
+                configJobProject(),
+                configJobName(),
+                this
+        );
+        // The tables to be masked
+        List<TableName> tables = grabTsManager().readTableSet(tableSetName);
+        if (tables.isEmpty()) {
+            LOG.info("Table set {} is empty, nothing to run.", tableSetName);
+            return;
+        }
+        // Checking if those tables are not being processed already.
+        int countRunningJobs = 0;
+        Set<String> jobIds = makeJobIds(tables);
+        for (JobInfo ji : jm.listJobs()) {
+            if (jobIds.contains(ji.getJobId())) {
+                LOG.info("Found a running job: {}\t{}\t{}",
+                        ji.getJobState(),
+                        ji.getStartTime(),
+                        ji.getJobId());
+                ++countRunningJobs;
+            }
+        }
+        if (countRunningJobs > 0) {
+            LOG.error("Job startup denied, having {} jobs already running");
+            return;
+        }
+
+        // TODO: job startup should be synchronized, e.g. we should lock
+        // concurrent job startup attempts for tables we want to process below.
+
+        final String batchId = UUID.randomUUID().toString();
+        LOG.info("Starting new masking jobs with batch ID {}...", batchId);
+
+        // Set repeatable parameters for job startup.
+        jm.setBatchId(batchId);
+        jm.setGlobalsId(getOption(JOB_GLOBALS));
+        jm.setInputDb(configDbSource());
+        jm.setOutputDb(configDbTarget());
+
+        Map<String,String> subst = new HashMap<>();
+        subst.put("dbname_logical", configDbLogical());
+        subst.put("dbname_source", configDbSource());
+        subst.put("dbname_target", configDbTarget());
+
+        // Start new masking job for each table.
+        for (TableName tn : tables) {
+            subst.put("schema", tn.getSchema());
+            subst.put("table", tn.getTable());
+            final StringSubstitutor ss = new StringSubstitutor(subst);
+            String jobId = jm.startJob(
+                    ss.replace(configTabSource()),
+                    ss.replace(configTabTarget()),
+                    ss.replace(configTabProfile())
+            );
+            LOG.info("Masking table {} through job {}", tn.getName(), jobId);
+        }
     }
 
     /**

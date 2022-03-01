@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tableSet name="sample2">
-  <db name="DB1">
-    <table name="SCHEMA1.TABLE1"/>
-    <table name="SCHEMA2.TABLE2"/>
-    <table name="SCHEMA2.TABLE3"/>
-    <table name="SCHEMA3.TABLE4"/>
-  </db>
-  <db name="DB2">
-    <table name="SCHEMA5.TABLE5"/>
-    <table name="SCHEMA5.TABLE6"/>
-    <table name="SCHEMA5.TABLE7"/>
-    <table name="SCHEMA5.TABLE8"/>
-  </db>
+<tableSet name="sample2" db="DB1">
+    <item schema="SCHEMA1" table="TABLE1"/>
+    <item schema="SCHEMA1" table="TABLE2"/>
+    <item schema="SCHEMA1" table="TABLE3"/>
+    <item schema="SCHEMA1" table="TABLE4"/>
+    <item schema="SCHEMA2" table="TABLE5"/>
+    <item schema="SCHEMA2" table="TABLE6"/>
+    <item schema="SCHEMA2" table="TABLE7"/>
+    <item schema="SCHEMA2" table="TABLE1"/>
 </tableSet>

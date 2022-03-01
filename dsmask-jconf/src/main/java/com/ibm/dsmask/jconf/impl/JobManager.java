@@ -48,10 +48,20 @@ public class JobManager {
     private final String dsjobReset;
     private final String dsjobRun;
 
+    // Stable values for job start
+    private String globalsId;
+    private String batchId;
+    private String inputDb;
+    private String outputDb;
+
     private final List<String> currentCommand = new ArrayList<>();
     private final List<String> workOutput = new ArrayList<>();
     private final List<String> workErrors = new ArrayList<>();
     private String currentDescription = null;
+
+    public static String safeInvocation(String table) {
+        return table.replace('.', '-').replaceAll("[\\[\\]\\\\\"']", "");
+    }
 
     public JobManager(String project, String jobType, JobConfiguration conf) {
         this.project = project;
@@ -61,6 +71,34 @@ public class JobManager {
         this.dsjobStatus = conf.getOption(DSJOB_STATUS);
         this.dsjobReset = conf.getOption(DSJOB_RESET);
         this.dsjobRun = conf.getOption(DSJOB_RUN);
+    }
+
+    public String getGlobalsId() {
+        return globalsId;
+    }
+    public void setGlobalsId(String globalsId) {
+        this.globalsId = globalsId;
+    }
+
+    public String getBatchId() {
+        return batchId;
+    }
+    public void setBatchId(String batchId) {
+        this.batchId = batchId;
+    }
+
+    public String getInputDb() {
+        return inputDb;
+    }
+    public void setInputDb(String inputDb) {
+        this.inputDb = inputDb;
+    }
+
+    public String getOutputDb() {
+        return outputDb;
+    }
+    public void setOutputDb(String outputDb) {
+        this.outputDb = outputDb;
     }
 
     public List<JobInfo> listJobs() {
@@ -133,11 +171,10 @@ public class JobManager {
         return null;
     }
 
-    public String startJob(String jobType, String jobInst, String batchId,
-            String globals, String dbIn, String dbOut,
-            String tabIn, String tabOut, String profileId) {
+    public String startJob(String tabIn, String tabOut, String profileId) {
         final Map<String,String> subst = new HashMap<>();
-        final String retval = jobType + "." + jobInst;
+        final String retval = jobType + "." +
+                safeInvocation(inputDb + "." + tabIn);
         // Command format:
 	// $DSJOB -run -param BatchId="$BATCH_ID" -param Globals=default
 	//  -param DbParams="$DB_SRC" -param DbOutParams="$DB_DST"
@@ -145,10 +182,10 @@ public class JobManager {
 	//  -param MaskingProfile="$TABPROF"
 	//  dstage1 MaskJdbc."$INSTID"
         subst.clear();
-        subst.put("globalsId", globals);
+        subst.put("globalsId", globalsId);
         subst.put("batchId", batchId);
-        subst.put("dbIn", dbIn);
-        subst.put("dbOut", dbOut);
+        subst.put("dbIn", inputDb);
+        subst.put("dbOut", outputDb);
         subst.put("tableIn", tabIn);
         subst.put("tableOut", tabOut);
         subst.put("profileId", profileId);

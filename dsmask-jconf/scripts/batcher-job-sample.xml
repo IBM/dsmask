@@ -25,10 +25,10 @@
 -->
 
 <!-- Source to target table name mapper -->
-<entry key="tabname.source">OPTIM1.{table}</entry>
+<entry key="tabname.source">OPTIM1."${table}"</entry>
 <!-- Source to target table name mapper -->
-<entry key="tabname.target">OPTIM2.{table}</entry>
+<entry key="tabname.target">OPTIM2."${table}"</entry>
 <!-- Source to profile name mapper -->
-<entry key="tabname.profile">{db}.{schema}.{table}</entry>
+<entry key="tabname.profile">${dbname_logical}.${schema}.${table}</entry>
 
 </properties>
