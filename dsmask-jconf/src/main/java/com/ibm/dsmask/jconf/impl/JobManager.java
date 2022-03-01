@@ -182,6 +182,7 @@ public class JobManager {
 	//  -param MaskingProfile="$TABPROF"
 	//  dstage1 MaskJdbc."$INSTID"
         subst.clear();
+        subst.put("dsjob", dsjobExec);
         subst.put("globalsId", globalsId);
         subst.put("batchId", batchId);
         subst.put("dbIn", inputDb);
@@ -199,6 +200,7 @@ public class JobManager {
             // Command format:
             //   dsjob -run -mode RESET -wait dstage1 MaskJdbc."$INSTID"
             subst.clear();
+            subst.put("dsjob", dsjobExec);
             subst.put("jobId", retval);
             subst.put("project", project);
             initCommand(subst, dsjobReset, "Reset a failed job")

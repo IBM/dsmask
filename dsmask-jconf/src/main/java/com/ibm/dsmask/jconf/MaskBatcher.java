@@ -314,7 +314,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
         Set<String> jobIds = makeJobIds(tables);
         for (JobInfo ji : jm.listJobs()) {
             if (jobIds.contains(ji.getJobId())) {
-                LOG.info("Found a running job: {}\t{}\t{}",
+                LOG.info("Found job: {}\t{}\t{}",
                         ji.getJobState(),
                         ji.getStartTime(),
                         ji.getJobId());
@@ -322,7 +322,8 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
             }
         }
         if (countRunningJobs > 0) {
-            LOG.error("Job startup denied, having {} jobs already running");
+            LOG.error("Job startup denied, having {} jobs already running",
+                    countRunningJobs);
             return;
         }
 
@@ -353,7 +354,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
                     ss.replace(configTabTarget()),
                     ss.replace(configTabProfile())
             );
-            LOG.info("Masking table {} through job {}", tn.getName(), jobId);
+            LOG.info("\tStarted job {}", jobId);
         }
     }
 
