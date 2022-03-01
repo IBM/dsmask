@@ -12,6 +12,7 @@
  */
 package com.ibm.dsmask.jconf;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.ArrayList;
@@ -19,17 +20,13 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.Set;
-import java.io.File;
-import com.ibm.dsmask.jconf.beans.*;
-import com.ibm.dsmask.jconf.impl.JobConfiguration;
-import com.ibm.dsmask.jconf.impl.JobManager;
-import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
-import com.ibm.dsmask.jconf.impl.TableSetManager;
-import com.ibm.dsmask.util.PasswordVault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.text.StringSubstitutor;
+import com.ibm.dsmask.jconf.beans.*;
+import com.ibm.dsmask.jconf.impl.*;
+import com.ibm.dsmask.util.PasswordVault;
 
 /**
  * Data masking batch job executor (entry point).
@@ -125,6 +122,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
             try (MaskBatcher mb = new MaskBatcher(mode, new File(args[1]), args[2])) {
                 mb.run();
             }
+            LOG.info("Exiting normally.");
 
         } catch(Throwable ex) {
             LOG.error("FATAL: operation failed", ex);
