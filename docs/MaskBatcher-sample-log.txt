@@ -1,0 +1,36 @@
+C:\IBM\Masker\dsmask-jconf>MaskBatcher REFRESH batcher-job-sample.xml ts1
+2022-03-01 17:06:52 INFO  MaskBatcher:162 - Starting operation REFRESH on tableSet 'ts1'
+2022-03-01 17:06:52 INFO  MaskBatcher:402 - Reading the list of tables for database DB2DEMO1...
+2022-03-01 17:06:53 INFO  MaskBatcher:404 -     found 5 confidential tables
+2022-03-01 17:06:53 INFO  MaskBatcher:407 - Number of tables after dedup: 5
+2022-03-01 17:06:53 INFO  MaskBatcher:409 - Table list written to tableSet ts1
+2022-03-01 17:06:53 INFO  MaskBatcher:178 - Operation complete.
+
+C:\IBM\Masker\dsmask-jconf>type ..\tablesets\ts1.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<tableSet name="ts1" db="DB2DEMO1">
+  <item schema="OPTIM1" table="CONTACT_EMAIL" />
+  <item schema="OPTIM1" table="CONTACT_PHONE" />
+  <item schema="OPTIM1" table="CUSTOMER" />
+  <item schema="OPTIM1" table="LEGAL_ENTITY" />
+  <item schema="OPTIM1" table="PHYSICAL_ENTITY" />
+</tableSet>
+
+C:\IBM\Masker\dsmask-jconf>MaskBatcher RUN batcher-job-sample.xml ts1
+2022-03-01 17:07:12 INFO  MaskBatcher:162 - Starting operation RUN on tableSet 'ts1'
+2022-03-01 17:07:14 INFO  MaskBatcher:339 - Starting new masking jobs with batch ID 00046ec7-d408-4381-8cbc-f04d0393edb0...
+2022-03-01 17:07:15 INFO  MaskBatcher:362 -     Started job MaskDb2.DB2DEMO1-OPTIM1-CONTACT_EMAIL
+2022-03-01 17:07:16 INFO  MaskBatcher:362 -     Started job MaskDb2.DB2DEMO1-OPTIM1-CONTACT_PHONE
+2022-03-01 17:07:19 INFO  MaskBatcher:362 -     Started job MaskDb2.DB2DEMO1-OPTIM1-CUSTOMER
+2022-03-01 17:07:22 INFO  MaskBatcher:362 -     Started job MaskDb2.DB2DEMO1-OPTIM1-LEGAL_ENTITY
+2022-03-01 17:07:31 INFO  MaskBatcher:362 -     Started job MaskDb2.DB2DEMO1-OPTIM1-PHYSICAL_ENTITY
+2022-03-01 17:07:31 INFO  MaskBatcher:178 - Operation complete.
+
+C:\IBM\Masker\dsmask-jconf>MaskBatcher STATUS batcher-job-sample.xml ts1
+2022-03-01 17:07:42 INFO  MaskBatcher:162 - Starting operation STATUS on tableSet 'ts1'
+2022-03-01 17:07:46 INFO  MaskBatcher:253 - Total active jobs found: 3
+2022-03-01 17:07:46 INFO  MaskBatcher:256 - Filtered active jobs: 3
+2022-03-01 17:07:46 INFO  MaskBatcher:259 -     RUNNING Tue Mar 01 17:07:31 2022        MaskDb2.DB2DEMO1-OPTIM1-PHYSICAL_ENTITY
+2022-03-01 17:07:46 INFO  MaskBatcher:259 -     QUEUED  Tue Mar 01 17:07:21 2022        MaskDb2.DB2DEMO1-OPTIM1-LEGAL_ENTITY
+2022-03-01 17:07:46 INFO  MaskBatcher:259 -     QUEUED  Tue Mar 01 17:07:19 2022        MaskDb2.DB2DEMO1-OPTIM1-CUSTOMER
+2022-03-01 17:07:46 INFO  MaskBatcher:178 - Operation complete.
