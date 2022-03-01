@@ -12,7 +12,7 @@
             <properties>
                 <exec.vmArgs></exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.appArgs>RUN batcher-job-sample.xml debug1</exec.appArgs>
+                <exec.appArgs>STOP batcher-job-sample.xml debug1</exec.appArgs>
                 <exec.mainClass>com.ibm.dsmask.jconf.MaskBatcher</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>/home/zinal/Projects/dsmask/dsmask-jconf/scripts</exec.workingdir>
@@ -30,7 +30,7 @@
             <properties>
                 <exec.vmArgs>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.appArgs>RUN batcher-job-sample.xml debug1</exec.appArgs>
+                <exec.appArgs>STOP batcher-job-sample.xml debug1</exec.appArgs>
                 <exec.mainClass>com.ibm.dsmask.jconf.MaskBatcher</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
@@ -51,7 +51,7 @@
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.mainClass>com.ibm.dsmask.jconf.MaskBatcher</exec.mainClass>
                 <exec.executable>java</exec.executable>
-                <exec.appArgs>RUN batcher-job-sample.xml debug1</exec.appArgs>
+                <exec.appArgs>STOP batcher-job-sample.xml debug1</exec.appArgs>
                 <exec.workingdir>/home/zinal/Projects/dsmask/dsmask-jconf/scripts</exec.workingdir>
             </properties>
         </action>

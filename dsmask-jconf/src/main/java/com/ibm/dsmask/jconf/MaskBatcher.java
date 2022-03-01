@@ -141,7 +141,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
         System.out.println("\t\t" + MaskBatcher.class.getName()
                 + " STATUS  jobfile.xml { tableSet | - }");
         System.out.println("\t\t" + MaskBatcher.class.getName()
-                + " KILL    jobfile.xml { tableSet | - }");
+                + " STOP    jobfile.xml { tableSet | - }");
         System.exit(1);
     }
 
@@ -168,8 +168,8 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
                 case RUN:
                     runRun();
                     break;
-                case KILL:
-                    runKill();
+                case STOP:
+                    runStop();
                     break;
                 case REFRESH:
                     runRefresh();
@@ -249,34 +249,42 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
                 this
         );
 
-        final List<JobInfo> jobs = jm.listJobs();
+        List<JobInfo> jobs = jm.listJobs();
         LOG.info("Total active jobs found: {}", jobs.size());
 
+        jobs = filterJobs(jobs);
+        LOG.info("Filtered active jobs: {}", jobs.size());
+
+        for (JobInfo ji : jobs) {
+            LOG.info("\t{}\t{}\t{}",
+                    ji.getJobState(),
+                    ji.getStartTime(),
+                    ji.getJobId());
+        }
+    }
+
+    private List<JobInfo> filterJobs(List<JobInfo> jobs) throws Exception {
         if (tableSetName==null || tableSetName.length()==0
                 || "-".equalsIgnoreCase(tableSetName)) {
-            // Unfiltered output of running and queued jobs.
-            for (JobInfo ji : jobs) {
-                LOG.info("\t{}\t{}\t{}",
-                        ji.getJobState(),
-                        ji.getStartTime(),
-                        ji.getJobId());
-            }
-            return;
+            return jobs;
         }
-
         // We need a table set to filter the output.
         List<TableName> tables = grabTsManager().readTableSet(tableSetName);
+        return filterJobs(jobs, tables);
+    }
+
+    private List<JobInfo> filterJobs(List<JobInfo> jobs, List<TableName> tables)
+            throws Exception {
         // So that we can generate possible job IDs.
         Set<String> jobIds = makeJobIds(tables);
-        // Filtered output of running and queued jobs.
+        // Filtered output of jobs.
+        final List<JobInfo> retval = new ArrayList<>();
         for (JobInfo ji : jobs) {
             if (jobIds.contains(ji.getJobId())) {
-                LOG.info("\t{}\t{}\t{}",
-                        ji.getJobState(),
-                        ji.getStartTime(),
-                        ji.getJobId());
+                retval.add(ji);
             }
         }
+        return retval;
     }
 
     private Set<String> makeJobIds(List<TableName> tables) {
@@ -311,15 +319,12 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
         }
         // Checking if those tables are not being processed already.
         int countRunningJobs = 0;
-        Set<String> jobIds = makeJobIds(tables);
-        for (JobInfo ji : jm.listJobs()) {
-            if (jobIds.contains(ji.getJobId())) {
-                LOG.info("Found job: {}\t{}\t{}",
-                        ji.getJobState(),
-                        ji.getStartTime(),
-                        ji.getJobId());
-                ++countRunningJobs;
-            }
+        for (JobInfo ji : filterJobs(jm.listJobs(), tables)) {
+            LOG.info("Found job: {}\t{}\t{}",
+                    ji.getJobState(),
+                    ji.getStartTime(),
+                    ji.getJobId());
+            ++countRunningJobs;
         }
         if (countRunningJobs > 0) {
             LOG.error("Job startup denied, having {} jobs already running",
@@ -359,11 +364,32 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     }
 
     /**
-     * KILL subcommand
+     * STOP subcommand
      * @throws Exception
      */
-    private void runKill() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void runStop() throws Exception {
+        // The job manager
+        final JobManager jm = new JobManager(
+                configJobProject(),
+                configJobName(),
+                this
+        );
+        int countStoppedJobs = 0;
+        for (JobInfo ji : filterJobs(jm.listJobs())) {
+            LOG.info("Found job: {}\t{}\t{}",
+                    ji.getJobState(),
+                    ji.getStartTime(),
+                    ji.getJobId());
+            ++countStoppedJobs;
+            try {
+                jm.stopJob(ji.getJobId());
+                LOG.info("\tJob stopped!");
+                ++countStoppedJobs;
+            } catch(Exception ex) {
+                LOG.error("Failed to stop job", ex);
+            }
+        }
+        LOG.info("Total jobs stopped: {}", countStoppedJobs);
     }
 
     /**
@@ -435,7 +461,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     public static enum Mode {
         STATUS,
         RUN,
-        KILL,
+        STOP,
         REFRESH;
 
         public static Mode getMode(String mode) {

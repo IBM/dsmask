@@ -46,4 +46,9 @@
       dstage1 ${jobId}
 </entry>
 
+<!-- Template command for stopping a job -->
+<entry key="dsjob.stop">
+    ${dsjob} -stop ${project} ${jobId}
+</entry>
+
 </properties>

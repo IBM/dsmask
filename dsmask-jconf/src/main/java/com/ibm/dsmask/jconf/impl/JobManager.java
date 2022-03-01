@@ -39,6 +39,7 @@ public class JobManager {
     public static final String DSJOB_STATUS = "dsjob.status";
     public static final String DSJOB_RESET = "dsjob.reset";
     public static final String DSJOB_RUN = "dsjob.run";
+    public static final String DSJOB_STOP = "dsjob.stop";
 
     private final String project;
     private final String jobType;
@@ -47,6 +48,7 @@ public class JobManager {
     private final String dsjobStatus;
     private final String dsjobReset;
     private final String dsjobRun;
+    private final String dsjobStop;
 
     // Stable values for job start
     private String globalsId;
@@ -71,6 +73,7 @@ public class JobManager {
         this.dsjobStatus = conf.getOption(DSJOB_STATUS);
         this.dsjobReset = conf.getOption(DSJOB_RESET);
         this.dsjobRun = conf.getOption(DSJOB_RUN);
+        this.dsjobStop = conf.getOption(DSJOB_STOP);
     }
 
     public String getGlobalsId() {
@@ -212,6 +215,15 @@ public class JobManager {
             executeCommand();
         }
         return retval;
+    }
+
+    public void stopJob(String jobId) {
+        final Map<String,String> subst = new HashMap<>();
+        subst.put("dsjob", dsjobExec);
+        subst.put("project", project);
+        subst.put("jobId", jobId);
+        initCommand(subst, dsjobStop, "Stop a running job")
+            .executeCommand();
     }
 
     private JobManager initCommand(Map<String,String> m, String templ, String desc) {
