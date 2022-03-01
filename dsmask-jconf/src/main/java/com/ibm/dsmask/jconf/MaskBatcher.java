@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.File;
 import com.ibm.dsmask.jconf.beans.*;
+import com.ibm.dsmask.jconf.impl.JobConfiguration;
 import com.ibm.dsmask.jconf.impl.JobManager;
 import com.ibm.dsmask.jconf.impl.MetadataIgcReader;
 import com.ibm.dsmask.jconf.impl.TableSetManager;
@@ -29,41 +31,73 @@ import com.ibm.dsmask.util.PasswordVault;
  * Data masking batch job executor (entry point).
  * @author zinal
  */
-public class MaskBatcher implements Runnable, AutoCloseable {
+public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
 
     private static final org.slf4j.Logger LOG = Utils.logger(MaskBatcher.class);
 
-    // property keys
+    // property keys for the job
+    public static final String JOB_CONF_FILE = "config.file";
+    public static final String JOB_PROJ = "job.project";
+    public static final String JOB_NAME = "job.name";
+    public static final String JOB_DB_LOGICAL = "dbname.logical";
+    public static final String JOB_DB_SOURCE = "dbname.source";
+    public static final String JOB_DB_TARGET = "dbname.target";
+    // property keys for configuration
     public static final String CONF_TABSET_DIR = "tableSet.dir";
     public static final String CONF_XMETA_URL = "xmeta.url";
     public static final String CONF_XMETA_USER = "xmeta.username";
     public static final String CONF_XMETA_PASS = "xmeta.password";
     public static final String CONF_XMETA_VAULT = "xmeta.vault";
-    public static final String CONF_JOB_CMD = "job.cmd";
-    public static final String CONF_JOB_PROJ = "job.project";
-    public static final String CONF_JOB_NAME = "job.name";
-    public static final String CONF_DB_LOGICAL = "dbname.logical";
-    public static final String CONF_DB_SOURCE = "dbname.source";
-    public static final String CONF_DB_TARGET = "dbname.target";
 
     private final Mode mode;
-    private final Properties props;
+    private final Properties propsJob;
+    private final Properties propsConfig;
     private final String tableSetName;
 
     private MetadataIgcReader igcReader = null;
     private TableSetManager tsManager = null;
 
-    private String confJobCmd;
     private String confJobName;
     private String confJobProject;
     private String confDbLogical;
     private String confDbSource;
     private String confDbTarget;
 
-    public MaskBatcher(Mode mode, Properties props, String tableSetName) {
+    public MaskBatcher(Mode mode, File jobFile, String tableSetName) {
         this.mode = mode;
-        this.props = props;
+        this.propsJob = new Properties();
+        loadProperties(propsJob, jobFile);
+        this.propsConfig = new Properties();
+        loadProperties(propsConfig, new File(getJobOption(propsJob, JOB_CONF_FILE)));
         this.tableSetName = tableSetName;
+    }
+
+    private static void loadProperties(Properties props, File file) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            props.loadFromXML(fis);
+        } catch(Exception ex) {
+            throw new RuntimeException("Failed to read property file " + file, ex);
+        }
+    }
+
+    private static String getJobOption(Properties props, String name) {
+        String v = props.getProperty(name);
+        if (v==null) {
+            throw new RuntimeException("Missing property " + name + " in the job file");
+        }
+        return v;
+    }
+
+    @Override
+    public String getOption(String name) {
+        String v = propsJob.getProperty(name);
+        if (v==null) {
+            v = propsConfig.getProperty(name);
+        }
+        if (v==null) {
+            throw new RuntimeException("Missing property [" + name + "] in the configuration");
+        }
+        return v.trim();
     }
 
     public static void main(String[] args) {
@@ -77,12 +111,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
                 usageAndDie();
             }
 
-            final Properties props = new Properties();
-            try (FileInputStream fis = new FileInputStream(args[1])) {
-                props.loadFromXML(fis);
-            }
-
-            try (MaskBatcher mb = new MaskBatcher(mode, props, args[2])) {
+            try (MaskBatcher mb = new MaskBatcher(mode, new File(args[1]), args[2])) {
                 mb.run();
             }
 
@@ -141,39 +170,33 @@ public class MaskBatcher implements Runnable, AutoCloseable {
         }
     }
 
-    private String configJobCmd() {
-        if (confJobCmd==null)
-            confJobCmd = getConfig(CONF_JOB_CMD);
-        return confJobCmd;
-    }
-
     private String configJobName() {
         if (confJobName==null)
-            confJobName = getConfig(CONF_JOB_NAME);
+            confJobName = getOption(JOB_NAME);
         return confJobName;
     }
 
     private String configJobProject() {
         if (confJobProject==null)
-            confJobProject = getConfig(CONF_JOB_PROJ);
+            confJobProject = getOption(JOB_PROJ);
         return confJobProject;
     }
 
     private String configDbLogical() {
         if (confDbLogical==null)
-            confDbLogical = getConfig(CONF_DB_LOGICAL);
+            confDbLogical = getOption(JOB_DB_LOGICAL);
         return confDbLogical;
     }
 
     private String configDbSource() {
         if (confDbSource==null)
-            confDbSource = getConfig(CONF_DB_SOURCE);
+            confDbSource = getOption(JOB_DB_SOURCE);
         return confDbSource;
     }
 
     private String configDbTarget() {
         if (confDbTarget==null)
-            confDbTarget = getConfig(CONF_DB_TARGET);
+            confDbTarget = getOption(JOB_DB_TARGET);
         return confDbTarget;
     }
 
@@ -185,7 +208,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
         final JobManager jm = new JobManager(
                 configJobProject(),
                 configJobName(),
-                configJobCmd()
+                this
         );
 
         final List<JobInfo> jobs = jm.listJobs();
@@ -256,7 +279,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
      * @throws Exception
      */
     private void runRefresh() throws Exception {
-        final String dbName = getConfig(CONF_DB_LOGICAL);
+        final String dbName = getOption(JOB_DB_LOGICAL);
         List<TableName> allTables = new ArrayList<>();
         LOG.info("Reading the list of tables for database {}...", dbName);
         final List<TableName> curTables = grabIgcReader().listMaskedTables(dbName);
@@ -285,21 +308,13 @@ public class MaskBatcher implements Runnable, AutoCloseable {
         return retval;
     }
 
-    private String getConfig(String name) {
-        String v = props.getProperty(name);
-        if (v==null) {
-            throw new RuntimeException("Missing property " + name + " in the job file");
-        }
-        return v;
-    }
-
     private MetadataIgcReader grabIgcReader() throws Exception {
         if (igcReader!=null)
             return igcReader;
-        final String jdbcUrl = getConfig(CONF_XMETA_URL);
+        final String jdbcUrl = getOption(CONF_XMETA_URL);
         final String username;
         final String password;
-        final String vaultKey = props.getProperty(CONF_XMETA_VAULT);
+        final String vaultKey = propsConfig.getProperty(CONF_XMETA_VAULT);
         if (vaultKey!=null && vaultKey.length() > 0) {
             final PasswordVault.Entry e = new PasswordVault().getEntry(vaultKey);
             if (e == null) {
@@ -311,8 +326,8 @@ public class MaskBatcher implements Runnable, AutoCloseable {
             username = e.login;
             password = e.password;
         } else {
-            username = getConfig(CONF_XMETA_USER);
-            password = getConfig(CONF_XMETA_PASS);
+            username = getOption(CONF_XMETA_USER);
+            password = getOption(CONF_XMETA_PASS);
         }
         igcReader = new MetadataIgcReader(jdbcUrl, username, password);
         return igcReader;
@@ -321,7 +336,7 @@ public class MaskBatcher implements Runnable, AutoCloseable {
     private TableSetManager grabTsManager() {
         if (tsManager!=null)
             return tsManager;
-        tsManager = new TableSetManager(getConfig(CONF_TABSET_DIR));
+        tsManager = new TableSetManager(getOption(CONF_TABSET_DIR));
         return tsManager;
     }
 

@@ -1,28 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>Sample job file for the jconf-batcher program</comment>
+<comment>Sample job file for the MaskBatcher program</comment>
 
-<entry key="tableSet.dir">../../testsuite/tablesets</entry>
-
-<entry key="xmeta.url">jdbc:db2://192.168.56.101:50000/xmeta</entry>
-<entry key="xmeta.vault">xmeta</entry>
-<!--
-<entry key="xmeta.username">xmeta</entry>
-<entry key="xmeta.password">P@ssw0rd</entry>
--->
-
-<!-- Possible commands to execute the dsjob tool, 
-     typically through passwordless SSH.
-     Example entries are shown below.
-<entry key="job.dsjob">ssh -p 2204 admin@dsmask1 C:\\IBM\\InformationServer\\Server\\DSEngine\\bin\\dsjob.exe</entry>
-<entry key="job.dsjob">ssh dsadm@dsmask1 /opt/IBM/InformationServer/Server/DSEngine/bin/dsjob</entry>
--->
-<entry key="job.cmd">ssh -p 2204 admin@dsmask1 C:\\IBM\\InformationServer\\Server\\DSEngine\\bin\\dsjob.exe</entry>
+<!-- Link to the main configuration file (can be different on per-job basis) -->
+<entry key="config.file">batcher-config-sample.xml</entry>
 
 <!-- DataStage project name (typically dstage1) -->
 <entry key="job.project">dstage1</entry>
-
 <!-- DataStage masking job name -->
 <entry key="job.name">MaskDb2</entry>
 
@@ -31,9 +16,13 @@
 
 <!-- Logical source database name -->
 <entry key="dbname.logical">DB2DEMO1</entry>
-<!-- Source and target connection names -->
+<!-- Source and target connection names.
+     Can be ommitted if they are the same as logical ones.
+-->
+<!--
 <entry key="dbname.source">DB2DEMO1</entry>
 <entry key="dbname.target">DB2DEMO1</entry>
+-->
 
 <!-- Source to target table name mapper -->
 <entry key="tabname.source">OPTIM1.{table}</entry>

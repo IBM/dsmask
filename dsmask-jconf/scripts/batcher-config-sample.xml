@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Sample configuration file for the MaskBatcher program</comment>
+
+<entry key="tableSet.dir">../../testsuite/tablesets</entry>
+
+<entry key="xmeta.url">jdbc:db2://192.168.56.101:50000/xmeta</entry>
+<entry key="xmeta.vault">xmeta</entry>
+<!--
+<entry key="xmeta.username">xmeta</entry>
+<entry key="xmeta.password">P@ssw0rd</entry>
+-->
+
+<!-- Possible commands to execute the dsjob tool, 
+     typically through passwordless SSH.
+     Example entries are shown below.
+<entry key="dsjob.exec">ssh -p 2204 admin@dsmask1 C:\IBM\InformationServer\Server\DSEngine\bin\dsjob.exe</entry>
+<entry key="dsjob.exec">ssh dsadm@dsmask1 /opt/IBM/InformationServer/Server/DSEngine/bin/dsjob</entry>
+-->
+<entry key="dsjob.exec">
+    ssh -p 2204 admin@dsmask1 C:\IBM\InformationServer\Server\DSEngine\bin\dsjob.exe
+</entry>
+
+<!-- Template command for listing job invocations -->
+<entry key="dsjob.list">
+    ${dsjob} -linvocations ${project} ${jobType}
+</entry>
+
+<!-- Template command for retrieving job status -->
+<entry key="dsjob.status">
+    ${dsjob} -jobinfo ${project} ${jobId}
+</entry>
+
+<!-- Template command for resetting jobs -->
+<entry key="dsjob.reset">
+    ${dsjob} -run -mode RESET -wait dstage1 ${jobId}
+</entry>
+
+<!-- Template command for running jobs -->
+<entry key="dsjob.run">
+    ${dsjob} -run -param Globals=${globalsId} -param BatchId=${batchId}
+      -param DbParams=${dbIn} -param DbOutParams=${dbOut}
+      -param InputTable=${tableIn} -param OutputTable=${tableOut}
+      -param MaskingProfile=${profileId}
+      dstage1 ${jobId}
+</entry>
+
+</properties>

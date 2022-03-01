@@ -18,9 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import com.ibm.dsmask.jconf.beans.JobInfo;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.StringTokenizer;
+import com.ibm.dsmask.jconf.beans.JobInfo;
 
 /**
  * Masking job manager, part of MaskBatcher tool implementation.
@@ -31,102 +34,69 @@ public class JobManager {
     private static final org.slf4j.Logger LOG =
             org.slf4j.LoggerFactory.getLogger(JobManager.class);
 
+    public static final String DSJOB_EXEC = "dsjob.exec";
+    public static final String DSJOB_LIST = "dsjob.list";
+    public static final String DSJOB_STATUS = "dsjob.status";
+    public static final String DSJOB_RESET = "dsjob.reset";
+    public static final String DSJOB_RUN = "dsjob.run";
+
     private final String project;
     private final String jobType;
-    private final String jobCommand;
-
-    private List<String> jobCommandList;
+    private final String dsjobExec;
+    private final String dsjobList;
+    private final String dsjobStatus;
+    private final String dsjobReset;
+    private final String dsjobRun;
 
     private final List<String> currentCommand = new ArrayList<>();
     private final List<String> workOutput = new ArrayList<>();
     private final List<String> workErrors = new ArrayList<>();
     private String currentDescription = null;
 
-    public JobManager(String project, String jobType, String jobCommand) {
+    public JobManager(String project, String jobType, JobConfiguration conf) {
         this.project = project;
         this.jobType = jobType;
-        this.jobCommand = jobCommand;
+        this.dsjobExec = conf.getOption(DSJOB_EXEC);
+        this.dsjobList = conf.getOption(DSJOB_LIST);
+        this.dsjobStatus = conf.getOption(DSJOB_STATUS);
+        this.dsjobReset = conf.getOption(DSJOB_RESET);
+        this.dsjobRun = conf.getOption(DSJOB_RUN);
     }
 
     public List<JobInfo> listJobs() {
+        final Map<String,String> subst = new HashMap<>();
         // List the job invocations.
         // Command format:
         //   dsjob -linvocations dstage1 MaskJdbc
         // Command output:
         //   one row per job invocation ID
-        initCommand()
-            .setDescription("List job invocations")
-            .addCommand("-linvocations")
-            .addCommand(project)
-            .addCommand(jobType)
+        subst.clear();
+        subst.put("dsjob", dsjobExec);
+        subst.put("project", project);
+        subst.put("jobType", jobType);
+        initCommand(subst, dsjobList, "List job invocations")
             .executeCommand();
         final List<JobInfo> retval = new ArrayList<>();
         final List<String> invocations = new ArrayList<>(workOutput);
         // For each job invocation, grab the execution status.
-        for (String invocation : invocations) {
+        for (String jobId : invocations) {
             // Only handle the invocation with non-empty execution ID.
-            if (! invocation.contains("."))
+            if (! jobId.contains("."))
                 continue;
             // Retrieve the job status.
             // Command format:
             //   dsjob -jobinfo dstage1 $jobId
             // Command output:
             //   Job Status	: RUN OK (1)
-            initCommand()
-                .setDescription("Retrieve job info")
-                .addCommand("-jobinfo")
-                .addCommand(project)
-                .addCommand(invocation)
+            subst.clear();
+            subst.put("dsjob", dsjobExec);
+            subst.put("project", project);
+            subst.put("jobId", jobId);
+            initCommand(subst, dsjobStatus, "Retrieve job info")
                 .executeCommand();
-            final JobInfo ji = grabJobInfo(invocation, workOutput);
+            final JobInfo ji = grabJobInfo(jobId, workOutput);
             if (ji != null)
                 retval.add(ji);
-        }
-        return retval;
-    }
-
-    public String startJob(String jobType, String jobInst, String batchId,
-            String globals, String dbIn, String dbOut,
-            String tabIn, String tabOut, String profileId) {
-        final String retval = jobType + "." + jobInst;
-        // Command format:
-	// $DSJOB -run -param BatchId="$BATCH_ID" -param Globals=default
-	//  -param DbParams="$DB_SRC" -param DbOutParams="$DB_DST"
-	//  -param InputTable="$TABNAME" -param OutputTable="$TABNAME"
-	//  -param MaskingProfile="$TABPROF"
-	//  dstage1 MaskJdbc."$INSTID"
-        initCommand()
-            .setDescription("Start new job")
-            .addCommand("-run")
-            .addParam("BatchId", batchId)
-            .addParam("Globals", globals)
-            .addParam("DbParams", dbIn)
-            .addParam("DbOutParams", dbOut)
-            .addParam("InputTable", tabIn)
-            .addParam("OutputTable", tabOut)
-            .addParam("MaskingProfile", profileId)
-            .addCommand(project)
-            .addCommand(retval);
-        final List<String> backupCommand = new ArrayList<>(currentCommand);
-        int exitCode = executeCommand(true);
-        if (exitCode != 0) {
-            // Job might need a reset.
-            // Command format:
-            //   dsjob -run -mode RESET -wait dstage1 MaskJdbc."$INSTID"
-            initCommand()
-                .setDescription("Reset a failed job")
-                .addCommand("-run")
-                .addCommand("-mode")
-                .addCommand("RESET")
-                .addCommand("-wait")
-                .addCommand(project)
-                .addCommand(retval)
-                .executeCommand();
-            // Re-running the original job
-            currentCommand.clear();
-            currentCommand.addAll(backupCommand);
-            setDescription("Start new job")
-                .executeCommand();
         }
         return retval;
     }
@@ -163,35 +133,55 @@ public class JobManager {
         return null;
     }
 
-    private List<String> getJobCommandList() {
-        if (jobCommandList == null) {
-            jobCommandList = new ArrayList<String>(
-                    new StringTokenizer(jobCommand).getTokenList()
-            );
+    public String startJob(String jobType, String jobInst, String batchId,
+            String globals, String dbIn, String dbOut,
+            String tabIn, String tabOut, String profileId) {
+        final Map<String,String> subst = new HashMap<>();
+        final String retval = jobType + "." + jobInst;
+        // Command format:
+	// $DSJOB -run -param BatchId="$BATCH_ID" -param Globals=default
+	//  -param DbParams="$DB_SRC" -param DbOutParams="$DB_DST"
+	//  -param InputTable="$TABNAME" -param OutputTable="$TABNAME"
+	//  -param MaskingProfile="$TABPROF"
+	//  dstage1 MaskJdbc."$INSTID"
+        subst.clear();
+        subst.put("globalsId", globals);
+        subst.put("batchId", batchId);
+        subst.put("dbIn", dbIn);
+        subst.put("dbOut", dbOut);
+        subst.put("tableIn", tabIn);
+        subst.put("tableOut", tabOut);
+        subst.put("profileId", profileId);
+        subst.put("jobId", retval);
+        subst.put("project", project);
+        initCommand(subst, dsjobRun, "Start new job");
+        final List<String> backupCommand = new ArrayList<>(currentCommand);
+        int exitCode = executeCommand(true);
+        if (exitCode != 0) {
+            // Job might need a reset.
+            // Command format:
+            //   dsjob -run -mode RESET -wait dstage1 MaskJdbc."$INSTID"
+            subst.clear();
+            subst.put("jobId", retval);
+            subst.put("project", project);
+            initCommand(subst, dsjobReset, "Reset a failed job")
+                .executeCommand();
+            // Re-running the original job
+            currentCommand.clear();
+            currentCommand.addAll(backupCommand);
+            currentDescription = "Start new job after reset";
+            executeCommand();
         }
-        return jobCommandList;
+        return retval;
     }
 
-    private JobManager initCommand() {
-        currentDescription = null;
+    private JobManager initCommand(Map<String,String> m, String templ, String desc) {
+        final String text = new StringSubstitutor(m).replace(templ).trim();
+        currentDescription = desc;
         currentCommand.clear();
-        currentCommand.addAll(getJobCommandList());
-        return this;
-    }
-
-    private JobManager setDescription(String v) {
-        currentDescription = v;
-        return this;
-    }
-
-    private JobManager addCommand(String v) {
-        currentCommand.add(v);
-        return this;
-    }
-
-    private JobManager addParam(String k, String v) {
-        currentCommand.add("-param");
-        currentCommand.add(k + "=" + v);
+        currentCommand.addAll(new ArrayList<>(
+                new StringTokenizer(text).getTokenList()
+        ));
         return this;
     }
 
@@ -270,7 +260,8 @@ public class JobManager {
         if (v==null)
             return;
         for (String s : v) {
-            LOG.info("{} {}", prefix, v);
+            if (s!=null && s.length() > 0)
+                LOG.info("{} {}", prefix, s);
         }
     }
 
