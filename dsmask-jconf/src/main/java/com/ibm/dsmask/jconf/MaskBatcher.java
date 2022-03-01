@@ -378,7 +378,6 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
                     ji.getJobState(),
                     ji.getStartTime(),
                     ji.getJobId());
-            ++countStoppedJobs;
             try {
                 jm.stopJob(ji.getJobId());
                 LOG.info("\tJob stopped!");
