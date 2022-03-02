@@ -12,10 +12,11 @@
  */
 package com.ibm.dsmask.jconf;
 
-import com.ibm.dsmask.jconf.beans.Utils;
-import com.ibm.dsmask.jconf.fio.FioGenerator;
 import java.io.FileInputStream;
 import java.util.Properties;
+import com.ibm.dsmask.jconf.beans.Utils;
+import com.ibm.dsmask.jconf.fio.FioGenerator;
+import com.ibm.dsmask.util.DsMaskVersion;
 
 /**
  * Dictionary builder entry point.
@@ -49,6 +50,9 @@ public class BuildDict {
                         + " jobfile.xml");
                 System.exit(1);
             }
+
+            LOG.info("DsMask {} BuildDict", DsMaskVersion.VERSION);
+
             final Properties props = new Properties();
             try (FileInputStream fis = new FileInputStream(args[0])) {
                 props.loadFromXML(fis);

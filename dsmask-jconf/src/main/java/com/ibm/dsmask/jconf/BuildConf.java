@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import com.ibm.dsmask.jconf.impl.*;
 import com.ibm.dsmask.jconf.beans.*;
 import com.ibm.dsmask.util.PasswordVault;
+import com.ibm.dsmask.util.DsMaskVersion;
 
 /**
  * dsmask-jconf driver program (entry point).
@@ -98,7 +99,7 @@ public class BuildConf implements Runnable {
     }
 
     private void runImpl() throws Exception {
-        LOG.info("DsMask configurator started.");
+        LOG.info("DsMask {} BuildConf", DsMaskVersion.VERSION);
         // Loading the table information and data classes.
         readTablesAndClasses();
         // load masking rules

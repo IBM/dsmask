@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import com.ibm.dsmask.util.DsMaskVersion;
 
 /**
  *
@@ -64,7 +65,7 @@ public class UniqService {
     }
 
     public void run() throws Exception {
-        LOG.info("Configuring...");
+        LOG.info("DsMask {} UniqService", DsMaskVersion.VERSION);
         // Handle shutdown signal
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

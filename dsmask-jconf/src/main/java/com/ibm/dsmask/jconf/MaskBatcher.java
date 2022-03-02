@@ -27,6 +27,7 @@ import org.apache.commons.text.StringSubstitutor;
 import com.ibm.dsmask.jconf.beans.*;
 import com.ibm.dsmask.jconf.impl.*;
 import com.ibm.dsmask.util.PasswordVault;
+import com.ibm.dsmask.util.DsMaskVersion;
 
 /**
  * Data masking batch job executor (entry point).
@@ -156,6 +157,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
 
     @Override
     public void run() {
+        LOG.info("DsMask {} MaskBatcher", DsMaskVersion.VERSION);
         try {
             LOG.info("Starting operation {} on tableSet '{}'",
                     mode, tableSetName);
