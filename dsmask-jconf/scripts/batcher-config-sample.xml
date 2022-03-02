@@ -12,6 +12,9 @@
 <entry key="xmeta.password">P@ssw0rd</entry>
 -->
 
+<!-- Number of concurrent invocations of dsjob tool -->
+<entry key="dsjob.parallel">5</entry>
+
 <!-- Possible commands to execute the dsjob tool, 
      often executed through passwordless SSH.
      Example entries are shown below.

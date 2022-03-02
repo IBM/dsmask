@@ -62,6 +62,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
 
     private MetadataIgcReader igcReader = null;
     private TableSetManager tsManager = null;
+    private JobManager jobManager = null;
 
     private String confJobName;
     private String confJobProject;
@@ -146,6 +147,10 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
 
     @Override
     public void close() throws Exception {
+        if (jobManager != null) {
+            jobManager.close();
+            jobManager = null;
+        }
         if (igcReader!=null) {
             igcReader.close();
             igcReader = null;
@@ -306,11 +311,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
      */
     private void runRun() throws Exception {
         // The job manager
-        final JobManager jm = new JobManager(
-                configJobProject(),
-                configJobName(),
-                this
-        );
+        final JobManager jm = grabJobManager();
         // The tables to be masked
         List<TableName> tables = grabTsManager().readTableSet(tableSetName);
         if (tables.isEmpty()) {
@@ -336,7 +337,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
         // concurrent job startup attempts for tables we want to process below.
 
         final String batchId = UUID.randomUUID().toString();
-        LOG.info("Starting new masking jobs with batch ID {}...", batchId);
+        LOG.info("Masking jobs batch ID {}", batchId);
 
         // Set repeatable parameters for job startup.
         jm.setBatchId(batchId);
@@ -349,17 +350,24 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
         subst.put("dbname_source", configDbSource());
         subst.put("dbname_target", configDbTarget());
 
+        final List<JobDef> jobDefs = new ArrayList<>();
+
         // Start new masking job for each table.
         for (TableName tn : tables) {
             subst.put("schema", tn.getSchema());
             subst.put("table", tn.getTable());
             final StringSubstitutor ss = new StringSubstitutor(subst);
-            String jobId = jm.startJob(
+            jobDefs.add( new JobDef(
                     ss.replace(configTabSource()),
                     ss.replace(configTabTarget()),
                     ss.replace(configTabProfile())
-            );
-            LOG.info("\tStarted job {}", jobId);
+            ) );
+        }
+
+        try {
+            jm.startJobs(jobDefs);
+        } catch(Exception ex) {
+            LOG.error("Failed to schedule job startup requests", ex);
         }
     }
 
@@ -368,27 +376,20 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
      * @throws Exception
      */
     private void runStop() throws Exception {
-        // The job manager
-        final JobManager jm = new JobManager(
-                configJobProject(),
-                configJobName(),
-                this
-        );
-        int countStoppedJobs = 0;
-        for (JobInfo ji : filterJobs(jm.listJobs())) {
-            LOG.info("Found job: {}\t{}\t{}",
+        List<String> jobIds = new ArrayList<>();
+        for (JobInfo ji : filterJobs( grabJobManager().listJobs() )) {
+            LOG.info("Found a running job: {}\t{}\t{}",
                     ji.getJobState(),
                     ji.getStartTime(),
                     ji.getJobId());
-            try {
-                jm.stopJob(ji.getJobId());
-                LOG.info("\tJob stopped!");
-                ++countStoppedJobs;
-            } catch(Exception ex) {
-                LOG.error("Failed to stop job", ex);
-            }
+            jobIds.add(ji.getJobId());
         }
-        LOG.info("Total jobs stopped: {}", countStoppedJobs);
+        LOG.info("Scheduling job stop requests...");
+        try {
+            grabJobManager().stopJobs(jobIds);
+        } catch(Exception ex) {
+            LOG.error("Failed to execute job stop requests", ex);
+        }
     }
 
     /**
@@ -426,7 +427,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     }
 
     private MetadataIgcReader grabIgcReader() throws Exception {
-        if (igcReader!=null)
+        if (igcReader != null)
             return igcReader;
         final PasswordVault.Entry e = PasswordVault.readProps
             (propsConfig, CONF_XMETA_VAULT, CONF_XMETA_USER, CONF_XMETA_PASS);
@@ -435,10 +436,17 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     }
 
     private TableSetManager grabTsManager() {
-        if (tsManager!=null)
+        if (tsManager != null)
             return tsManager;
         tsManager = new TableSetManager(getOption(CONF_TABSET_DIR));
         return tsManager;
+    }
+
+    private JobManager grabJobManager() {
+        if (jobManager != null)
+            return jobManager;
+        jobManager = new JobManager(configJobProject(), configJobName(), this);
+        return jobManager;
     }
 
     public static enum Mode {
