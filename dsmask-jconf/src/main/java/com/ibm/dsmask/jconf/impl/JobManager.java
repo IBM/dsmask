@@ -50,6 +50,8 @@ public class JobManager {
     private final String dsjobRun;
     private final String dsjobStop;
 
+    private final List<String> dsjobExecList;
+
     // Stable values for job start
     private String globalsId;
     private String batchId;
@@ -74,6 +76,8 @@ public class JobManager {
         this.dsjobReset = conf.getOption(DSJOB_RESET);
         this.dsjobRun = conf.getOption(DSJOB_RUN);
         this.dsjobStop = conf.getOption(DSJOB_STOP);
+        this.dsjobExecList = new StringTokenizer(this.dsjobExec.trim())
+                .getTokenList();
     }
 
     public String getGlobalsId() {
@@ -112,11 +116,9 @@ public class JobManager {
         // Command output:
         //   one row per job invocation ID
         subst.clear();
-        subst.put("dsjob", dsjobExec);
         subst.put("project", project);
         subst.put("jobType", jobType);
-        initCommand(subst, dsjobList, "List job invocations")
-            .executeCommand();
+        cmdRun(subst, dsjobList, "List job invocations");
         final List<JobInfo> retval = new ArrayList<>();
         final List<String> invocations = new ArrayList<>(workOutput);
         // For each job invocation, grab the execution status.
@@ -130,11 +132,9 @@ public class JobManager {
             // Command output:
             //   Job Status	: RUN OK (1)
             subst.clear();
-            subst.put("dsjob", dsjobExec);
             subst.put("project", project);
             subst.put("jobId", jobId);
-            initCommand(subst, dsjobStatus, "Retrieve job info")
-                .executeCommand();
+            cmdRun(subst, dsjobStatus, "Retrieve job info");
             final JobInfo ji = grabJobInfo(jobId, workOutput);
             if (ji != null)
                 retval.add(ji);
@@ -185,7 +185,6 @@ public class JobManager {
 	//  -param MaskingProfile="$TABPROF"
 	//  dstage1 MaskJdbc."$INSTID"
         subst.clear();
-        subst.put("dsjob", dsjobExec);
         subst.put("globalsId", globalsId);
         subst.put("batchId", batchId);
         subst.put("dbIn", inputDb);
@@ -195,48 +194,52 @@ public class JobManager {
         subst.put("profileId", profileId);
         subst.put("jobId", retval);
         subst.put("project", project);
-        initCommand(subst, dsjobRun, "Start new job");
+        cmdInit(subst, dsjobRun, "Start new job");
         final List<String> backupCommand = new ArrayList<>(currentCommand);
-        int exitCode = executeCommand(true);
+        int exitCode = cmdRun(true);
         if (exitCode != 0) {
             // Job might need a reset.
             // Command format:
             //   dsjob -run -mode RESET -wait dstage1 MaskJdbc."$INSTID"
             subst.clear();
-            subst.put("dsjob", dsjobExec);
             subst.put("jobId", retval);
             subst.put("project", project);
-            initCommand(subst, dsjobReset, "Reset a failed job")
-                .executeCommand();
+            cmdRun(subst, dsjobReset, "Reset a failed job");
             // Re-running the original job
             currentCommand.clear();
             currentCommand.addAll(backupCommand);
             currentDescription = "Start new job after reset";
-            executeCommand();
+            cmdRun();
         }
         return retval;
     }
 
     public void stopJob(String jobId) {
         final Map<String,String> subst = new HashMap<>();
-        subst.put("dsjob", dsjobExec);
         subst.put("project", project);
         subst.put("jobId", jobId);
-        initCommand(subst, dsjobStop, "Stop a running job")
-            .executeCommand();
+        cmdRun(subst, dsjobStop, "Stop a running job");
     }
 
-    private JobManager initCommand(Map<String,String> m, String templ, String desc) {
-        final String text = new StringSubstitutor(m).replace(templ).trim();
+    private void cmdInit(Map<String,String> m, String templ, String desc) {
         currentDescription = desc;
         currentCommand.clear();
-        currentCommand.addAll(new ArrayList<>(
-                new StringTokenizer(text).getTokenList()
-        ));
-        return this;
+        // Split the command into the operands.
+        final List<String> splitCommand =
+                new StringTokenizer(templ.trim()).getTokenList();
+        final StringSubstitutor replacer = new StringSubstitutor(m);
+        for (String item : splitCommand) {
+            if ("${dsjob}".equalsIgnoreCase(item)) {
+                // Special case for dsjob tool invocation.
+                currentCommand.addAll(dsjobExecList);
+            } else {
+                // Substitute variables into each operand.
+                currentCommand.add(replacer.replace(item));
+            }
+        }
     }
 
-    private int executeCommand(boolean allowFailure) {
+    private int cmdRun(boolean allowFailure) {
         workOutput.clear();
         workErrors.clear();
         int exitCode = 0;
@@ -270,8 +273,13 @@ public class JobManager {
                 + " has FAILED with status code " + exitCode);
     }
 
-    private void executeCommand() {
-        executeCommand(false);
+    private void cmdRun() {
+        cmdRun(false);
+    }
+
+    private void cmdRun(Map<String,String> m, String templ, String desc) {
+        cmdInit(m, templ, desc);
+        cmdRun();
     }
 
     /**
