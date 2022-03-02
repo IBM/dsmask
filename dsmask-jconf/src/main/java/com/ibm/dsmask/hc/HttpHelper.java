@@ -12,6 +12,7 @@
  */
 package com.ibm.dsmask.hc;
 
+import com.ibm.dsmask.util.PasswordVault;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -44,6 +45,15 @@ import org.apache.hc.core5.http.ssl.TLS;
  * @author zinal
  */
 public class HttpHelper {
+
+    public static CloseableHttpClient newClient(String baseUrl, String vaultId)
+            throws Exception {
+        PasswordVault.Entry e = new PasswordVault().getEntry(vaultId);
+        if (e==null) {
+            throw new RuntimeException("Illegal password vault ID: " + vaultId);
+        }
+        return newClient(baseUrl, e.login, e.password);
+    }
 
     public static CloseableHttpClient newClient(String baseUrl, String login,
             String password) throws Exception {

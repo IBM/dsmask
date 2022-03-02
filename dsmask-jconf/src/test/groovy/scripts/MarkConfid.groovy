@@ -198,9 +198,15 @@ new File("MarkConfid-config.xml").withInputStream { is -> conf.loadFromXML(is) }
 // The re-usable connection
 G.IIS_URL = conf.getProperty("iis.url", "https://localhost:9443")
 G.IIS_SEARCH_URL = G.IIS_URL + "/ibm/iis/igc-rest/v1/search"
-final hc = HttpHelper.newClient( G.IIS_SEARCH_URL,
-        conf.getProperty("iis.username", "isadmin"),
-        conf.getProperty("iis.password", "P@ssw0rd") )
+final CloseableHttpClient hc;
+if ( conf.getProperty("iis.vault") != null ) {
+    hc = HttpHelper.newClient( G.IIS_SEARCH_URL,
+            conf.getProperty("iis.vault", "isadmin") )
+} else {
+    hc = HttpHelper.newClient( G.IIS_SEARCH_URL,
+            conf.getProperty("iis.username", "isadmin"),
+            conf.getProperty("iis.password", "P@ssw0rd") )
+}
 // Main algorithm is executed on top of HTTP connection
 hc.withCloseable { iis -> runAll(iis, conf) }
 

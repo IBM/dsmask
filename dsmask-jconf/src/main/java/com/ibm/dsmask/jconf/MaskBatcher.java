@@ -428,25 +428,9 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
     private MetadataIgcReader grabIgcReader() throws Exception {
         if (igcReader!=null)
             return igcReader;
-        final String jdbcUrl = getOption(CONF_XMETA_URL);
-        final String username;
-        final String password;
-        final String vaultKey = propsConfig.getProperty(CONF_XMETA_VAULT);
-        if (vaultKey!=null && vaultKey.length() > 0) {
-            final PasswordVault.Entry e = new PasswordVault().getEntry(vaultKey);
-            if (e == null) {
-                throw new RuntimeException("Missing password vault "
-                        + "entry for key " + vaultKey
-                        + ", please check property " + CONF_XMETA_VAULT
-                        + " in the job file");
-            }
-            username = e.login;
-            password = e.password;
-        } else {
-            username = getOption(CONF_XMETA_USER);
-            password = getOption(CONF_XMETA_PASS);
-        }
-        igcReader = new MetadataIgcReader(jdbcUrl, username, password);
+        final PasswordVault.Entry e = PasswordVault.readProps
+            (propsConfig, CONF_XMETA_VAULT, CONF_XMETA_USER, CONF_XMETA_PASS);
+        igcReader = new MetadataIgcReader(getOption(CONF_XMETA_URL), e.login, e.password);
         return igcReader;
     }
 

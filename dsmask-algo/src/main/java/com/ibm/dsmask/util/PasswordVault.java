@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -278,6 +279,33 @@ public class PasswordVault {
         @SuppressWarnings("unchecked")
         Map<String, Entry> work = (Map<String, Entry>) ois.readObject();
         return new HashMap<>(work);
+    }
+
+    public static Entry readProps(Properties props, String propVault,
+            String propUsername, String propPassword) {
+        final String vaultKey = props.getProperty(propVault);
+        if (vaultKey!=null && vaultKey.length() > 0) {
+            final PasswordVault.Entry e = new PasswordVault().getEntry(vaultKey);
+            if (e == null) {
+                throw new RuntimeException("Missing password vault "
+                        + "entry for key " + vaultKey
+                        + ", please check property " + propVault
+                        + " in the configuration");
+            }
+            return e;
+        } else {
+            String username = props.getProperty(propUsername);
+            if (username==null) {
+                 throw new RuntimeException("Missing property ["
+                         + propUsername + "] in the configuration");
+            }
+            String password = props.getProperty(propPassword);
+            if (password==null) {
+                 throw new RuntimeException("Missing property ["
+                         + propPassword + "] in the configuration");
+            }
+            return new Entry(username, password);
+        }
     }
 
     public static class Entry implements Serializable {

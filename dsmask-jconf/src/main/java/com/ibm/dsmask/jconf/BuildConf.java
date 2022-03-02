@@ -189,25 +189,10 @@ public class BuildConf implements Runnable {
 
         if (useIGC) {
             final String url = getConfig(CONF_IGC_URL);
-            final String username;
-            final String password;
-            final String vaultKey = props.getProperty(CONF_IGC_VAULT);
-            if (vaultKey==null) {
-                username = getConfig(CONF_IGC_USER);
-                password = getConfig(CONF_IGC_PASS);
-            } else {
-                final PasswordVault.Entry e = new PasswordVault().getEntry(vaultKey);
-                if (e == null) {
-                    throw new RuntimeException("Missing password vault "
-                            + "entry for key " + vaultKey
-                            + ", please check property " + CONF_IGC_VAULT
-                            + " in the job file");
-                }
-                username = e.login;
-                password = e.password;
-            }
+            final PasswordVault.Entry e = PasswordVault.readProps
+                (props, CONF_IGC_VAULT, CONF_IGC_USER, CONF_IGC_PASS);
             try (MetadataIgcReader reader
-                    = new MetadataIgcReader(url, username, password)) {
+                    = new MetadataIgcReader(url, e.login, e.password)) {
                 for ( TableInfo ti :  reader.readTables() ) {
                     tableInfo.put(ti.getFullName().toLowerCase(), ti);
                 }

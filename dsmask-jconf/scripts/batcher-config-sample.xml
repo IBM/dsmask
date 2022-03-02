@@ -13,10 +13,12 @@
 -->
 
 <!-- Possible commands to execute the dsjob tool, 
-     typically through passwordless SSH.
+     often executed through passwordless SSH.
      Example entries are shown below.
-<entry key="dsjob.exec">ssh -p 2204 admin@dsmask1 C:\IBM\InformationServer\Server\DSEngine\bin\dsjob.exe</entry>
+<entry key="dsjob.exec">C:\IBM\InformationServer\Server\DSEngine\bin\dsjob.exe</entry>
+<entry key="dsjob.exec">/opt/IBM/InformationServer/Server/DSEngine/bin/dsjob</entry>
 <entry key="dsjob.exec">ssh dsadm@dsmask1 /opt/IBM/InformationServer/Server/DSEngine/bin/dsjob</entry>
+<entry key="dsjob.exec">ssh -p 2204 admin@dsmask1 C:\IBM\InformationServer\Server\DSEngine\bin\dsjob.exe</entry>
 -->
 <entry key="dsjob.exec">
     ssh -p 2204 admin@dsmask1 C:\IBM\InformationServer\Server\DSEngine\bin\dsjob.exe

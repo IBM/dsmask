@@ -3,8 +3,11 @@
 <properties>
 <comment>Configuration file for dsmask MaskConfid marker script</comment>
 <entry key="iis.url">https://localhost:9443</entry>
+<entry key="iis.vault">isadmin</entry>
+<!--
 <entry key="iis.username">isadmin</entry>
 <entry key="iis.password">P@ssw0rd</entry>
+-->
 <entry key="term.G.0">DsMask.G1</entry>
 <entry key="term.G.1">DsMask.G2</entry>
 <entry key="term.G.2">DsMask.G3</entry>
