@@ -73,25 +73,6 @@
         </includes>
     </fileSet>
     <fileSet>
-        <directory>${basedir}/../batcher</directory>
-        <outputDirectory>batcher</outputDirectory>
-        <includes>
-            <include>*.sh</include>
-        </includes>
-        <fileMode>750</fileMode>
-    </fileSet>
-    <fileSet>
-        <directory>${basedir}/../batcher</directory>
-        <outputDirectory>batcher</outputDirectory>
-        <includes>
-            <include>*.xml</include>
-            <include>*.txt</include>
-            <include>*.groovy</include>
-            <include>*.bat</include>
-            <include>*.cmd</include>
-        </includes>
-    </fileSet>
-    <fileSet>
         <directory>${basedir}/../dsjob</directory>
         <outputDirectory>dsjob</outputDirectory>
         <includes>
