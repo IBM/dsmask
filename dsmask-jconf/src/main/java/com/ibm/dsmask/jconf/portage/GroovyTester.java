@@ -12,7 +12,7 @@
  */
 package com.ibm.dsmask.jconf.portage;
 
-import com.ibm.dsmask.util.DsMaskUtil;
+import net.dsmask.util.DsMaskUtil;
 import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;

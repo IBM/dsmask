@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 import com.ibm.dsmask.jconf.beans.Utils;
 import com.ibm.dsmask.jconf.fio.FioGenerator;
-import com.ibm.dsmask.util.DsMaskVersion;
+import net.dsmask.DsMaskVersion;
 
 /**
  * Dictionary builder entry point.

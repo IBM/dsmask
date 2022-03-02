@@ -12,6 +12,8 @@
  */
 package com.ibm.dsmask.impl;
 
+import net.dsmask.algo.CharClassSet;
+import net.dsmask.algo.CharzTable;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.ibm.dsmask.algo.*;
 import com.ibm.dsmask.beans.*;
 import com.ibm.dsmask.ops.*;
 

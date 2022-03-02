@@ -12,6 +12,7 @@
  */
 package com.ibm.dsmask.util;
 
+import net.dsmask.util.SimpleDiegester;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -19,7 +19,9 @@ import com.ibm.dsmask.beans.MskContext;
 import com.ibm.dsmask.beans.MskKey;
 import com.ibm.dsmask.impl.XKeeper;
 import com.ibm.dsmask.impl.XServices;
-import com.ibm.dsmask.uniq.*;
+import net.dsmask.uniq.UniqProviderFactory;
+import net.dsmask.uniq.UniqProvider;
+import net.dsmask.uniq.UniqStore;
 
 /**
  *

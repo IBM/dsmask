@@ -12,6 +12,7 @@
  */
 package com.ibm.dsmask.algo;
 
+import net.dsmask.algo.BasicDigest;
 import org.junit.Assert;
 import org.junit.Test;
 

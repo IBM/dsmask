@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.text.StringTokenizer;
-import com.ibm.dsmask.util.DsMaskUtil;
+import net.dsmask.util.DsMaskUtil;
 
 /**
  * Global utilities.

@@ -12,6 +12,8 @@
  */
 package com.ibm.dsmask.algo;
 
+import net.dsmask.algo.CharzTable;
+import net.dsmask.algo.CharzTranslate;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.Assert;

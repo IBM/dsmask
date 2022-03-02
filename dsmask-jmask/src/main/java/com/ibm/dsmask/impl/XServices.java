@@ -13,8 +13,8 @@
 package com.ibm.dsmask.impl;
 
 import com.ibm.nex.odpp.ODPP;
-import com.ibm.dsmask.uniq.UniqProvider;
-import com.ibm.dsmask.uniq.UniqProviderFactory;
+import net.dsmask.uniq.UniqProvider;
+import net.dsmask.uniq.UniqProviderFactory;
 import com.ibm.dsmask.SafeLogger;
 import com.ibm.dsmask.ops.AlgoInitException;
 

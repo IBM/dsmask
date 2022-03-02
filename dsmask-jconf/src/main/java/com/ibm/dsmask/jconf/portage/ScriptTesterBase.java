@@ -17,7 +17,7 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import com.ibm.dsmask.util.ByteArrayWrapper;
+import net.dsmask.util.ByteArrayWrapper;
 import com.ibm.dsmask.jconf.beans.*;
 
 /**

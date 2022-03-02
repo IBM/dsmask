@@ -17,8 +17,8 @@ import java.util.Set;
 import com.ibm.dsmask.beans.*;
 import com.ibm.dsmask.ops.AlSimpleVector;
 import com.ibm.dsmask.ops.AlgoExecException;
-import com.ibm.dsmask.uniq.UniqRequest;
-import com.ibm.dsmask.uniq.UniqResponse;
+import net.dsmask.uniq.UniqRequest;
+import net.dsmask.uniq.UniqResponse;
 
 /**
  * Calculation workspace for the current step

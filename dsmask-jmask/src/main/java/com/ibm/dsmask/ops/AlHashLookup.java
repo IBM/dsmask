@@ -19,7 +19,7 @@ import java.util.List;
 import org.apache.commons.collections.map.LRUMap;
 import com.ibm.dsmask.impl.*;
 import com.ibm.dsmask.beans.MskFunc;
-import com.ibm.dsmask.algo.BasicHasher;
+import net.dsmask.algo.BasicHasher;
 
 /**
  * Find substitution values in a hash table.

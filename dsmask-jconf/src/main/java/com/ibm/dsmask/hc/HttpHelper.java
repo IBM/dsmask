@@ -12,7 +12,7 @@
  */
 package com.ibm.dsmask.hc;
 
-import com.ibm.dsmask.util.PasswordVault;
+import net.dsmask.util.PasswordVault;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;

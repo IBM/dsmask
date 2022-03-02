@@ -15,7 +15,7 @@ package com.ibm.dsmask.jconf.fio;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
-import com.ibm.dsmask.algo.PureJavaCrc32;
+import net.dsmask.algo.PureJavaCrc32;
 
 /**
  * Compare two NamesBean values, according to their salted hashes.

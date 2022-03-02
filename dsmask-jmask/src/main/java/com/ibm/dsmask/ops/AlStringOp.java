@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.apache.commons.text.WordUtils;
 import com.ibm.dsmask.beans.MskFunc;
-import com.ibm.dsmask.algo.CyrillicTranslit;
+import net.dsmask.algo.CyrillicTranslit;
 
 /**
  *

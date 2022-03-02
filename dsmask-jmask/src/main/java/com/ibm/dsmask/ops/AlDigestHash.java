@@ -15,7 +15,7 @@ package com.ibm.dsmask.ops;
 import java.util.List;
 import com.ibm.dsmask.impl.*;
 import com.ibm.dsmask.beans.MskFunc;
-import com.ibm.dsmask.algo.BasicDigest;
+import net.dsmask.algo.BasicDigest;
 
 /**
  * Hash value supporting algorithm.

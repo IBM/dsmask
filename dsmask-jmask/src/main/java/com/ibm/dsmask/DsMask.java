@@ -22,7 +22,7 @@ import com.ibm.is.cc.javastage.api.*;
 import com.ibm.dsmask.beans.*;
 import com.ibm.dsmask.ds.DsLink;
 import com.ibm.dsmask.impl.*;
-import com.ibm.dsmask.uniq.UniqClientFactory;
+import net.dsmask.uniq.UniqClientFactory;
 
 /**
  * DataStage masking operator

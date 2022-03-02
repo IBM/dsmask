@@ -13,8 +13,8 @@
 package com.ibm.dsmask.ops;
 
 import java.util.List;
-import com.ibm.dsmask.algo.CharClassSet;
-import com.ibm.dsmask.algo.MaskFPE;
+import net.dsmask.algo.CharClassSet;
+import net.dsmask.algo.MaskFPE;
 import com.ibm.dsmask.beans.*;
 import com.ibm.dsmask.impl.Utils;
 import com.ibm.dsmask.impl.XKeeper;

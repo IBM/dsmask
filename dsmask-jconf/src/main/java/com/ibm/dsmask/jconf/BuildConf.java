@@ -22,8 +22,8 @@ import java.util.Properties;
 import java.util.TreeMap;
 import com.ibm.dsmask.jconf.impl.*;
 import com.ibm.dsmask.jconf.beans.*;
-import com.ibm.dsmask.util.PasswordVault;
-import com.ibm.dsmask.util.DsMaskVersion;
+import net.dsmask.util.PasswordVault;
+import net.dsmask.DsMaskVersion;
 
 /**
  * dsmask-jconf driver program (entry point).

@@ -12,10 +12,13 @@
  */
 package com.ibm.dsmask.uniq;
 
+import net.dsmask.uniq.UniqStore;
+import net.dsmask.uniq.UniqResponse;
+import net.dsmask.uniq.UniqRequest;
 import org.junit.Assert;
 import org.junit.Test;
-import com.ibm.dsmask.algo.CharClassSet;
-import com.ibm.dsmask.algo.MaskFPE;
+import net.dsmask.algo.CharClassSet;
+import net.dsmask.algo.MaskFPE;
 
 /**
  *

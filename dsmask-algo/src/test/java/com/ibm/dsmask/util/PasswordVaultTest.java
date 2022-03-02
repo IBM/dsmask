@@ -12,6 +12,8 @@
  */
 package com.ibm.dsmask.util;
 
+import net.dsmask.util.DsMaskUtil;
+import net.dsmask.util.PasswordVault;
 import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;

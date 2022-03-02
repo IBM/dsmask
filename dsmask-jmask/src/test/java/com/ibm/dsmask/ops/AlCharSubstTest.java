@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import com.ibm.dsmask.beans.*;
-import com.ibm.dsmask.algo.CharzTable;
+import net.dsmask.algo.CharzTable;
 import com.ibm.dsmask.mock.TestResources;
 
 /**

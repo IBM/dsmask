@@ -12,6 +12,8 @@
  */
 package com.ibm.dsmask.algo;
 
+import net.dsmask.algo.MaskFPE;
+import net.dsmask.algo.CharClassSet;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

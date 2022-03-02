@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import com.ibm.dsmask.impl.*;
 import com.ibm.dsmask.beans.MskFunc;
-import com.ibm.dsmask.algo.PureJavaCrc32;
+import net.dsmask.algo.PureJavaCrc32;
 
 /**
  * Date hash-based consistent masking.

@@ -14,7 +14,7 @@ package com.ibm.dsmask.jconf.impl;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import com.ibm.dsmask.util.DsMaskUtil;
+import net.dsmask.util.DsMaskUtil;
 
 /**
  *

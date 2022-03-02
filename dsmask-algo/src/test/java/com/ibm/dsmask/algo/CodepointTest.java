@@ -14,7 +14,7 @@ package com.ibm.dsmask.algo;
 
 import org.junit.Assert;
 import org.junit.Test;
-import com.ibm.dsmask.util.DsMaskUtil;
+import net.dsmask.util.DsMaskUtil;
 
 /**
  *

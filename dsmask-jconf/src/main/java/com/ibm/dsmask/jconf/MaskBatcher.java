@@ -26,8 +26,8 @@ import java.util.UUID;
 import org.apache.commons.text.StringSubstitutor;
 import com.ibm.dsmask.jconf.beans.*;
 import com.ibm.dsmask.jconf.impl.*;
-import com.ibm.dsmask.util.PasswordVault;
-import com.ibm.dsmask.util.DsMaskVersion;
+import net.dsmask.util.PasswordVault;
+import net.dsmask.DsMaskVersion;
 
 /**
  * Data masking batch job executor (entry point).
