@@ -29,6 +29,6 @@ if [ "$BASE" = "." ]; then BASE=".."; else BASE=`dirname $BASE`; fi
 cp -v $BASE/dsmask-uniq/target/dsmask-uniq-*-bin.zip $DEST/
 cp -v $BASE/dsmask-jconf/target/dsmask-jconf-*-bin.zip $DEST/
 cp -v $BASE/dsmask-jmask/target/dsmask-jmask-*-bin.zip $DEST/
-cp -v $BASE/ia-bundle-ru/target/ia-bundle-ru-*-bin.zip $DEST/
+cp -v $BASE/ia-bundle-ru/target/ia-bundle-ru-bin.zip $DEST/
 
 # End Of File
