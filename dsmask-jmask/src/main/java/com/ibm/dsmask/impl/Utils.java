@@ -151,9 +151,8 @@ public class Utils extends DsMaskUtil {
     }
 
     public static int getConfigInt(List<String[]> lines, String key, int defval) {
-        if (!hasConfigEntry(lines, key)) {
+        if (!hasConfigEntry(lines, key))
             return defval;
-        }
         String val = getConfigValue(lines, key);
         try {
             return Integer.parseInt(val);
@@ -164,9 +163,8 @@ public class Utils extends DsMaskUtil {
     }
 
     public static long getConfigLong(List<String[]> lines, String key, long defval) {
-        if (!hasConfigEntry(lines, key)) {
+        if (!hasConfigEntry(lines, key))
             return defval;
-        }
         String val = getConfigValue(lines, key);
         try {
             return Long.parseLong(val);
@@ -174,6 +172,15 @@ public class Utils extends DsMaskUtil {
             throw new IllegalArgumentException("Incorrect value for key " + key
                 + ", expected integer, got input " + val);
         }
+    }
+
+    public static boolean getConfigBool(List<String[]> lines, String key, boolean defval) {
+        if (!hasConfigEntry(lines, key))
+            return defval;
+        final String v = getConfigValue(lines, key).trim();
+        if (v.length() == 0)
+            return defval;
+        return toBoolean(v);
     }
 
     /**

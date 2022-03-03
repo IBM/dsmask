@@ -35,8 +35,10 @@ public class AlFPE implements AlSimpleValue {
         String userKey = keeper.getUserKey(Utils.getConfigValue(conf, "key"));
         int skipBefore = Utils.getConfigInt(conf, "skip-before", 0);
         int skipAfter = Utils.getConfigInt(conf, "skip-after", 0);
+        boolean allowSame = Utils.getConfigBool(conf, "allow-same", false);
 
-        this.algo = new MaskFPE(charClassSet, userKey, skipBefore, skipAfter);
+        this.algo = new MaskFPE(charClassSet, userKey, 
+                skipBefore, skipAfter, allowSame);
     }
 
     @Override
