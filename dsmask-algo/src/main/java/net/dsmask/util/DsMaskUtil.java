@@ -14,6 +14,7 @@ package net.dsmask.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Objects;
 
 /**
  * Miscellaneous utility methods which are hard to put elsewhere.
@@ -21,6 +22,39 @@ import java.io.FileFilter;
  */
 public class DsMaskUtil {
 
+    /**
+     * Empty string - treated as a missing value.
+     */
+    public static final String NONE = "";
+
+    public static final String EOL = System.getProperty("line.separator");
+
+    public static String safe(String value) {
+        return (value==null) ? NONE : value.trim();
+    }
+
+    public static String lower(String value) {
+        return safe(value).toLowerCase();
+    }
+
+    public static boolean equalsCI(String a, String b) {
+        return (a == b) || safe(a).equalsIgnoreCase(safe(b));
+    }
+
+    public static boolean equalsNL(String a, String b) {
+        return Objects.equals(a, b)
+                || (a==null && (b==null || b.length()==0))
+                || (b==null && (a==null || a.length()==0));
+    }
+
+    public static boolean safeEquals(String a, String b) {
+        return (a==b) || safe(a).equals(safe(b));
+    }
+
+    public static int hashCode(String o) {
+        return o != null ? lower(o).hashCode() : 0;
+    }
+    
     /**
      * Convert the code point to a string representation
      * @param sb String builder to append the code point to, or null to allocate a new one

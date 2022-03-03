@@ -27,13 +27,6 @@ import net.dsmask.util.DsMaskUtil;
  */
 public class Utils extends DsMaskUtil {
 
-    public static final String NONE = "";
-    public static final String EOL = System.getProperty("line.separator");
-
-    public static String lower(String s) {
-        return (s==null) ? "" : s.trim().toLowerCase();
-    }
-
     public static <T> T getLast(final List<T> list) {
         if (list==null || list.isEmpty())
             return null;
