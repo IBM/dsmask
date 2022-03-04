@@ -7,7 +7,7 @@ Object[] invoke(String sign) {
   if ( "Ж".equalsIgnoreCase(sign) )
     return "F";
   if ( "М".equalsIgnoreCase(sign) )
-    return "F";
+    return "M";
   return sign;
 }
       ]]></text>
