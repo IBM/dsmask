@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dsmask-masking-rules>
 
+    <function name="gender" type="GroovyScript">
+      <text><![CDATA[
+Object[] invoke(String sign) {
+  if ( "Ж".equalsIgnoreCase(sign) )
+    return "F";
+  if ( "М".equalsIgnoreCase(sign) )
+    return "F";
+  return sign;
+}
+      ]]></text>
+      <text-input><![CDATA[
+return [ 'ж' ] as Object[]
+      ]]></text-input>
+    </function>
+
     <function name="name-male-hash" type="HashLookup">
         <![CDATA[
             DB dict-names
