@@ -15,6 +15,9 @@
         <step name="norm" function="name-norm">
             <ref pos="1"/>
         </step>
+        <step name="gender" function="gender">
+            <ref name="$" pos="1"/>
+        </step>
         <step name="hash-male" function="name-male-hash">
             <predicate><![CDATA[
 return 'M'.equalsIgnoreCase(input[1])
@@ -23,7 +26,7 @@ return 'M'.equalsIgnoreCase(input[1])
 return ['Пагосян Гагик Спартакович', 'M'] as Object[]
             ]]></predicate-input>
             <ref name="norm" pos="1"/>
-            <ref name="$" pos="1"/>
+            <ref name="gender" pos="1"/>
         </step>
         <step name="hash-female" function="name-female-hash">
             <predicate><![CDATA[
@@ -33,10 +36,10 @@ return 'F'.equalsIgnoreCase(input[1])
 return ['Смирнова Анна Теодоровна', 'F'] as Object[]
             ]]></predicate-input>
             <ref name="norm" pos="1"/>
-            <ref name="$" pos="1"/>
+            <ref name="gender" pos="1"/>
         </step>
         <step name="project" function="name-get-3">
-            <ref name="$" pos="1"/>
+            <ref name="gender" pos="1"/>
             <ref name="hash-male" pos="2"/>
             <ref name="hash-male" pos="3"/>
             <ref name="hash-male" pos="4"/>
@@ -53,6 +56,9 @@ return ['Смирнова Анна Теодоровна', 'F'] as Object[]
         <step name="norm" function="name-norm">
             <ref pos="2"/>
         </step>
+        <step name="gender" function="gender">
+            <ref name="$" pos="1"/>
+        </step>
         <step name="hash-male" function="name-male-hash">
             <predicate><![CDATA[
 return 'M'.equalsIgnoreCase(input[1])
@@ -61,7 +67,7 @@ return 'M'.equalsIgnoreCase(input[1])
 return ['Пагосян Гагик Спартакович', 'M'] as Object[]
             ]]></predicate-input>
             <ref name="norm" pos="1"/>
-            <ref name="$" pos="1"/>
+            <ref name="gender" pos="1"/>
         </step>
         <step name="hash-female" function="name-female-hash">
             <predicate><![CDATA[
@@ -71,10 +77,10 @@ return 'F'.equalsIgnoreCase(input[1])
 return ['Смирнова Анна Теодоровна', 'F'] as Object[]
             ]]></predicate-input>
             <ref name="norm" pos="1"/>
-            <ref name="$" pos="1"/>
+            <ref name="gender" pos="1"/>
         </step>
         <step name="project" function="name-get-1">
-            <ref name="$" pos="1"/>
+            <ref name="gender" pos="1"/>
             <ref name="hash-male" pos="1"/>
             <ref name="hash-female" pos="1"/>
         </step>
