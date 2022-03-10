@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,12 @@ package com.ibm.dsmask.util;
  */
 public class DsMaskVersion {
 
-    public static final String VERSION = "1.2-2022.03.10";
+    /**
+     * Version number in one of two format:
+     *   A.B-SNAPSHOT for development versions
+     *   A.B-yyyy.mm.dd for released versions.
+     */
+    public static final String VERSION = "1.3-SNAPSHOT";
+    // "1.2-2022.03.10"
 
 }
