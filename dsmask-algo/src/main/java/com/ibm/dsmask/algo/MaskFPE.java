@@ -24,10 +24,13 @@ import com.ibm.dsmask.util.DsMaskUtil;
 public class MaskFPE {
 
     public static final String HMAC_NAME = "HmacSHA512";
+    public static final String DEFAULT_KEY = "ваттерпежек0змА";
 
     // + skip chars before and after
     private final int skipBefore;
     private final int skipAfter;
+    // + allow returning the unmodified value
+    private final boolean allowSameVal;
     // + character classes
     private final CharClassSet charClassSet;
     // + key
@@ -44,21 +47,26 @@ public class MaskFPE {
     }
 
     public MaskFPE(CharClassSet cset, String userKey) {
-        this(cset, userKey, 0, 0);
+        this(cset, userKey, 0, 0, false);
     }
 
     public MaskFPE(CharClassSet cset, String userKey,
             int skipBefore, int skipAfter) {
+        this(cset, userKey, skipBefore, skipAfter, false);
+    }
+
+    public MaskFPE(CharClassSet cset, String userKey,
+            int skipBefore, int skipAfter, boolean allowSameVal) {
         this(cset,
                 (userKey==null) ? (byte[])null : userKey.getBytes(StandardCharsets.UTF_8),
-                skipBefore, skipAfter);
+                skipBefore, skipAfter, allowSameVal);
     }
 
     public MaskFPE(CharClassSet cset, byte[] userKey,
-            int skipBefore, int skipAfter) {
+            int skipBefore, int skipAfter, boolean allowSameVal) {
         this.charClassSet = cset;
         if (userKey==null || userKey.length==0)
-            userKey = "ваттерпежек0змА".getBytes(StandardCharsets.UTF_8);
+            userKey = DEFAULT_KEY.getBytes(StandardCharsets.UTF_8);
         this.userKey = userKey;
         try {
             SecretKeySpec keySpec = new SecretKeySpec(userKey, HMAC_NAME);
@@ -73,6 +81,7 @@ public class MaskFPE {
             skipAfter = 0;
         this.skipBefore = skipBefore;
         this.skipAfter = skipAfter;
+        this.allowSameVal = allowSameVal;
     }
 
     public int getSkipBefore() {
@@ -101,14 +110,24 @@ public class MaskFPE {
         String value = in.toString();
         if (value.length()==0)
             return value; // Empty string on input, same object on output
+        if (value.length() <= (skipBefore + skipAfter)) {
+            if (allowSameVal)
+                return value;
+            throw new RuntimeException("Input value [" + value + "] too short, "
+                    + "needs to have at least "
+                    + String.valueOf(skipBefore + skipAfter) + " characters");
+        }
         // Protect against equal input and output
         int substep = 0;
         while (true) {
             String retval = algo(value, iteration, substep);
             if (! retval.equalsIgnoreCase(value))
                 return retval;
-            if ( ++substep > 10000 )
+            if (allowSameVal)
+                return retval;
+            if ( ++substep > 1000 ) {
                 throw new RuntimeException("Hanged FPE on input value [" + value + "]");
+            }
         }
     }
 

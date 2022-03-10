@@ -176,6 +176,15 @@ public class Utils extends DsMaskUtil {
         }
     }
 
+    public static boolean getConfigBool(List<String[]> lines, String key, boolean defval) {
+        if (!hasConfigEntry(lines, key))
+            return defval;
+        final String v = getConfigValue(lines, key).trim();
+        if (v.length() == 0)
+            return defval;
+        return toBoolean(v);
+    }
+
     /**
      * Convert the string containing a comma-separated list of integers
      * to the array of actual integer values.
