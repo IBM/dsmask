@@ -135,6 +135,11 @@ public class XRowState {
             errors.addOperNull(operation, inCol.getName(), outputIndex, original);
             return false;
         }
+        /*
+        Disabled the output same-value checks, as this is a valid situation
+        for many real scenarious. Needs to be done depending on the actual
+        masking operation characteristics - which is a TODO item.
+
         if (operation.getOutputIndexes().length == 1) {
             // Value validation is performed only for single-value masking operations.
             String temp1 = original.toString().trim();
@@ -145,6 +150,7 @@ public class XRowState {
                 return false;
             }
         }
+        */
         return true;
     }
 
