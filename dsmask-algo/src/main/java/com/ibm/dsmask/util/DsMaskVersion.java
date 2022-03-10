@@ -23,7 +23,7 @@ public class DsMaskVersion {
      *   A.B-SNAPSHOT for development versions
      *   A.B-yyyy.mm.dd for released versions.
      */
-    public static final String VERSION = "1.3-SNAPSHOT";
+    public static final String VERSION = "1.2.1-2022-03-10";
     // "1.2-2022.03.10"
 
 }
