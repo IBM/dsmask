@@ -342,6 +342,7 @@ public class MaskBatcher implements Runnable, AutoCloseable, JobConfiguration {
         // Set repeatable parameters for job startup.
         jm.setBatchId(batchId);
         jm.setGlobalsId(getOption(JOB_GLOBALS));
+        jm.setLogicalDb(configDbLogical());
         jm.setInputDb(configDbSource());
         jm.setOutputDb(configDbTarget());
 

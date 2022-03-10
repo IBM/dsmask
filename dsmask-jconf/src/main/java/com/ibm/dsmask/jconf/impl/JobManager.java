@@ -63,6 +63,7 @@ public class JobManager implements AutoCloseable {
     // Stable values for job start
     private String globalsId;
     private String batchId;
+    private String logicalDb;
     private String inputDb;
     private String outputDb;
 
@@ -105,6 +106,13 @@ public class JobManager implements AutoCloseable {
     }
     public void setGlobalsId(String globalsId) {
         this.globalsId = globalsId;
+    }
+
+    public String getLogicalDb() {
+        return logicalDb;
+    }
+    public void setLogicalDb(String logicalDb) {
+        this.logicalDb = logicalDb;
     }
 
     public String getBatchId() {
@@ -418,6 +426,7 @@ public class JobManager implements AutoCloseable {
         public JobInfo call() throws Exception {
             final Map<String,String> subst = new HashMap<>();
             subst.put("project", owner.project);
+            subst.put("jobType", owner.jobType);
             subst.put("jobId", jobId);
             cmdRun(subst, owner.dsjobStatus, "Retrieve job info");
             return grabJobInfo(jobId, workOutput);
@@ -444,13 +453,17 @@ public class JobManager implements AutoCloseable {
 
         @Override
         public String call() throws Exception {
-            String jobId = owner.jobType + "." +
+            final String invocationId =
                     safeInvocation(owner.inputDb + "." + job.inputTable);
+            final String jobId = owner.jobType + "." + invocationId;
             final Map<String,String> subst = new HashMap<>();
-            subst.put("jobId", jobId);
             subst.put("project", owner.project);
+            subst.put("jobType", owner.jobType);
+            subst.put("jobId", jobId);
+            subst.put("invocationId", invocationId);
             subst.put("globalsId", owner.globalsId);
             subst.put("batchId", owner.batchId);
+            subst.put("dbLogical", owner.logicalDb);
             subst.put("dbIn", owner.inputDb);
             subst.put("dbOut", owner.outputDb);
             subst.put("tableIn", job.inputTable);
@@ -464,8 +477,9 @@ public class JobManager implements AutoCloseable {
                 // Command format:
                 //   dsjob -run -mode RESET -wait dstage1 MaskJdbc."$INSTID"
                 subst.clear();
-                subst.put("jobId", jobId);
                 subst.put("project", owner.project);
+                subst.put("jobType", owner.jobType);
+                subst.put("jobId", jobId);
                 cmdRun(subst, owner.dsjobReset, "Reset a failed job");
                 // Re-running the original job
                 currentCommand.clear();
@@ -495,6 +509,7 @@ public class JobManager implements AutoCloseable {
             try {
                 final Map<String,String> subst = new HashMap<>();
                 subst.put("project", owner.project);
+                subst.put("jobType", owner.jobType);
                 subst.put("jobId", jobId);
                 cmdRun(subst, owner.dsjobStop, "Stop a running job");
                 LOG.info("Stopped job {}", jobId);
