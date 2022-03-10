@@ -18,6 +18,6 @@ package com.ibm.dsmask.util;
  */
 public class DsMaskVersion {
 
-    public static final String VERSION = "1.2-SNAPSHOT";
+    public static final String VERSION = "1.2-2022.03.10";
 
 }
