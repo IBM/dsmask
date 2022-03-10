@@ -123,9 +123,9 @@ public class MaskFPE {
             String retval = algo(value, iteration, substep);
             if (! retval.equalsIgnoreCase(value))
                 return retval;
+            if (allowSameVal)
+                return retval;
             if ( ++substep > 1000 ) {
-                if (allowSameVal)
-                    return retval;
                 throw new RuntimeException("Hanged FPE on input value [" + value + "]");
             }
         }

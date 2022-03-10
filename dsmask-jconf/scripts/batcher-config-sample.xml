@@ -39,7 +39,7 @@
 
 <!-- Template command for resetting jobs -->
 <entry key="dsjob.reset">
-    ${dsjob} -run -mode RESET -wait dstage1 ${jobId}
+    ${dsjob} -run -mode RESET -wait ${project} ${jobId}
 </entry>
 
 <!-- Template command for running jobs -->
@@ -48,7 +48,7 @@
       -param DbParams=${dbIn} -param DbOutParams=${dbOut}
       -param InputTable=${tableIn} -param OutputTable=${tableOut}
       -param MaskingProfile=${profileId}
-      dstage1 ${jobId}
+      ${project} ${jobId}
 </entry>
 
 <!-- Template command for stopping a job -->

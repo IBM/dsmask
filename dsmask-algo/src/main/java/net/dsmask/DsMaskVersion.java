@@ -18,6 +18,12 @@ package net.dsmask;
  */
 public class DsMaskVersion {
 
+    /**
+     * Version number in one of two format:
+     *   A.B-SNAPSHOT for development versions
+     *   A.B-yyyy.mm.dd for released versions.
+     */
     public static final String VERSION = "2.0-SNAPSHOT";
+    // "1.2-2022.03.10"
 
 }
