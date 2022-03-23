@@ -41,19 +41,5 @@ public interface AnyRule {
      * @return List of output references
      */
     List<? extends AnyReference> getOutputs();
-    
-    /**
-     * Retrieves an input reference at the specified position.
-     * @param pos Position number, zero-based.
-     * @return Input reference.
-     */
-    AnyReference getInput(int pos);
-    
-    /**
-     * Retrieves an output reference at the specified position.
-     * @param pos Position number, zero-based.
-     * @return Output reference.
-     */
-    AnyReference getOutput(int pos);
-    
+
 }

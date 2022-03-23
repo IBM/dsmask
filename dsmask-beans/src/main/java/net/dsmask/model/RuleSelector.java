@@ -428,10 +428,12 @@ public class RuleSelector {
             trivialRules = new HashMap<>();
             complexRules = new ArrayList<>();
             for (AnyRule mr : allRules) {
-                if (mr.getInputs().size()==1
-                        && mr.getOutputs().size()==1
-                        && mr.getInput(0).equals(mr.getOutput(0))) {
-                    for (AnyLabel label : mr.getInput(0).getLabels())
+                final List<? extends AnyReference> inputs = mr.getInputs();
+                final List<? extends AnyReference> outputs = mr.getOutputs();
+                if (inputs.size()==1
+                        && outputs.size()==1
+                        && inputs.get(0).equals( outputs.get(0) )) {
+                    for (AnyLabel label : inputs.get(0).getLabels())
                         trivialRules.put(label.getId(), mr);
                 } else {
                     complexRules.add(mr);

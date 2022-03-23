@@ -55,25 +55,11 @@ public class MaskingRule extends EntityBase implements AnyRule {
         return outputs;
     }
 
-    @Override
-    public MetaReference getInput(int pos) {
-        if (pos < 0 || pos >= inputs.size())
-            return null;
-        return inputs.get(pos);
-    }
-
     public MaskingRule addInput(MetaReference mr) {
         if (mr==null)
             throw new NullPointerException();
         inputs.add(mr);
         return this;
-    }
-
-    @Override
-    public MetaReference getOutput(int pos) {
-        if (pos < 0 || pos >= outputs.size())
-            return null;
-        return outputs.get(pos);
     }
 
     public MaskingRule addOutput(MetaReference mr) {
