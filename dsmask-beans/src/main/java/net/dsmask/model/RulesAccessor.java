@@ -12,6 +12,7 @@
  */
 package net.dsmask.model;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,6 +23,13 @@ import java.util.List;
  */
 public interface RulesAccessor {
 
-    List<? extends AnyRule> retrieveRules(String context);
+    /**
+     * Retrieve the masking rules for the specified context and labels.
+     * @param context Masking context, null or empty string for default
+     * @param labels Collection of field labels
+     * @return Collection of masking rules, the exact ordering is unspecified
+     */
+    List<? extends AnyRule> retrieveRules(String context, 
+            Collection<? extends AnyLabel> labels);
 
 }

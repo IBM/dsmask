@@ -124,7 +124,8 @@ public class ModelAccessor implements PackageAccessor, RulesAccessor {
     }
 
     @Override
-    public List<MaskingRule> retrieveRules(String context) {
+    public List<MaskingRule> retrieveRules(String context, 
+            Collection<? extends AnyLabel> labels) {
         final List<MaskingRule> retval = new ArrayList<>();
         for (PackageAccessor pa : data) {
             for (ModelName name : pa.list(EntityType.Rule)) {

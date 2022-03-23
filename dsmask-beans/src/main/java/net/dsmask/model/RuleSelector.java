@@ -159,13 +159,13 @@ public class RuleSelector {
      * Exclude masking rules which cannot be applied to a table
      * because they require at least one missing data class.
      * @param rules The full set of masking rules
-     * @param table Table definition
+     * @param labels All field labels from the table definition
      * @return Filtered list of masking rules
      */
-    private List<AnyRule> filterByClasses(List<? extends AnyRule> rules, AnyTable table) {
+    private List<AnyRule> filterByClasses(List<? extends AnyRule> rules, 
+            Set<AnyLabel> labels) {
         if (rules==null || rules.isEmpty())
             return Collections.emptyList();
-        final Set<AnyLabel> labels = ModelUtils.getAllLabels(table);
         if (labels.isEmpty())
             return Collections.emptyList();
         final ArrayList<AnyRule> retval = new ArrayList<>();
@@ -410,17 +410,19 @@ public class RuleSelector {
         }
 
         RuleSet prepare(String context) {
+            // retrieve all labels
+            final Set<AnyLabel> labels = ModelUtils.getAllLabels(table);
             // logger the full set of rules for a specific context
-            List<? extends AnyRule> allRules = rulesAccessor.retrieveRules(context);
+            List<? extends AnyRule> allRules = rulesAccessor.retrieveRules(context, labels);
             // append the default rules to the end of list
             if (context!=null && context.trim().length()>0) {
                 final ArrayList<AnyRule> temp = new ArrayList<>(allRules);
-                temp.addAll(rulesAccessor.retrieveRules(null));
+                temp.addAll(rulesAccessor.retrieveRules(null, labels));
                 allRules = temp;
             }
             // exclude non-relevant rules
             // (those for which we have do not have all necessary fields)
-            allRules = filterByClasses(allRules, table);
+            allRules = filterByClasses(allRules, labels);
             if (allRules.isEmpty())
                 return this; // nothing to mask - no rules available
             // Separate trivial vs complex rules.
