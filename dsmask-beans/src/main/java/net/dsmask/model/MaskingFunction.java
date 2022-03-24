@@ -46,7 +46,7 @@ public class MaskingFunction extends EntityBase {
     }
 
     public MaskingFunction setParameter(String name, String value) {
-        MaskingParameter mp = algorithm.getParameter(name);
+        AlgorithmParameter mp = algorithm.getParameter(name);
         if (mp==null) {
             throw new IllegalArgumentException("Illegal parameter [" + name
                     + "] for algorithm [" + algorithm.getName() + "]");

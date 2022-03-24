@@ -12,6 +12,8 @@
  */
 package net.dsmask.model;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,10 @@ public class AlgorithmModule {
 
     public String getModuleName() {
         return moduleName;
+    }
+
+    public Collection<AlgorithmInfo> getAlgorithms() {
+        return Collections.unmodifiableCollection( algorithms.values() );
     }
 
     public void registerAlgorithm(AlgorithmInfo ai) {

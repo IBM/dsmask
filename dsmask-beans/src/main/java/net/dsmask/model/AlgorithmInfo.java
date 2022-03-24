@@ -27,7 +27,7 @@ public class AlgorithmInfo implements ModelIdentity {
 
     private final String name;
     private final boolean iterable;
-    private final LinkedHashMap<String, MaskingParameter> parameters = new LinkedHashMap<>();
+    private final LinkedHashMap<String, AlgorithmParameter> parameters = new LinkedHashMap<>();
 
     public AlgorithmInfo(String name) {
         this(name, false);
@@ -56,16 +56,16 @@ public class AlgorithmInfo implements ModelIdentity {
         return name.substring(0, pos);
     }
 
-    public static String safeId(String inputName, String inputModule) {
-        String name = ModelUtils.lower(inputName);
-        String module = ModelUtils.lower(inputModule);
+    public static String safeId(String algorithmName, String moduleName) {
+        String name = ModelUtils.lower(algorithmName);
+        String module = ModelUtils.lower(moduleName);
         int pos = 0;
         while ((pos = name.indexOf(":")) >= 0) {
             String modulePart = name.substring(0, pos);
-            if (inputModule != null) {
+            if (moduleName != null) {
                 if (!module.equals(modulePart)) {
-                    throw new IllegalArgumentException("Algorithm [" + inputName
-                            + "] cannot be part of module [" + inputModule + "]");
+                    throw new IllegalArgumentException("Algorithm [" + algorithmName
+                            + "] cannot be part of module [" + moduleName + "]");
                 }
             }
             name = name.substring(pos+1);
@@ -80,19 +80,19 @@ public class AlgorithmInfo implements ModelIdentity {
         return iterable;
     }
 
-    public Collection<MaskingParameter> getParameters() {
-        return Collections.unmodifiableCollection(parameters.values());
+    public Collection<AlgorithmParameter> getParameters() {
+        return Collections.unmodifiableCollection( parameters.values() );
     }
 
-    public AlgorithmInfo addParameter(MaskingParameter mp) {
+    public AlgorithmInfo addParameter(AlgorithmParameter mp) {
         if (mp!=null)
             parameters.put(mp.getId(), mp);
         return this;
     }
 
-    public AlgorithmInfo addParameters(Collection<MaskingParameter> mps) {
+    public AlgorithmInfo addParameters(Collection<AlgorithmParameter> mps) {
         if (mps!=null) {
-            for (MaskingParameter mp : mps) {
+            for (AlgorithmParameter mp : mps) {
                 if (mp!=null)
                     parameters.put(mp.getId(), mp);
             }
@@ -100,7 +100,7 @@ public class AlgorithmInfo implements ModelIdentity {
         return this;
     }
 
-    public MaskingParameter getParameter(String name) {
+    public AlgorithmParameter getParameter(String name) {
         if (name==null)
             name = "";
         else

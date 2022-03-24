@@ -46,6 +46,29 @@ public enum ParameterType {
     /**
      * double value
      */
-    Double
+    Double,
+
+    /**
+     * element of pre-defined values list
+     */
+    Item;
+
+    /**
+     * Convert string code to parameter type object.
+     * @param v String code
+     * @return parameter type object
+     */
+    public static ParameterType fromString(String v) {
+        if (v==null)
+            return Line;
+        v = v.trim();
+        if (v.length()==0)
+            return Line;
+        for (ParameterType pt : ParameterType.values()) {
+            if (v.equalsIgnoreCase(pt.name()))
+                return pt;
+        }
+        return Line;
+    }
 
 }

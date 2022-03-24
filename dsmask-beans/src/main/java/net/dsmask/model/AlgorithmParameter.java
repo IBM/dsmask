@@ -12,28 +12,36 @@
  */
 package net.dsmask.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import net.dsmask.util.DsMaskUtil;
+
 /**
  * Parameter definition for a data masking algorithm.
  * @author zinal
  */
-public class MaskingParameter implements ModelIdentity {
+public class AlgorithmParameter implements ModelIdentity {
 
     private final String name;
     private final ParameterType type;
     private final String defval;
+    private List<String> items;
 
-    public MaskingParameter(String name) {
+    public AlgorithmParameter(String name) {
         this(name, ParameterType.Line, null);
     }
 
-    public MaskingParameter(String name, ParameterType type) {
+    public AlgorithmParameter(String name, ParameterType type) {
         this(name, type, null);
     }
 
-    public MaskingParameter(String name, ParameterType type, String defval) {
+    public AlgorithmParameter(String name, ParameterType type, String defval) {
         this.name = ModelUtils.safe(name);
         this.type = (type == null) ? ParameterType.Line : type;
         this.defval = defval;
+        this.items = null;
     }
 
     @Override
@@ -58,6 +66,22 @@ public class MaskingParameter implements ModelIdentity {
         return (defval==null);
     }
 
+    public List<String> getItems() {
+        return (items==null) ?
+                Collections.emptyList() :
+                Collections.unmodifiableList(items);
+    }
+
+    public void addItem(String item) {
+        item = DsMaskUtil.lower(item);
+        if (item.length() == 0) {
+            throw new IllegalArgumentException(item);
+        }
+        if (items==null)
+            items = new ArrayList<>();
+        items.add(item);
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -76,7 +100,7 @@ public class MaskingParameter implements ModelIdentity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final MaskingParameter other = (MaskingParameter) obj;
+        final AlgorithmParameter other = (AlgorithmParameter) obj;
         if (!ModelUtils.equalsCI(this.name, other.name)) {
             return false;
         }
@@ -84,6 +108,9 @@ public class MaskingParameter implements ModelIdentity {
             return false;
         }
         if (this.type != other.type) {
+            return false;
+        }
+        if (!Objects.equals(this.items, other.items)) {
             return false;
         }
         return true;
