@@ -45,6 +45,7 @@ public class MaskingRule extends EntityBase implements AnyRule {
         return EntityType.Rule;
     }
 
+    @Override
     public Set<String> getContexts() {
         return contexts;
     }

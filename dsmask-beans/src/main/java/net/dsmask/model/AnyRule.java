@@ -13,6 +13,7 @@
 package net.dsmask.model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract masking rule.
@@ -41,5 +42,10 @@ public interface AnyRule {
      * @return List of output references
      */
     List<? extends AnyReference> getOutputs();
+
+    /**
+     * @return Allowed rule usage contexts.
+     */
+    Set<String> getContexts();
 
 }
