@@ -12,26 +12,25 @@
  */
 package net.dsmask.model.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 import net.dsmask.model.*;
 import org.junit.Assert;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  *
  * @author zinal
  */
-public class ModuleInfoSerializerTest {
+public class AlgoSerializerTest {
 
     @Test
-    public void test() throws Exception {
+    public void test1() throws Exception {
         AlgorithmModule input = makeModule();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ModuleInfoSerializer.writeStream(input, baos);
+        AlgoSerializer.writeStream(input, baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        AlgorithmModule output = ModuleInfoSerializer.readStream(bais);
+        AlgorithmModule output = AlgoSerializer.readStream(bais);
         Assert.assertEquals(input, output);
         //System.out.println(new String(baos.toByteArray(), StandardCharsets.UTF_8));
     }

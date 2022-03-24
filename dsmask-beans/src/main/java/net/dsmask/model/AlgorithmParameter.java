@@ -63,6 +63,8 @@ public class AlgorithmParameter implements ModelIdentity {
     }
 
     public boolean isMandatory() {
+        // Default value may be an empty string.
+        // Only null here means that there is no default value.
         return (defval==null);
     }
 

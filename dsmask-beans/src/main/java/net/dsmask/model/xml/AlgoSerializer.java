@@ -27,7 +27,7 @@ import org.jdom2.output.XMLOutputter;
  * XML in/out for @AlgorithmModule
  * @author zinal
  */
-public class ModuleInfoSerializer {
+public class AlgoSerializer {
 
     public static final String TAG_AlgoModule = "algo-module";
     public static final String TAG_AlgoInfo = "algo-info";
@@ -87,8 +87,11 @@ public class ModuleInfoSerializer {
                 Element elParam = new Element(TAG_AlgoParam);
                 elParam.setAttribute(ATT_name, ap.getName());
                 elParam.setAttribute(ATT_type, ap.getType().name());
-                if (ap.getDefval()!=null && ap.getDefval().length() > 0)
+                if (ap.getDefval()!=null) {
+                    // Default value may be an empty string.
+                    // Only null here means that there is no default value.
                     elParam.setAttribute(ATT_defval, ap.getDefval());
+                }
                 for (String item : ap.getItems()) {
                     Element elItem = new Element(TAG_AlgoItem);
                     elItem.setAttribute(ATT_value, item);

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<algo-module name="dsmask">
+    <!-- Projection -->
+    <algo-info name="Project" iter="false">
+    </algo-info>
+    <!-- Format Preserving Encryption -->
+    <algo-info name="FPE" iter="true">
+        <algo-param name="class" type="Line" defval="russian-simple"/>
+        <algo-param name="key" type="Key"/>
+        <algo-param name="skip-before" type="Integer" defval="0"/>
+        <algo-param name="skip-after" type="Integer" defval="0"/>
+        <algo-param name="allow-same" type="Item" defval="N">
+            <algo-item value="Y"/>
+            <algo-item value="N"/>
+        </algo-param>
+    </algo-info>
+    <!-- Format Preserving Hashing -->
+    <algo-info name="FPH" iter="true">
+        <algo-param name="class" type="Line" defval="russian-simple"/>
+        <algo-param name="key" type="Key"/>
+        <algo-param name="skip-before" type="Integer" defval="0"/>
+        <algo-param name="skip-after" type="Integer" defval="0"/>
+        <algo-param name="allow-same" type="Item" defval="N">
+            <algo-item value="Y"/>
+            <algo-item value="N"/>
+        </algo-param>
+    </algo-info>
+    <!-- Character substitution -->
+    <algo-info name="CharSubst" iter="false">
+        <algo-param name="table" type="Line"/>
+    </algo-info>
+    <!-- String concatenation -->
+    <algo-info name="Concat" iter="false">
+        <algo-param name="separator" type="Line" defval=""/>
+    </algo-info>
+    <!-- String split -->
+    <algo-info name="Split" iter="false">
+        <algo-param name="rx" type="Line"/>
+    </algo-info>
+    <!-- String operation sequence -->
+    <algo-info name="StringOp" iter="false">
+        <algo-param name="script" type="Text"/>
+    </algo-info>
+    <!-- Date operation -->
+    <algo-info name="DateOp" iter="true">
+        <algo-param name="key" type="Key"/>
+        <algo-param name="format" type="Line" defval="yyyy-MM-dd"/>
+    </algo-info>
+    <!-- Digest hash -->
+    <algo-info name="Digest" iter="false">
+        <algo-param name="key" type="Key" defval=""/>
+        <algo-param name="type" type="Line" defval="SHA-512"/>
+    </algo-info>
+    <!-- Numerical hash -->
+    <algo-info name="Hash" iter="false">
+        <algo-param name="key" type="Key" defval=""/>
+        <algo-param name="from" type="Integer" defval="0"/>
+        <algo-param name="to" type="Integer" defval="10"/>
+    </algo-info>
+    <!-- Hash lookup -->
+    <algo-info name="LookupHash" iter="true">
+        <algo-param name="key" type="Key" defval=""/>
+        <algo-param name="db" type="Line"/>
+        <algo-param name="user" type="Line" defval=""/>
+        <algo-param name="table" type="Line"/>
+        <algo-param name="id" type="Line"/>
+        <algo-param name="out" type="Text"/>
+    </algo-info>
+    <!-- Key lookup -->
+    <algo-info name="LookupKey" iter="false">
+        <algo-param name="key" type="Key" defval=""/>
+        <algo-param name="db" type="Line"/>
+        <algo-param name="user" type="Line" defval=""/>
+        <algo-param name="table" type="Line"/>
+        <algo-param name="keys" type="Text"/>
+        <algo-param name="out" type="Text"/>
+    </algo-info>
+</algo-module>

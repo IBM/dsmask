@@ -12,8 +12,10 @@
  */
 package net.dsmask.model;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import net.dsmask.model.xml.AlgoSerializer;
 
 /**
  * Masking algorithm provider, holding a collection of the defined
@@ -27,6 +29,7 @@ public class AlgorithmProvider {
     private static final AlgorithmProvider INSTANCE = new AlgorithmProvider();
 
     private AlgorithmProvider() {
+        modules.put(AlgorithmInfo.MODULE_DEFAULT, loadDefaultModule());
     }
 
     public static AlgorithmProvider getInstance() {
@@ -50,5 +53,16 @@ public class AlgorithmProvider {
             am = modules.get(moduleName);
         }
         return (am==null) ? null : am.findAlgorithm(name);
+    }
+
+    public static AlgorithmModule loadDefaultModule() {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try (InputStream stream = loader
+                .getResourceAsStream("dsmask-algo-builtin.xml")) {
+            return AlgoSerializer.readStream(stream);
+        } catch(Exception ex) {
+            throw new RuntimeException("Failed to load the "
+                    + "definition of the default algorithm module", ex);
+        }
     }
 }
