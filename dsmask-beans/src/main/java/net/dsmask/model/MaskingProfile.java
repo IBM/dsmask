@@ -15,6 +15,7 @@ package net.dsmask.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Table masking profile - a set of masking actions to be executed
@@ -25,13 +26,23 @@ import java.util.Objects;
  * @author zinal
  * @since 2020
  */
-public class MaskingProfile {
+public class MaskingProfile extends EntityBase {
 
     private final AnyTable table;
     private final List<MaskingOperation> operations = new ArrayList<>();
 
     public MaskingProfile(AnyTable table) {
+        this(table, generateName(table));
+    }
+
+    public MaskingProfile(AnyTable table, String name) {
+        super(name);
         this.table = table;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.Profile;
     }
 
     public AnyTable getTable() {
@@ -68,6 +79,10 @@ public class MaskingProfile {
             return false;
         }
         return true;
+    }
+
+    public static String generateName(AnyTable table) {
+        return table.getFullName() + ".GN-" + UUID.randomUUID();
     }
 
 }

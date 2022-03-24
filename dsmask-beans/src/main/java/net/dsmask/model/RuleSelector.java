@@ -34,21 +34,21 @@ public class RuleSelector {
     private static final org.slf4j.Logger LOG =
             org.slf4j.LoggerFactory.getLogger(RuleSelector.class);
 
-    private RulesAccessor rulesAccessor;
+    private ModelAccessor modelAccessor;
 
     public RuleSelector() {
     }
 
-    public RuleSelector(RulesAccessor rulesAccessor) {
-        this.rulesAccessor = rulesAccessor;
+    public RuleSelector(ModelAccessor rulesAccessor) {
+        this.modelAccessor = rulesAccessor;
     }
 
-    public RulesAccessor getRulesAccessor() {
-        return rulesAccessor;
+    public ModelAccessor getModelAccessor() {
+        return modelAccessor;
     }
 
-    public void setRulesAccessor(RulesAccessor rulesAccessor) {
-        this.rulesAccessor = rulesAccessor;
+    public void setModelAccessor(ModelAccessor modelAccessor) {
+        this.modelAccessor = modelAccessor;
     }
 
     /**
@@ -162,7 +162,7 @@ public class RuleSelector {
      * @param labels All field labels from the table definition
      * @return Filtered list of masking rules
      */
-    private List<AnyRule> filterByClasses(List<? extends AnyRule> rules, 
+    private List<AnyRule> filterByClasses(Collection<? extends AnyRule> rules,
             Set<AnyLabel> labels) {
         if (rules==null || rules.isEmpty())
             return Collections.emptyList();
@@ -413,11 +413,11 @@ public class RuleSelector {
             // retrieve all labels
             final Set<AnyLabel> labels = ModelUtils.getAllLabels(table);
             // logger the full set of rules for a specific context
-            List<? extends AnyRule> allRules = rulesAccessor.retrieveRules(context, labels);
+            Collection<? extends AnyRule> allRules = modelAccessor.retrieveRules(context, labels);
             // append the default rules to the end of list
             if (context!=null && context.trim().length()>0) {
                 final ArrayList<AnyRule> temp = new ArrayList<>(allRules);
-                temp.addAll(rulesAccessor.retrieveRules(null, labels));
+                temp.addAll(modelAccessor.retrieveRules(null, labels));
                 allRules = temp;
             }
             // exclude non-relevant rules
