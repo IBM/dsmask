@@ -32,7 +32,6 @@ public class XmlProviderZip extends XmlProviderBase {
     }
 
     public XmlProviderZip(File zipFile) {
-        String pn = "";
         try ( FileInputStream fis = new FileInputStream(zipFile);
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 ZipInputStream zis = new ZipInputStream(bis) ) {

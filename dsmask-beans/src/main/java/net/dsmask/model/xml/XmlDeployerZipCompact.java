@@ -34,7 +34,7 @@ public class XmlDeployerZipCompact implements XmlDeployer, AutoCloseable {
     private final ZipOutputStream zos;
     private final Element rootElement;
 
-    public XmlDeployerZipCompact(File fileName, String packageName) throws IOException {
+    public XmlDeployerZipCompact(File fileName) throws IOException {
         this.fileName = fileName;
         fileName.delete();
         this.zos = new ZipOutputStream(new FileOutputStream(fileName));
