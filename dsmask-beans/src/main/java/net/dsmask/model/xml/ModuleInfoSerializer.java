@@ -12,8 +12,16 @@
  */
 package net.dsmask.model.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import org.jdom2.Element;
 import net.dsmask.model.*;
+import org.jdom2.Document;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
  * XML in/out for @AlgorithmModule
@@ -60,6 +68,13 @@ public class ModuleInfoSerializer {
         return am;
     }
 
+    public static AlgorithmModule readStream(InputStream is)
+            throws Exception {
+        Element el = new SAXBuilder(null, null, new LocatedJDOMFactory())
+                .build(is).getRootElement();
+        return readJdom(el);
+    }
+
     public static Element writeJdom(AlgorithmModule am) {
         Element elModule = new Element(TAG_AlgoModule);
         elModule.setAttribute(ATT_name, am.getModuleName());
@@ -84,6 +99,13 @@ public class ModuleInfoSerializer {
             elModule.addContent(elAlgo);
         }
         return elModule;
+    }
+
+    public static void writeStream(AlgorithmModule am, OutputStream os)
+            throws IOException {
+        new XMLOutputter(Format.getRawFormat())
+                .output(new Document(writeJdom(am)), os);
+        os.flush();
     }
 
 }

@@ -110,7 +110,9 @@ public class AlgorithmInfo implements ModelIdentity {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.name);
+        return hash;
     }
 
     @Override
@@ -118,11 +120,17 @@ public class AlgorithmInfo implements ModelIdentity {
         if (this == obj) {
             return true;
         }
-        if (! super.equals(obj)) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final AlgorithmInfo other = (AlgorithmInfo) obj;
         if (this.iterable != other.iterable) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
             return false;
         }
         if (!Objects.equals(this.parameters, other.parameters)) {

@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Module of masking algorithms.
@@ -46,6 +47,34 @@ public class AlgorithmModule {
     public AlgorithmInfo findAlgorithm(String algoName) {
         algoName = AlgorithmInfo.safeId(algoName, moduleName);
         return algorithms.get(ModelUtils.lower(algoName));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.moduleName);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AlgorithmModule other = (AlgorithmModule) obj;
+        if (!Objects.equals(this.moduleName, other.moduleName)) {
+            return false;
+        }
+        if (!Objects.equals(this.algorithms, other.algorithms)) {
+            return false;
+        }
+        return true;
     }
 
 }
