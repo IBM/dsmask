@@ -13,8 +13,8 @@
 package net.dsmask.model.xml;
 
 import org.junit.Test;
-import net.dsmask.model.*;
 import org.junit.Assert;
+import net.dsmask.model.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
