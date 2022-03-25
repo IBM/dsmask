@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.commons.text.TextRandomProvider;
 
@@ -89,7 +89,7 @@ public class SimpleDiegester {
 
     public String makeResponse(String request) {
         byte[] hash = mac.doFinal(request.getBytes(StandardCharsets.UTF_8));
-        return DatatypeConverter.printBase64Binary(hash);
+        return Base64.encodeBase64String(hash);
     }
 
 }
