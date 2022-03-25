@@ -18,15 +18,14 @@ import java.nio.charset.StandardCharsets;
  * Naive Java-only FPE algorithm implementation.
  * @author mzinal
  */
-public class MaskFPE extends FpxGeneric {
+public class MaskFPH extends FpxGeneric {
 
-    public static final String DEFAULT_KEY = "ваттерпежек0змА";
-    public static final String HMAC_NAME = "HmacSHA512";
+    public static final String DEFAULT_KEY = "иди0синкразия";
 
     /**
      * Minimal constructor.
      */
-    public MaskFPE() {
+    public MaskFPH() {
         this(CharClassSet.DEFAULT_RUSSIAN);
     }
 
@@ -34,7 +33,7 @@ public class MaskFPE extends FpxGeneric {
      * Helper constructor.
      * @param cset Character set class definition
      */
-    public MaskFPE(CharClassSet cset) {
+    public MaskFPH(CharClassSet cset) {
         this(cset, "");
     }
 
@@ -43,7 +42,7 @@ public class MaskFPE extends FpxGeneric {
      * @param cset Character set class definition
      * @param userKey User key string - if null or empty, default key will be used instead
      */
-    public MaskFPE(CharClassSet cset, String userKey) {
+    public MaskFPH(CharClassSet cset, String userKey) {
         this(cset, userKey, 0, 0, false);
     }
 
@@ -54,7 +53,7 @@ public class MaskFPE extends FpxGeneric {
      * @param skipBefore Number of characters to be skipped unmasked at the beginning
      * @param skipAfter Number of characters to be skipped unmasked at the end
      */
-    public MaskFPE(CharClassSet cset, String userKey,
+    public MaskFPH(CharClassSet cset, String userKey,
             int skipBefore, int skipAfter) {
         this(cset, userKey, skipBefore, skipAfter, false);
     }
@@ -67,7 +66,7 @@ public class MaskFPE extends FpxGeneric {
      * @param skipAfter Number of characters to be skipped unmasked at the end
      * @param allowSameVal Allow unmodified input
      */
-    public MaskFPE(CharClassSet cset, String userKey,
+    public MaskFPH(CharClassSet cset, String userKey,
             int skipBefore, int skipAfter, boolean allowSameVal) {
         this(cset,
                 (userKey==null) ? (byte[])null : userKey.getBytes(StandardCharsets.UTF_8),
@@ -82,10 +81,10 @@ public class MaskFPE extends FpxGeneric {
      * @param skipAfter Number of characters to be skipped unmasked at the end
      * @param allowSameVal Allow unmodified input
      */
-    public MaskFPE(CharClassSet cset, byte[] userKey,
+    public MaskFPH(CharClassSet cset, byte[] userKey,
             int skipBefore, int skipAfter, boolean allowSameVal) {
         super(cset, userKey, skipBefore, skipAfter, allowSameVal, 
-                new FpxIndexFPE(fixKey(userKey), HMAC_NAME));
+                new FpxIndexHash(fixKey(userKey)));
     }
 
     public static byte[] fixKey(byte[] userKey) {

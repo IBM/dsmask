@@ -40,7 +40,7 @@ public class FpxIndexFPE implements FpxIndexFactory {
         return new IndexGen(getMacValue(value, iteration));
     }
 
-    public byte[] getMacValue(String value, String iteration) {
+    public final byte[] getMacValue(String value, String iteration) {
         try {
             if (iteration != null && iteration.length() > 0) {
                 mac.update(iteration.getBytes(StandardCharsets.UTF_8));
