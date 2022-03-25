@@ -18,7 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.UUID;
-import net.dsmask.algo.MaskFPE;
+import net.dsmask.algo.MaskFPH;
 
 /**
  * Demonstration and basic performance test for dsmask-uniq module.
@@ -63,7 +63,7 @@ public class UniqDemo {
         long tvFinish = 0;
         try {
             try (UniqProvider provider = openProvider(dir.toFile())) {
-                final Worker[] workers = new Worker[10];
+                final Worker[] workers = new Worker[5];
                 for (int i=0; i<workers.length; ++i)
                     workers[i] = new Worker(provider);
                 final Thread[] threads = new Thread[workers.length];
@@ -96,8 +96,8 @@ public class UniqDemo {
                     .map(Path::toFile).forEach(File::delete);
         }
 
-        LOG.info("Completed, total runtime: {}", (tvFinish-tvStart));
-        LOG.info("** total:  {}", numTotal);
+        LOG.info("Completed, total runtime: {} msec.", (tvFinish-tvStart));
+        LOG.info("** total:  {} (= store + fail)", numTotal);
         LOG.info("** store:  {}", numStore);
         LOG.info("** fail:   {}", numFail);
         LOG.info("** hint:   {}", numHint);
@@ -120,6 +120,10 @@ public class UniqDemo {
         }
     }
 
+    /**
+     * Short value generator, providing high probability of FPE/FPH masking conflicts.
+     * @return Generated short string value.
+     */
     public static String makeNewValue() {
         String v = UUID.randomUUID().toString().replaceAll("-", "")
                 .substring(5, 9);
@@ -164,9 +168,9 @@ public class UniqDemo {
 
     private static class Worker implements Runnable {
         private final UniqProvider provider;
-        private final MaskFPE masker;
+        private final MaskFPH masker;
 
-        public static final int NUM_VALUES = 30000;
+        public static final int NUM_VALUES = 1000000;
 
         public int numTotal = 0;
         public int numHint = 0;
@@ -176,7 +180,7 @@ public class UniqDemo {
 
         public Worker(UniqProvider provider) {
             this.provider = provider;
-            this.masker = new MaskFPE();
+            this.masker = new MaskFPH();
         }
 
         @Override
@@ -193,24 +197,21 @@ public class UniqDemo {
 
             for ( int i=0; i<NUM_VALUES; ++i) {
                 String value = makeNewValue();
-                ++numTotal;
+                ++numTotal; // count total values
                 int iteration = 0;
                 String initMasked = null;
                 boolean hasHint = false;
                 while (true) {
-                    ++numIter;
-
-                    if (counterProgress++ >= 100) {
+                    if (counterProgress++ >= 1000) {
                         counterProgress = 0;
                         long tvCur = System.currentTimeMillis();
-                        if (tvCur - tvProgress >= 15000L) {
+                        if (tvCur - tvProgress >= 5000L) {
                             tvProgress = tvCur;
                             LOG.info("Thread {} processed {} of {}",
                                     Thread.currentThread().getName(),
                                     i, NUM_VALUES);
                         }
                     }
-
                     // Compute the next masked value
                     String masked = masker.calculate(value, iteration);
                     // Always store the masked value for the first iteration,
@@ -232,7 +233,7 @@ public class UniqDemo {
                     }
                     UniqResponse[] resp = provider.store(STORE_TYPE, urq_arr);
                     if (resp[0].isLinkedCorrectly()) {
-                        ++numStore;
+                        ++numStore; // count success calls
                         break;
                     }
                     if (hasHint) {
@@ -243,15 +244,16 @@ public class UniqDemo {
                     }
                     if (resp[0].getIteration() > 0) {
                         // We got a hint which iteration number to use
-                        ++numHint;
+                        ++numHint; // count hint iteration
                         iteration = resp[0].getIteration();
                         hasHint = true;
                     } else {
                         ++iteration;
-                        if (iteration > 10000) {
-                            ++numFail;
+                        if (iteration > 100) {
+                            ++numFail; // count failures
                             break;
                         }
+                        ++numIter; // count extra iterations
                     }
                 } // while (true)
             }
