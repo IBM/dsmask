@@ -12,6 +12,7 @@
  */
 package net.dsmask.uniq;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,7 +36,8 @@ public class UniqClient implements UniqProvider {
             theSocket = new Socket(address, portNumber);
             theSocket.setKeepAlive(true);
             theSocket.setTcpNoDelay(true);
-            this.dais = new DataInputStream(theSocket.getInputStream());
+            this.dais = new DataInputStream(
+                    new BufferedInputStream(theSocket.getInputStream()));
             this.daos = new DataOutputStream(
                     new BufferedOutputStream(theSocket.getOutputStream()));
             diegest(this.dais, this.daos, secret);

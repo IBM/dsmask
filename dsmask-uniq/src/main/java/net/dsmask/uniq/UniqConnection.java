@@ -12,6 +12,7 @@
  */
 package net.dsmask.uniq;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -46,7 +47,8 @@ public class UniqConnection implements Runnable {
             throws Exception {
         this.owner = owner;
         this.socket = socket;
-        this.dais = new DataInputStream(socket.getInputStream());
+        this.dais = new DataInputStream(
+                new BufferedInputStream(socket.getInputStream()));
         this.daos = new DataOutputStream(
                 new BufferedOutputStream(socket.getOutputStream()));
     }
