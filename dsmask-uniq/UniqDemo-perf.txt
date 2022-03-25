@@ -1,100 +1,75 @@
 *** Network:
 
-Working in /tmp/uniqdemo2285473014121864696
-2022-03-25 15:58:53 INFO  UniqLazyCommit:82 - Commit thread running with delay 10000 msec.
-2022-03-25 15:58:53 INFO  UniqSocketServer:88 - UniqServer running on port 10500, address null
-2022-03-25 15:58:54 INFO  UniqConnection:68 - UniqServer connected remote port 42430, address /127.0.0.1
-2022-03-25 15:58:54 INFO  UniqConnection:68 - UniqServer connected remote port 42428, address /127.0.0.1
-2022-03-25 15:58:54 INFO  UniqConnection:68 - UniqServer connected remote port 42434, address /127.0.0.1
-2022-03-25 15:58:54 INFO  UniqConnection:68 - UniqServer connected remote port 42436, address /127.0.0.1
-2022-03-25 15:58:54 INFO  UniqConnection:68 - UniqServer connected remote port 42438, address /127.0.0.1
-2022-03-25 15:58:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 107700 of 1000000
-2022-03-25 15:58:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 111253 of 1000000
-2022-03-25 15:58:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 110592 of 1000000
-2022-03-25 15:58:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 111376 of 1000000
-2022-03-25 15:58:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 109081 of 1000000
-2022-03-25 15:59:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 221995 of 1000000
-2022-03-25 15:59:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 222324 of 1000000
-2022-03-25 15:59:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 221625 of 1000000
-2022-03-25 15:59:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 223103 of 1000000
-2022-03-25 15:59:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 223681 of 1000000
-2022-03-25 15:59:09 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 331608 of 1000000
-2022-03-25 15:59:09 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 333234 of 1000000
-2022-03-25 15:59:09 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 332210 of 1000000
-2022-03-25 15:59:09 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 333210 of 1000000
-2022-03-25 15:59:09 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 330827 of 1000000
-2022-03-25 15:59:14 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 443847 of 1000000
-2022-03-25 15:59:14 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 443375 of 1000000
-2022-03-25 15:59:14 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 446666 of 1000000
-2022-03-25 15:59:14 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 446702 of 1000000
-2022-03-25 15:59:14 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 444576 of 1000000
-2022-03-25 15:59:19 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 553751 of 1000000
-2022-03-25 15:59:19 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 550533 of 1000000
-2022-03-25 15:59:19 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 556548 of 1000000
-2022-03-25 15:59:19 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 555899 of 1000000
-2022-03-25 15:59:19 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 553495 of 1000000
-2022-03-25 15:59:24 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 664556 of 1000000
-2022-03-25 15:59:24 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 662547 of 1000000
-2022-03-25 15:59:24 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 667423 of 1000000
-2022-03-25 15:59:24 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 669675 of 1000000
-2022-03-25 15:59:24 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 665405 of 1000000
-2022-03-25 15:59:29 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 772784 of 1000000
-2022-03-25 15:59:29 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 781337 of 1000000
-2022-03-25 15:59:29 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 771301 of 1000000
-2022-03-25 15:59:29 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 776279 of 1000000
-2022-03-25 15:59:29 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 772161 of 1000000
-2022-03-25 15:59:34 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 884676 of 1000000
-2022-03-25 15:59:34 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 891202 of 1000000
-2022-03-25 15:59:34 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 886999 of 1000000
-2022-03-25 15:59:34 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 883317 of 1000000
-2022-03-25 15:59:34 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 881829 of 1000000
-2022-03-25 15:59:39 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 993190 of 1000000
-2022-03-25 15:59:39 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 995174 of 1000000
-2022-03-25 15:59:39 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 998488 of 1000000
-2022-03-25 15:59:39 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 989287 of 1000000
-2022-03-25 15:59:39 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 988095 of 1000000
-2022-03-25 15:59:40 INFO  UniqSocketServer:118 - UniqServer shutting down...
-2022-03-25 15:59:40 INFO  UniqLazyCommit:116 - Commit thread terminating, total commits: 40
- - dsmask_uniq_0 size 2580480 bytes
- - dsmask_uniq_1 size 2498560 bytes
- - dsmask_uniq_2 size 2408448 bytes
- - dsmask_uniq_3 size 2613248 bytes
- - dsmask_uniq_4 size 2375680 bytes
- - dsmask_uniq_5 size 2547712 bytes
- - dsmask_uniq_6 size 2371584 bytes
- - dsmask_uniq_7 size 2367488 bytes
- - dsmask_uniq_8 size 2490368 bytes
- - dsmask_uniq_9 size 2326528 bytes
-2022-03-25 15:59:40 INFO  UniqDemo:99 - Completed, total runtime: 46697 msec.
-2022-03-25 15:59:40 INFO  UniqDemo:100 - ** total:  5000000 (= store + fail)
-2022-03-25 15:59:40 INFO  UniqDemo:101 - ** store:  4983920
-2022-03-25 15:59:40 INFO  UniqDemo:102 - ** fail:   16080
-2022-03-25 15:59:40 INFO  UniqDemo:103 - ** hint:   372310
-2022-03-25 15:59:40 INFO  UniqDemo:104 - ** iter:   2068300
-2022-03-25 15:59:40 INFO  UniqConnection:79 - UniqServer disconnected remote port 42434, address /127.0.0.1, stats: C=1488435, R=1488435, H=74594, J=491653
-2022-03-25 15:59:41 INFO  UniqConnection:79 - UniqServer disconnected remote port 42428, address /127.0.0.1, stats: C=1491456, R=1491456, H=74707, J=494699
-2022-03-25 15:59:41 INFO  UniqConnection:79 - UniqServer disconnected remote port 42438, address /127.0.0.1, stats: C=1482767, R=1482767, H=74029, J=485933
-2022-03-25 15:59:41 INFO  UniqConnection:79 - UniqServer disconnected remote port 42436, address /127.0.0.1, stats: C=1477830, R=1477830, H=74330, J=480953
-2022-03-25 15:59:41 INFO  UniqConnection:79 - UniqServer disconnected remote port 42430, address /127.0.0.1, stats: C=1500122, R=1500122, H=74650, J=503452
+Working in /tmp/uniqdemo17118234971839809736
+2022-03-25 16:48:43 INFO  UniqLazyCommit:82 - Commit thread running with delay 10000 msec.
+2022-03-25 16:48:43 INFO  UniqSocketServer:88 - UniqServer running on port 10500, address null
+2022-03-25 16:48:44 INFO  UniqConnection:70 - UniqServer connected remote port 43218, address /127.0.0.1
+2022-03-25 16:48:44 INFO  UniqConnection:70 - UniqServer connected remote port 43216, address /127.0.0.1
+2022-03-25 16:48:44 INFO  UniqConnection:70 - UniqServer connected remote port 43212, address /127.0.0.1
+2022-03-25 16:48:44 INFO  UniqConnection:70 - UniqServer connected remote port 43214, address /127.0.0.1
+2022-03-25 16:48:44 INFO  UniqConnection:70 - UniqServer connected remote port 43232, address /127.0.0.1
+2022-03-25 16:48:49 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 214421 of 1000000
+2022-03-25 16:48:49 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 214899 of 1000000
+2022-03-25 16:48:49 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 214595 of 1000000
+2022-03-25 16:48:49 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 214344 of 1000000
+2022-03-25 16:48:49 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 215040 of 1000000
+2022-03-25 16:48:54 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 444770 of 1000000
+2022-03-25 16:48:54 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 445905 of 1000000
+2022-03-25 16:48:54 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 447610 of 1000000
+2022-03-25 16:48:54 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 447923 of 1000000
+2022-03-25 16:48:54 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 444918 of 1000000
+2022-03-25 16:48:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 663110 of 1000000
+2022-03-25 16:48:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 666432 of 1000000
+2022-03-25 16:48:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 667512 of 1000000
+2022-03-25 16:48:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 667539 of 1000000
+2022-03-25 16:48:59 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 668149 of 1000000
+2022-03-25 16:49:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-0 processed 888023 of 1000000
+2022-03-25 16:49:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-4 processed 893296 of 1000000
+2022-03-25 16:49:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-3 processed 889816 of 1000000
+2022-03-25 16:49:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-2 processed 895148 of 1000000
+2022-03-25 16:49:04 INFO  UniqDemo:210 - Thread uniq-demo-worker-1 processed 892059 of 1000000
+2022-03-25 16:49:07 INFO  UniqSocketServer:118 - UniqServer shutting down...
+2022-03-25 16:49:07 INFO  UniqLazyCommit:116 - Commit thread terminating, total commits: 20
+ - dsmask_uniq_0 size 1875968 bytes
+ - dsmask_uniq_1 size 1810432 bytes
+ - dsmask_uniq_2 size 1769472 bytes
+ - dsmask_uniq_3 size 1863680 bytes
+ - dsmask_uniq_4 size 1720320 bytes
+ - dsmask_uniq_5 size 1826816 bytes
+ - dsmask_uniq_6 size 1720320 bytes
+ - dsmask_uniq_7 size 1748992 bytes
+ - dsmask_uniq_8 size 1789952 bytes
+ - dsmask_uniq_9 size 1691648 bytes
+2022-03-25 16:49:07 INFO  UniqDemo:99 - Completed, total runtime: 23773 msec.
+2022-03-25 16:49:07 INFO  UniqDemo:100 - ** total:  5000000 (= store + fail)
+2022-03-25 16:49:07 INFO  UniqDemo:101 - ** store:  4985890
+2022-03-25 16:49:07 INFO  UniqDemo:102 - ** fail:   14110
+2022-03-25 16:49:07 INFO  UniqDemo:103 - ** hint:   374038
+2022-03-25 16:49:07 INFO  UniqDemo:104 - ** iter:   1871489
+2022-03-25 16:49:08 INFO  UniqConnection:81 - UniqServer disconnected remote port 43216, address /127.0.0.1, stats: C=1444533, R=1444533, H=74910, J=447301
+2022-03-25 16:49:08 INFO  UniqConnection:81 - UniqServer disconnected remote port 43212, address /127.0.0.1, stats: C=1450027, R=1450027, H=74700, J=452864
+2022-03-25 16:49:08 INFO  UniqConnection:81 - UniqServer disconnected remote port 43232, address /127.0.0.1, stats: C=1441727, R=1441727, H=74809, J=444467
+2022-03-25 16:49:08 INFO  UniqConnection:81 - UniqServer disconnected remote port 43214, address /127.0.0.1, stats: C=1453362, R=1453362, H=74843, J=456237
+2022-03-25 16:49:08 INFO  UniqConnection:81 - UniqServer disconnected remote port 43218, address /127.0.0.1, stats: C=1455878, R=1455878, H=74776, J=458768
 
 *** Local:
 
-Working in /tmp/uniqdemo2077894645519441401
-2022-03-25 16:00:39 INFO  UniqLazyCommit:82 - Commit thread running with delay 10000 msec.
-2022-03-25 16:00:43 INFO  UniqLazyCommit:116 - Commit thread terminating, total commits: 0
- - dsmask_uniq_0 size 835584 bytes
- - dsmask_uniq_1 size 823296 bytes
- - dsmask_uniq_2 size 811008 bytes
+Working in /tmp/uniqdemo1170617326921828386
+2022-03-25 16:50:17 INFO  UniqLazyCommit:82 - Commit thread running with delay 10000 msec.
+2022-03-25 16:50:21 INFO  UniqLazyCommit:116 - Commit thread terminating, total commits: 0
+ - dsmask_uniq_0 size 831488 bytes
+ - dsmask_uniq_1 size 831488 bytes
+ - dsmask_uniq_2 size 815104 bytes
  - dsmask_uniq_3 size 843776 bytes
- - dsmask_uniq_4 size 798720 bytes
- - dsmask_uniq_5 size 847872 bytes
- - dsmask_uniq_6 size 774144 bytes
- - dsmask_uniq_7 size 790528 bytes
- - dsmask_uniq_8 size 815104 bytes
+ - dsmask_uniq_4 size 786432 bytes
+ - dsmask_uniq_5 size 835584 bytes
+ - dsmask_uniq_6 size 778240 bytes
+ - dsmask_uniq_7 size 782336 bytes
+ - dsmask_uniq_8 size 802816 bytes
  - dsmask_uniq_9 size 782336 bytes
-2022-03-25 16:00:43 INFO  UniqDemo:99 - Completed, total runtime: 4163 msec.
-2022-03-25 16:00:43 INFO  UniqDemo:100 - ** total:  5000000 (= store + fail)
-2022-03-25 16:00:43 INFO  UniqDemo:101 - ** store:  4984633
-2022-03-25 16:00:43 INFO  UniqDemo:102 - ** fail:   15367
-2022-03-25 16:00:43 INFO  UniqDemo:103 - ** hint:   372719
-2022-03-25 16:00:43 INFO  UniqDemo:104 - ** iter:   2000386
+2022-03-25 16:50:21 INFO  UniqDemo:99 - Completed, total runtime: 3584 msec.
+2022-03-25 16:50:21 INFO  UniqDemo:100 - ** total:  5000000 (= store + fail)
+2022-03-25 16:50:21 INFO  UniqDemo:101 - ** store:  4985420
+2022-03-25 16:50:21 INFO  UniqDemo:102 - ** fail:   14580
+2022-03-25 16:50:21 INFO  UniqDemo:103 - ** hint:   372300
+2022-03-25 16:50:21 INFO  UniqDemo:104 - ** iter:   1918589
