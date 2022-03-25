@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 public class MaskFPETest extends TestResources {
 
     private MaskFPE algorithm1 = null;
+    private MaskFPE algorithm1bis = null;
     private MaskFPE algorithm2 = null;
     private MaskFPE algorithm3 = null;
 
@@ -50,11 +51,20 @@ public class MaskFPETest extends TestResources {
 
     @Test
     public void test1Exec3() {
-        Object in, out;
+        Object in, out, out2, out3, outbis;
         in = "small letters AND BIG LETTERS по русски И БОЛЬШЕ";
         out = getAlgorithm1().calculate(in);
-        //System.out.println("FPE [" + in + "] -> [" + out + "]");
+        out2 = getAlgorithm1().calculate(in, 1); // iteration must provide different result
+        out3 = getAlgorithm1().calculate(in, 2); // again must be different
+        outbis = getAlgorithm1bis().calculate(in); // different key - different result
+        // System.out.println("FPE1 [" + in + "] -> [" + out + "]");
+        // System.out.println("FPE2 [" + in + "] -> [" + out2 + "]");
+        // System.out.println("FPE3 [" + in + "] -> [" + out3 + "]");
+        // System.out.println("FPEB [" + in + "] -> [" + outbis + "]");
         assertEquals("pjvnv eglndxh ESO VME FDAVXNX иё цдмевб В ЧКВКЁЬ", out);
+        assertEquals("warfk uwfoqed KCR QAR MBFVCVQ пм лркебй Е ПБРЛОЮ", out2);
+        assertEquals("bygij rjfdesn DKN BUB QHERUEC бш счгдии Щ ОРНБГЫ", out3);
+        assertEquals("qfsre fucnyae MWD ABE FETLZDD гл хпзоок Э ЦХЖЗТЗ", outbis);
     }
 
     @Test
@@ -95,6 +105,13 @@ public class MaskFPETest extends TestResources {
             algorithm1 = new MaskFPE();
         }
         return algorithm1;
+    }
+
+    private MaskFPE getAlgorithm1bis() {
+        if (algorithm1bis==null) {
+            algorithm1bis = new MaskFPE(CharClassSet.DEFAULT_RUSSIAN, "КлючОтКисловодска");
+        }
+        return algorithm1bis;
     }
 
     private MaskFPE getAlgorithm2() {

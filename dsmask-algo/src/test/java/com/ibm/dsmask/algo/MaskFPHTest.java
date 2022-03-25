@@ -51,17 +51,20 @@ public class MaskFPHTest extends TestResources {
 
     @Test
     public void test1Exec3() {
-        Object in, out, out2, out3;
+        Object in, out, out2, out3, outbis;
         in = "small letters AND BIG LETTERS по русски И БОЛЬШЕ";
         out = getAlgorithm1().calculate(in);
-        out2 = getAlgorithm1().calculate(in, 1);
-        out3 = getAlgorithm1bis().calculate(in);
+        out2 = getAlgorithm1().calculate(in, 1); // iteration must provide different result
+        out3 = getAlgorithm1().calculate(in, 2); // again must be different
+        outbis = getAlgorithm1bis().calculate(in); // different key - different result
         // System.out.println("FPE1 [" + in + "] -> [" + out + "]");
         // System.out.println("FPE2 [" + in + "] -> [" + out2 + "]");
         // System.out.println("FPE3 [" + in + "] -> [" + out3 + "]");
+        // System.out.println("FPEB [" + in + "] -> [" + outbis + "]");
         assertEquals("ybcic pfgjnqt FHM NJD XWYJFVW бх арннйп Щ ИХЙЭЦЗ", out);
         assertEquals("jchjr feuwcyf AOD IRM RZDPNWM уа нныттл Ъ ТЙГХОР", out2);
-        assertEquals("fiira hjrlnej AQT BHG MUYGOBY вм цйёцнц Б ЪЖЁЕЛЫ", out3);
+        assertEquals("vjrnm bbenwoe CRY BDW EMOCBOP шш лнмйуз Ъ МЪЪЮДГ", out3);
+        assertEquals("fiira hjrlnej AQT BHG MUYGOBY вм цйёцнц Б ЪЖЁЕЛЫ", outbis);
     }
 
     @Test
