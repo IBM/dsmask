@@ -24,6 +24,7 @@ import org.apache.commons.text.RandomStringGenerator;
 public class FpxPerf {
 
     public static void main(String[] args) {
+        System.out.println(System.getProperty("java.version"));
         System.out.println("FpxPerf: initializing...");
         final MaskFPE fpe = new MaskFPE();
         final MaskFPH fph = new MaskFPH();

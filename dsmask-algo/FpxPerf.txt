@@ -1,0 +1,22 @@
+*** Example performance data from net.dsmask.demo.FpxPerf
+
+(a) AMD Ryzen 5 5600X 6-Core Processor
+
+$ /usr/lib/jvm/java-8-openjdk-amd64/bin/java -version
+openjdk version "1.8.0_272"
+OpenJDK Runtime Environment (build 1.8.0_272-8u272-b10-0+deb9u1-b10)
+OpenJDK 64-Bit Server VM (build 25.272-b10, mixed mode)
+
+1.8.0_272
+FpxPerf: initializing...
+FpxPerf: generating input...
+FpxPerf: generated total 1000000 values in 1875 msec.
+FpxPerf: measuring FPE speed with iteration 0...
+	 5028 msec. = 198886,24 values/second.
+FpxPerf: measuring FPE speed with iteration 1...
+	 5297 msec. = 188786,11 values/second.
+FpxPerf: measuring FPH speed with iteration 0...
+	 3089 msec. = 323729,36 values/second.
+FpxPerf: measuring FPH speed with iteration 1...
+	 3278 msec. = 305064,06 values/second.
+
