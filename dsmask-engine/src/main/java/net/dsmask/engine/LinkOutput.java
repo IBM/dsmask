@@ -30,7 +30,7 @@ public interface LinkOutput {
      * Generate a new output record object
      * @return Empty output record
      */
-    RowOutput getOutputRecord();
+    RowOutput newOutputRecord();
 
     /**
      * Save an output record

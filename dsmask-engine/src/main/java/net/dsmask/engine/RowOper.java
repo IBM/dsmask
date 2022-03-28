@@ -26,12 +26,12 @@ public class RowOper {
     private final int[] indexInput;
     private final int[] indexOutput;
 
-    public RowOper(LinkInfo linkInfo, MaskingProfile prof, MaskingOperation op) {
+    public RowOper(Workspace workspace, MaskingOperation op) {
         this.context = new CtxItemBlock(op.getRule());
-        this.indexInput = index(linkInfo.getInputLink().getInputColumns(),
-                linkInfo.getInputMap(), op.getInputs());
-        this.indexOutput = index(linkInfo.getOutputLink().getOutputColumns(),
-                linkInfo.getOutputMap(), op.getOutputs());
+        this.indexInput = index(workspace.getInputColumns(),
+                workspace.getInputMap(), op.getInputs());
+        this.indexOutput = index(workspace.getOutputColumns(),
+                workspace.getOutputMap(), op.getOutputs());
     }
 
     /**

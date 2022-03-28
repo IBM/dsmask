@@ -26,10 +26,10 @@ public class RowContext {
 
     private RowContext nextPending = null;
 
-    public RowContext(LinkInfo linkInfo, MaskingProfile prof) {
-        this.operations = new ArrayList<>(prof.getOperations().size());
-        for (MaskingOperation op : prof.getOperations()) {
-            this.operations.add(new RowOper(linkInfo, prof, op));
+    public RowContext(Workspace workspace) {
+        this.operations = new ArrayList<>(workspace.getOperations().size());
+        for (MaskingOperation op : workspace.getOperations()) {
+            this.operations.add(new RowOper(workspace, op));
         }
     }
 
@@ -60,11 +60,11 @@ public class RowContext {
 
     /**
      * Grab the outputs from all the operations, merge into the output row.
-     * @param row Output row values holder
+     * @param link Output link to send the row
      */
-    public final void collect(RowOutput row) {
+    public final void collect(LinkOutput link) {
         for (RowOper ro : operations) {
-            ro.collect(row);
+            //ro.collect(row);
         }
     }
 

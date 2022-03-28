@@ -20,27 +20,24 @@ import net.dsmask.model.*;
  */
 public class MaskingEngine {
 
-    private final LinkInfo linkInfo;
-    private final MaskingProfile profile;
+    private final Workspace workspace;
     private final RowContext[] allRows;
     private RowContext pendingRows;
     private int rowCount;
 
-    public MaskingEngine(LinkInfo linkInfo, MaskingProfile profile, int batchSize) {
-        batchSize = (batchSize>0) ? batchSize : 1;
-        this.linkInfo = linkInfo;
-        this.profile = profile;
-        this.allRows = new RowContext[batchSize];
+    public MaskingEngine(Workspace workspace) {
+        this.workspace = workspace;
+        this.allRows = new RowContext[workspace.getBatchSize()];
         this.pendingRows = null;
         this.rowCount = 0;
     }
 
-    public LinkInfo getLinkInfo() {
-        return linkInfo;
+    public final Workspace getWorkspace() {
+        return workspace;
     }
 
-    public MaskingProfile getProfile() {
-        return profile;
+    public final MaskingProfile getProfile() {
+        return workspace.getProfile();
     }
 
     public final int getRowCount() {
@@ -68,7 +65,7 @@ public class MaskingEngine {
         RowContext ctx = allRows[rowCount];
         if (ctx==null) {
             // Generate the new row context.
-            ctx = new RowContext(linkInfo, profile);
+            ctx = new RowContext(workspace);
             allRows[rowCount] = ctx;
         }
         // Assign the input row values.
@@ -84,8 +81,12 @@ public class MaskingEngine {
     /**
      * Compute the values for all rows in a batch.
      */
-    public void compute() {
-
+    public void process() {
+        // Try to move the computation forward.
+        while (! increment()) {
+            // Process the pending batch operations.
+            batch();
+        }
     }
 
     /**
@@ -115,6 +116,14 @@ public class MaskingEngine {
     }
 
     /**
+     * Execute the pending batch operations.
+     * Clear the batch execution queues.
+     */
+    private void batch() {
+        
+    }
+
+    /**
      * Collect the output values from the data masking operations.
      * @param pos Row position in the batch list
      * @param link Output link.
@@ -127,7 +136,7 @@ public class MaskingEngine {
             throw new IllegalArgumentException("Row position specified is "
                     + String.valueOf(pos) + ", must be less than " + String.valueOf(rowCount));
         }
-        //allRows[pos].collect(row);
+        allRows[pos].collect(link);
     }
 
 }
