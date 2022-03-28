@@ -16,15 +16,24 @@ package net.dsmask.engine;
  * Basic definitions for the computational step.
  * @author zinal
  */
-public abstract class CtxItemBase {
+public abstract class CtxBase {
 
-    private XVector value;
+    protected XVector value;
+    
+    public CtxBase() {
+        this(1);
+    }
 
-    public CtxItemBase() {
-        this.value = new XVector(1);
+    public CtxBase(int size) {
+        this.value = new XVector(size);
     }
 
     public final XVector getValue() {
+        return value;
+    }
+
+    public final XVector makeValue(int size) {
+        value = XVector.make(value, size);
         return value;
     }
 

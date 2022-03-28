@@ -18,15 +18,15 @@ import net.dsmask.model.*;
  *
  * @author zinal
  */
-public class CtxItemBlock extends CtxItemBase {
+public class CtxBlock extends CtxBase {
 
     private final ItemBlock item;
 
-    public CtxItemBlock(AnyRule rule) {
+    public CtxBlock(AnyRule rule) {
         this.item = ((MaskingRule) rule).getPipeline();
     }
 
-    public CtxItemBlock(ItemBlock item) {
+    public CtxBlock(ItemBlock item) {
         this.item = item;
     }
 

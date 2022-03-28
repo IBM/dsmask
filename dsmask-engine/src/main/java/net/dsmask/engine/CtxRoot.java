@@ -12,22 +12,20 @@
  */
 package net.dsmask.engine;
 
-import net.dsmask.model.*;
-
 /**
  *
  * @author zinal
  */
-public class CtxItemStep extends CtxItemBase {
+public class CtxRoot extends CtxBase {
 
-    private final ItemStep item;
-
-    public CtxItemStep(ItemStep item) {
-        this.item = item;
+    public CtxRoot(int[] index) {
+        super(index.length);
     }
-
-    public final ItemStep getItem() {
-        return item;
+    
+    public final void setup(int[] index, RowInput row) {
+        makeValue(index.length);
+        for (int i=0; i<index.length; ++i)
+            value.values[i] = row.getValue(index[i]);
     }
 
 }
