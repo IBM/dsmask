@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package com.ibm.dsmask.impl;
+package net.dsmask.engine;
 
 /**
  * The abstract access to the input row values.
  * @author zinal
  */
-public interface XRowInput {
+public interface RowInput {
 
     /**
      * Retrieve the field value by its index.
