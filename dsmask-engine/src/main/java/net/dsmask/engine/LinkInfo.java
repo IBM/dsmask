@@ -50,6 +50,14 @@ public class LinkInfo {
         return outputMap;
     }
 
+    public List<XColumnInfo> getInputColumns() {
+        return inputLink.getInputColumns();
+    }
+
+    public List<XColumnInfo> getOutputColumns() {
+        return outputLink.getOutputColumns();
+    }
+
     private static Map<String, Integer> map(List<XColumnInfo> columns) {
         final Map<String, Integer> m = new HashMap<>();
         for (XColumnInfo ci : columns)

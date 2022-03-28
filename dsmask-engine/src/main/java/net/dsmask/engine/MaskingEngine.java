@@ -35,6 +35,14 @@ public class MaskingEngine {
         this.rowCount = 0;
     }
 
+    public LinkInfo getLinkInfo() {
+        return linkInfo;
+    }
+
+    public MaskingProfile getProfile() {
+        return profile;
+    }
+
     public final int getRowCount() {
         return rowCount;
     }
@@ -74,10 +82,17 @@ public class MaskingEngine {
     }
 
     /**
+     * Compute the values for all rows in a batch.
+     */
+    public void compute() {
+
+    }
+
+    /**
      * Move forward the computation over the current input set of rows.
      * @return true, if the computation has completed, false otherwise.
      */
-    public boolean increment() {
+    private boolean increment() {
         boolean retval = true;
         RowContext ctx = pendingRows, prev = null;
         while (ctx != null) {
@@ -102,9 +117,9 @@ public class MaskingEngine {
     /**
      * Collect the output values from the data masking operations.
      * @param pos Row position in the batch list
-     * @param row Output row values container.
+     * @param link Output link.
      */
-    public void collect(int pos, RowOutput row) {
+    public void collect(int pos, LinkOutput link) {
         if (pendingRows != null) {
             throw new IllegalStateException("Cannot run collect() with pending rows");
         }
@@ -112,7 +127,7 @@ public class MaskingEngine {
             throw new IllegalArgumentException("Row position specified is "
                     + String.valueOf(pos) + ", must be less than " + String.valueOf(rowCount));
         }
-        allRows[pos].collect(row);
+        //allRows[pos].collect(row);
     }
 
 }
