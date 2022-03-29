@@ -12,23 +12,27 @@
  */
 package net.dsmask.engine.impl;
 
-import net.dsmask.engine.*;
 import net.dsmask.model.*;
 
 /**
  *
  * @author zinal
  */
-public class CtxRoot extends CtxBase {
+public class CtxScript extends CtxBase {
 
-    public CtxRoot(int sz) {
-        super(ItemType.Block, sz);
+    private final ItemScript item;
+
+    public CtxScript(ItemScript item) {
+        super(ItemType.Script, item.getInputs().size());
+        this.item = item;
     }
-    
-    public final void setup(int[] index, RowInput row) {
-        makeValue(index.length);
-        for (int i=0; i<index.length; ++i)
-            value.values[i] = row.getValue(index[i]);
+
+    public final ItemScript getItem() {
+        return item;
+    }
+
+    public final void calculate() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

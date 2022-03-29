@@ -23,11 +23,16 @@ public class CtxStep extends CtxBase {
     private final ItemStep item;
 
     public CtxStep(ItemStep item) {
+        super(ItemType.Step, item.getInputs().size());
         this.item = item;
     }
 
     public final ItemStep getItem() {
         return item;
+    }
+
+    public final boolean calculate() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

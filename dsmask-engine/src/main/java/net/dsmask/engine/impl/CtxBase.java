@@ -12,7 +12,8 @@
  */
 package net.dsmask.engine.impl;
 
-import net.dsmask.engine.XVector;
+import net.dsmask.engine.*;
+import net.dsmask.model.*;
 
 /**
  * Basic definitions for the computational step.
@@ -20,14 +21,20 @@ import net.dsmask.engine.XVector;
  */
 public abstract class CtxBase {
 
+    protected final ItemType itemType;
     protected XVector value;
     
-    public CtxBase() {
-        this(1);
+    public CtxBase(ItemType itemType) {
+        this(itemType, 1);
     }
 
-    public CtxBase(int size) {
+    public CtxBase(ItemType itemType, int size) {
+        this.itemType = itemType;
         this.value = new XVector(size);
+    }
+
+    public final ItemType getItemType() {
+        return itemType;
     }
 
     public final XVector getValue() {
