@@ -10,22 +10,28 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package net.dsmask.engine;
+package net.dsmask.engine.impl;
+
+import net.dsmask.model.*;
 
 /**
  *
  * @author zinal
  */
-public class CtxRoot extends CtxBase {
+public class CtxBlock extends CtxBase {
 
-    public CtxRoot(int[] index) {
-        super(index.length);
+    private final ItemBlock item;
+
+    public CtxBlock(AnyRule rule) {
+        this.item = ((MaskingRule) rule).getPipeline();
     }
-    
-    public final void setup(int[] index, RowInput row) {
-        makeValue(index.length);
-        for (int i=0; i<index.length; ++i)
-            value.values[i] = row.getValue(index[i]);
+
+    public CtxBlock(ItemBlock item) {
+        this.item = item;
+    }
+
+    public final ItemBlock getItem() {
+        return item;
     }
 
 }

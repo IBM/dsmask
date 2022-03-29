@@ -10,7 +10,7 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package net.dsmask.engine;
+package net.dsmask.engine.impl;
 
 import net.dsmask.model.*;
 

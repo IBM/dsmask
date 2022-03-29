@@ -10,7 +10,9 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package net.dsmask.engine;
+package net.dsmask.engine.impl;
+
+import net.dsmask.engine.XVector;
 
 /**
  * Basic definitions for the computational step.

@@ -10,23 +10,24 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package net.dsmask.engine;
+package net.dsmask.engine.impl;
 
 import java.util.List;
 import java.util.Map;
+import net.dsmask.engine.*;
 import net.dsmask.model.*;
 
 /**
  * Masking operation context for a single row.
  * @author zinal
  */
-public class RowOper {
+public class MaskingSingleOper {
 
     private final CtxBlock context;
     private final int[] indexInput;
     private final int[] indexOutput;
 
-    public RowOper(Workspace workspace, MaskingOperation op) {
+    public MaskingSingleOper(Workspace workspace, MaskingOperation op) {
         this.context = new CtxBlock(op.getRule());
         this.indexInput = index(workspace.getInputColumns(),
                 workspace.getInputMap(), op.getInputs());

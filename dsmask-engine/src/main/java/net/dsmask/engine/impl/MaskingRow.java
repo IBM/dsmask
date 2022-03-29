@@ -10,34 +10,35 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package net.dsmask.engine;
+package net.dsmask.engine.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.dsmask.engine.*;
 import net.dsmask.model.*;
 
 /**
  * Masking context for a single row.
  * @author zinal
  */
-public class RowContext {
+public class MaskingRow {
 
-    private final List<RowOper> operations;
+    private final List<MaskingSingleOper> operations;
 
-    private RowContext nextPending = null;
+    private MaskingRow nextPending = null;
 
-    public RowContext(Workspace workspace) {
+    public MaskingRow(Workspace workspace) {
         this.operations = new ArrayList<>(workspace.getOperations().size());
         for (MaskingOperation op : workspace.getOperations()) {
-            this.operations.add(new RowOper(workspace, op));
+            this.operations.add(new MaskingSingleOper(workspace, op));
         }
     }
 
-    public final RowContext getNextPending() {
+    public final MaskingRow getNextPending() {
         return nextPending;
     }
 
-    public final void setNextPending(RowContext nextPending) {
+    public final void setNextPending(MaskingRow nextPending) {
         this.nextPending = nextPending;
     }
 
@@ -53,7 +54,7 @@ public class RowContext {
      * @param row Input row values
      */
     public final void setup(RowInput row) {
-        for (RowOper ro : operations) {
+        for (MaskingSingleOper ro : operations) {
             ro.setup(row);
         }
     }
@@ -63,7 +64,7 @@ public class RowContext {
      * @param link Output link to send the row
      */
     public final void collect(LinkOutput link) {
-        for (RowOper ro : operations) {
+        for (MaskingSingleOper ro : operations) {
             //ro.collect(row);
         }
     }
@@ -74,7 +75,7 @@ public class RowContext {
      */
     public final boolean increment() {
         boolean retval = true;
-        for (RowOper ro : operations) {
+        for (MaskingSingleOper ro : operations) {
             final boolean operComplete = ro.increment();
             if (!operComplete)
                 retval = false;

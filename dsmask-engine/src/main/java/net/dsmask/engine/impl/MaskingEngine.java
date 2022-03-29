@@ -10,8 +10,9 @@
  * Contributors:
  *  Maksim Zinal (IBM) - Initial implementation
  */
-package net.dsmask.engine;
+package net.dsmask.engine.impl;
 
+import net.dsmask.engine.*;
 import net.dsmask.model.*;
 
 /**
@@ -21,13 +22,13 @@ import net.dsmask.model.*;
 public class MaskingEngine {
 
     private final Workspace workspace;
-    private final RowContext[] allRows;
-    private RowContext pendingRows;
+    private final MaskingRow[] allRows;
+    private MaskingRow pendingRows;
     private int rowCount;
 
     public MaskingEngine(Workspace workspace) {
         this.workspace = workspace;
-        this.allRows = new RowContext[workspace.getBatchSize()];
+        this.allRows = new MaskingRow[workspace.getBatchSize()];
         this.pendingRows = null;
         this.rowCount = 0;
     }
@@ -62,10 +63,10 @@ public class MaskingEngine {
             // Cannot move forward, batch size exceeded.
             return false;
         }
-        RowContext ctx = allRows[rowCount];
+        MaskingRow ctx = allRows[rowCount];
         if (ctx==null) {
             // Generate the new row context.
-            ctx = new RowContext(workspace);
+            ctx = new MaskingRow(workspace);
             allRows[rowCount] = ctx;
         }
         // Assign the input row values.
@@ -95,9 +96,10 @@ public class MaskingEngine {
      */
     private boolean increment() {
         boolean retval = true;
-        RowContext ctx = pendingRows, prev = null;
+        MaskingRow ctx = pendingRows;
+        MaskingRow prev = null;
         while (ctx != null) {
-            final RowContext next = ctx.getNextPending();
+            final MaskingRow next = ctx.getNextPending();
             if (ctx.increment()) {
                 // Exclude the completed row from the list.
                 if (prev != null) {
