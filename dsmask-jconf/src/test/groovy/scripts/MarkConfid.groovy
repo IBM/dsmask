@@ -15,8 +15,7 @@ import com.ibm.dsmask.hc.HttpHelper
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
 
 class G {
-    static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.
-        getLogger("dsmask-MarkConfid")
+    static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger("dsmask-MarkConfid")
     // Global settings
     static String IIS_URL = null
     static String IIS_SEARCH_URL = null
@@ -169,31 +168,39 @@ def grabFromConfig(Properties conf, String confname) {
 }
 
 // Operations sequence using the IIS services connection
-def runAll(CloseableHttpClient iis, Properties conf) {
-    grabFromConfig(conf, "term.G").each { it ->
+def runAll(CloseableHttpClient iis, Properties job) {
+    grabFromConfig(job, "term.G").each { it ->
         markTerm(iis, it, safeFindTermId(iis, "DsMask.G"))
     }
-    grabFromConfig(conf, "term.C").each { it ->
+    grabFromConfig(job, "term.C").each { it ->
         markTerm(iis, it, safeFindTermId(iis, "DsMask.C"))
     }
-    grabFromConfig(conf, "term.R").each { it ->
+    grabFromConfig(job, "term.R").each { it ->
         markTerm(iis, it, safeFindTermId(iis, "DsMask.R"))
     }
-    grabFromConfig(conf, "dcs.G").each { it ->
+    grabFromConfig(job, "dcs.G").each { it ->
         markDataClass(iis, it, safeFindTermId(iis, "DsMask.G"))
     }
-    grabFromConfig(conf, "dcs.C").each { it ->
+    grabFromConfig(job, "dcs.C").each { it ->
         markDataClass(iis, it, safeFindTermId(iis, "DsMask.C"))
     }
-    grabFromConfig(conf, "dcs.R").each { it ->
+    grabFromConfig(job, "dcs.R").each { it ->
         markDataClass(iis, it, safeFindTermId(iis, "DsMask.R"))
     }
 }
 
-G.LOG.info "dsmask MarkConfid v1.0 2022-01-30"
+G.LOG.info "dsmask MarkConfid v1.1 2022-03-31"
 
-final Properties conf = new Properties()
+final Properties conf = new Properties(), job = new Properties()
 new File("MarkConfid-config.xml").withInputStream { is -> conf.loadFromXML(is) }
+final String jobFileName
+if (this.args.length == 0) {
+    jobFileName = "MarkConfid-job.xml"
+} else {
+    jobFileName = this.args[0]
+}
+G.LOG.info "Configuration file: {}", jobFileName
+new File(jobFileName).withInputStream { is2 -> job.loadFromXML(is2) }
 
 // The re-usable connection
 G.IIS_URL = conf.getProperty("iis.url", "https://localhost:9443")
@@ -208,7 +215,7 @@ if ( conf.getProperty("iis.vault") != null ) {
             conf.getProperty("iis.password", "P@ssw0rd") )
 }
 // Main algorithm is executed on top of HTTP connection
-hc.withCloseable { iis -> runAll(iis, conf) }
+hc.withCloseable { iis -> runAll(iis, job) }
 
 G.LOG.info "dsmask MarkConfid shutting down..."
 

@@ -70,7 +70,8 @@ public class JobManager implements AutoCloseable {
     private ExecutorService executor = null;
 
     public static String safeInvocation(String table) {
-        return table.replace('.', '-').replaceAll("[\\[\\]\\\\\"']", "");
+        return table.replace('.', '-')
+                .replaceAll("([^0-9a-zA-Z_\\-])", "_");
     }
 
     public JobManager(String project, String jobType, JobConfiguration conf) {
