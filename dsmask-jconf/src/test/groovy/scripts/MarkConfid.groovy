@@ -193,11 +193,14 @@ G.LOG.info "dsmask MarkConfid v1.1 2022-03-31"
 
 final Properties conf = new Properties(), job = new Properties()
 new File("MarkConfid-config.xml").withInputStream { is -> conf.loadFromXML(is) }
+final String jobFileName
 if (this.args.length == 0) {
-    new File("MarkConfid-job.xml").withInputStream { is -> conf.loadFromXML(is) }
+    jobFileName = "MarkConfid-job.xml"
 } else {
-    new File(this.args[0]).withInputStream { is -> conf.loadFromXML(is) }
+    jobFileName = this.args[0]
 }
+G.LOG.info "Configuration file: {}", jobFileName
+new File(jobFileName).withInputStream { is2 -> job.loadFromXML(is2) }
 
 // The re-usable connection
 G.IIS_URL = conf.getProperty("iis.url", "https://localhost:9443")

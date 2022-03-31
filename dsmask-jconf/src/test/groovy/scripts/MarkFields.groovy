@@ -22,12 +22,34 @@ class G {
     static String IIS_SEARCH_URL = null
     // Cache of dataclass/term IDs [type, X:id], where X={D,T}
     static final Map<String, String> KNOWN_IDS = new HashMap<>()
-    // Cache of incorrect IDs
-    static final Set<String> BAD_IDS = new HashSet<>()
+}
+
+class FieldInfo {
+    String name
+    String id
+    String dcs
+}
+
+class TableInfo {
+    String name
+    String id
+    final Map<String, FieldInfo> items = new TreeMap<>()
+}
+
+class SchemaInfo {
+    String name
+    String id
+    final Map<String, TableInfo> items = new TreeMap<>()
+}
+
+class DbInfo {
+    String name
+    String id
+    final Map<String, SchemaInfo> items = new TreeMap<>()
 }
 
 class Input {
-    final Map<String, Map<String, Map<String, Map<String, String>>>> data = new TreeMap<>();
+    final Map<String, DbInfo> data = new TreeMap<>();
 }
 
 // Lookup term by its abbreviation
@@ -95,17 +117,19 @@ def safeFindId(CloseableHttpClient iis, String code) {
     return retval
 }
 
-def mapOne(CloseableHttpClient iis, String db, String schema, String table, String field, String dcs) {
-    G.LOG.info "Mapping {}.{}.{} {} -> {}", db, schema, table, field, dcs
+def mapOne(CloseableHttpClient iis, DbInfo db, SchemaInfo schema,
+        TableInfo table, FieldInfo field) {
+    G.LOG.info "Mapping {}.{}.{} {} -> {}", db.name, schema.name,
+        table.name, field.name, field.dcs
 }
 
 // Operations sequence using the IIS services connection
 def runAll(CloseableHttpClient iis, Input input) {
     input.data.each { db ->
-        db.value.each { schema ->
-            schema.value.each { table ->
-                table.value.each { field ->
-                    mapOne(iis, db.key, schema.key, table.key, field.key, field.value)
+        db.value.items.each { schema ->
+            schema.value.items.each { table ->
+                table.value.items.each { field ->
+                    mapOne(iis, db.value, schema.value, table.value, field.value)
                 }
             }
         }
@@ -123,23 +147,32 @@ def loadInputFile(InputStream is, Input input) {
             final String table = items[2]
             final String field = items[3]
             final String dcs = items[4]
-            def schemas = input.data.get(db)
-            if (schemas==null) {
-                schemas = new TreeMap<>()
-                input.data.put(db, schemas)
+            def dbInfo = input.data.get(db)
+            if (dbInfo==null) {
+                dbInfo = new DbInfo()
+                dbInfo.name = db;
+                input.data.put(db, dbInfo)
             }
-            def tables = schemas.get(schema)
-            if (tables==null) {
-                tables = new TreeMap<>()
-                schemas.put(schema, tables)
+            def schemaInfo = dbInfo.items.get(schema)
+            if (schemaInfo==null) {
+                schemaInfo = new SchemaInfo()
+                schemaInfo.name = schema
+                dbInfo.items.put(schema, schemaInfo)
             }
-            def fields = tables.get(table)
-            if (fields==null) {
-                fields = new TreeMap<>()
-                tables.put(table, fields)
+            def tableInfo = schemaInfo.items.get(table)
+            if (tableInfo==null) {
+                tableInfo = new TableInfo()
+                tableInfo.name = table
+                schemaInfo.items.put(table, tableInfo)
             }
-            if ( fields.put(field, dcs) != null ) {
+            def fieldInfo = tableInfo.items.get(field)
+            if (fieldInfo!=null) {
                 G.LOG.warn "Duplicate line: {}", line
+            } else {
+                fieldInfo = new FieldInfo()
+                fieldInfo.name = field
+                fieldInfo.dcs = dcs
+                tableInfo.items.put(field, fieldInfo)
             }
         }
     }
