@@ -8,29 +8,4 @@
 <entry key="iis.username">isadmin</entry>
 <entry key="iis.password">P@ssw0rd</entry>
 -->
-<entry key="term.G.0">DsMask.G1</entry>
-<entry key="term.G.1">DsMask.G2</entry>
-<entry key="term.G.2">DsMask.G3</entry>
-<entry key="term.G.3">DsMask.G4</entry>
-<entry key="term.G.4">DsMask.G5</entry>
-<entry key="dcs.R.0">GEN</entry>
-<entry key="dcs.C.0">OGRN_Rus</entry>
-<entry key="dcs.C.1">INN_Rus</entry>
-<entry key="dcs.C.2">SNILS_Rus</entry>
-<entry key="dcs.C.3">NID_Org_Rus</entry>
-<entry key="dcs.C.4">NID_Dom_Rus</entry>
-<entry key="dcs.C.5">NID_Frn_Rus</entry>
-<entry key="dcs.C.6">NameFirst_Rus</entry>
-<entry key="dcs.C.7">NameMiddle_Rus</entry>
-<entry key="dcs.C.8">NameLast_Rus</entry>
-<entry key="dcs.C.9">NameFull_Rus</entry>
-<entry key="dcs.C.10">NameAbbr_Rus</entry>
-<entry key="dcs.C.11">PA_Rus</entry>
-<entry key="dcs.C.12">Prof_Rus</entry>
-<entry key="dcs.C.13">PhoneNumber_Rus</entry>
-<entry key="dcs.C.14">PN</entry>
-<entry key="dcs.C.15">EA</entry>
-<entry key="dcs.C.16">DOB</entry>
-<entry key="dcs.C.17">DocDate_Rus</entry>
-<entry key="dcs.C.18">OrgName_Rus</entry>
 </properties>
