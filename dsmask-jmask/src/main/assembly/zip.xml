@@ -41,6 +41,7 @@
             <include>*.cmd</include>
             <include>*.txt</include>
             <include>*.sql</include>
+            <include>*.csv</include>
         </includes>
     </fileSet>
   </fileSets>
