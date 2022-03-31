@@ -28,24 +28,43 @@ class FieldInfo {
     String name
     String id
     String dcs
+    TableInfo owner
+
+    String getFullName() {
+        return owner.getFullName() + "." + name
+    }
 }
 
 class TableInfo {
     String name
     String id
     final Map<String, FieldInfo> items = new TreeMap<>()
+    SchemaInfo owner
+
+    String getFullName() {
+        return owner.getFullName() + "." + name
+    }
 }
 
 class SchemaInfo {
     String name
     String id
     final Map<String, TableInfo> items = new TreeMap<>()
+    DbInfo owner
+
+    String getFullName() {
+        return owner.getFullName() + "." + name
+    }
 }
 
 class DbInfo {
     String name
     String id
     final Map<String, SchemaInfo> items = new TreeMap<>()
+
+    String getFullName() {
+        return name
+    }
 }
 
 class Input {
@@ -102,7 +121,7 @@ String directFindDcsId(CloseableHttpClient iis, String code) {
     return retval
 }
 
-String safeFindId(CloseableHttpClient iis, String code) {
+String safeFindDcs(CloseableHttpClient iis, String code) {
     def retval = G.KNOWN_IDS.get(code)
     if (retval != null)
         return retval
@@ -121,47 +140,18 @@ String safeFindId(CloseableHttpClient iis, String code) {
     return retval
 }
 
-String directFindDb(CloseableHttpClient iis, String name) {
+String directFind(CloseableHttpClient iis, String type, String name, 
+        String ownerType, String ownerId) {
     def input = new StringBuilder()
     input.append("{\"pageSize\":1")
-    input.append(",\"types\":[\"database\"]")
-    input.append(",\"where\": {\"conditions\":[")
-    input.append("{\"property\": \"name\",\"operator\": \"=\"")
-    input.append(",\"value\": \"").append(name).append("\"}]")
-    input.append(",\"operator\": \"and\"}}")
-
-    def output = postJsonText(iis, input)
-    if (output==null || output.length()==0)
-        return null
-    def jsonData = new JsonSlurper().parseText(output)
-    def jsonItems = jsonData["items"]
-    if (jsonItems.size()==0)
-        return null
-    def retval = jsonItems[0]["_id"].toString()
-
-    G.LOG.info "Database {} found: {}", name, retval
-    return retval
-}
-
-String findDb(CloseableHttpClient iis, DbInfo info) {
-    if (info.id==null) {
-        info.id = directFindDb(iis, info.name)
-    }
-    if (info.id==null) {
-        throw new Exception("Cannot find database '" + info.name + "'")
-    }
-    return info.id
-}
-
-String directFindSchema(CloseableHttpClient iis, String owner, String name) {
-    def input = new StringBuilder()
-    input.append("{\"pageSize\":1")
-    input.append(",\"types\":[\"database_schema\"]")
+    input.append(",\"types\":[\"").append(type).append("\"]")
     input.append(",\"where\": {\"conditions\":[")
     input.append("{\"property\": \"name\",\"operator\": \"=\"")
     input.append(",\"value\": \"").append(name).append("\"}")
-    input.append(",{\"property\": \"database\",\"operator\": \"=\"")
-    input.append(",\"value\": \"").append(owner).append("\"}")
+    if (ownerType!=null) {
+        input.append(",{\"property\": \"").append(ownerType).append("\",\"operator\": \"=\"")
+        input.append(",\"value\": \"").append(ownerId).append("\"}")
+    }
     input.append("],\"operator\": \"and\"}}")
 
     def output = postJsonText(iis, input)
@@ -171,63 +161,63 @@ String directFindSchema(CloseableHttpClient iis, String owner, String name) {
     def jsonItems = jsonData["items"]
     if (jsonItems.size()==0)
         return null
-    def retval = jsonItems[0]["_id"].toString()
-
-    G.LOG.info "Schema {} found: {}", name, retval
-    return retval
+    final id = jsonItems[0]["_id"].toString()
+    G.LOG.info "FOUND {}/{} at {}/{}: {}", type, name, ownerType, ownerId, id
+    return id
 }
 
-String findSchema(CloseableHttpClient iis, DbInfo db, SchemaInfo info) {
+String safeFind(CloseableHttpClient iis, DbInfo info) {
     if (info.id==null) {
-        info.id = directFindSchema(iis, db.id, info.name)
+        info.id = directFind(iis, "database", info.name, null, null)
     }
     if (info.id==null) {
-        throw new Exception("Cannot find schema '" + info.name + "'")
-    }
-    return info.id
-}
-
-String directFindTable(CloseableHttpClient iis, String owner, String name) {
-    def input = new StringBuilder()
-    input.append("{\"pageSize\":1")
-    input.append(",\"types\":[\"database_table\"]")
-    input.append(",\"where\": {\"conditions\":[")
-    input.append("{\"property\": \"name\",\"operator\": \"=\"")
-    input.append(",\"value\": \"").append(name).append("\"}")
-    input.append(",{\"property\": \"database_schema\",\"operator\": \"=\"")
-    input.append(",\"value\": \"").append(owner).append("\"}")
-    input.append("],\"operator\": \"and\"}}")
-
-    def output = postJsonText(iis, input)
-    if (output==null || output.length()==0)
-        return null
-    def jsonData = new JsonSlurper().parseText(output)
-    def jsonItems = jsonData["items"]
-    if (jsonItems.size()==0)
-        return null
-    def retval = jsonItems[0]["_id"].toString()
-
-    G.LOG.info "Table {} found: {}", name, retval
-    return retval
-}
-
-String findTable(CloseableHttpClient iis, SchemaInfo schema, TableInfo info) {
-    if (info.id==null) {
-        info.id = directFindTable(iis, schema.id, info.name)
-    }
-    if (info.id==null) {
-        throw new Exception("Cannot find table '" + info.name + "'")
+        throw new Exception("Cannot find database " + info.fullName)
     }
     return info.id
 }
 
-def mapOne(CloseableHttpClient iis, DbInfo db, SchemaInfo schema,
-        TableInfo table, FieldInfo field) {
+String safeFind(CloseableHttpClient iis, SchemaInfo info) {
+    if (info.id==null) {
+        safeFind(iis, info.owner)
+        info.id = directFind(iis, "database_schema", info.name, "database", info.owner.id)
+    }
+    if (info.id==null) {
+        throw new Exception("Cannot find schema " + info.fullName)
+    }
+    return info.id
+}
+
+String safeFind(CloseableHttpClient iis, TableInfo info) {
+    if (info.id==null) {
+        safeFind(iis, info.owner)
+        info.id = directFind(iis, "database_table", info.name, "database_schema", info.owner.id)
+    }
+    if (info.id==null) {
+        throw new Exception("Cannot find table " + info.fullName)
+    }
+    return info.id
+}
+
+String safeFind(CloseableHttpClient iis, FieldInfo info) {
+    if (info.id==null) {
+        safeFind(iis, info.owner)
+        info.id = directFind(iis, "database_column", info.name, "database_table", info.owner.id)
+    }
+    if (info.id==null) {
+        throw new Exception("Cannot find field " + info.fullName)
+    }
+    return info.id
+}
+
+def mapOne(CloseableHttpClient iis, FieldInfo field) {
+    final table = field.owner
+    final schema = table.owner
+    final db = schema.owner
     G.LOG.info "Mapping {}.{}.{} {} -> {}", db.name, schema.name,
         table.name, field.name, field.dcs
-    findDb iis, db
-    findSchema iis, db, schema
-    findTable iis, schema, table
+    final fieldId = safeFind iis, field
+    final dcsId = safeFindDcs iis, field.dcs
+    G.LOG.info "\t{} -> {}", fieldId, dcsId
 }
 
 // Operations sequence using the IIS services connection
@@ -236,13 +226,14 @@ def runAll(CloseableHttpClient iis, Input input) {
         db.value.items.each { schema ->
             schema.value.items.each { table ->
                 table.value.items.each { field ->
-                    mapOne(iis, db.value, schema.value, table.value, field.value)
+                    mapOne(iis, field.value)
                 }
             }
         }
     }
 }
 
+// Read CSV file into the sorted data map
 def loadInputFile(InputStream is, Input input) {
     is.eachLine { line ->
         final String[] items = new StringTokenizer(line).getTokenArray()
@@ -257,19 +248,21 @@ def loadInputFile(InputStream is, Input input) {
             def dbInfo = input.data.get(db)
             if (dbInfo==null) {
                 dbInfo = new DbInfo()
-                dbInfo.name = db;
+                dbInfo.name = db
                 input.data.put(db, dbInfo)
             }
             def schemaInfo = dbInfo.items.get(schema)
             if (schemaInfo==null) {
                 schemaInfo = new SchemaInfo()
                 schemaInfo.name = schema
+                schemaInfo.owner = dbInfo
                 dbInfo.items.put(schema, schemaInfo)
             }
             def tableInfo = schemaInfo.items.get(table)
             if (tableInfo==null) {
                 tableInfo = new TableInfo()
                 tableInfo.name = table
+                tableInfo.owner = schemaInfo
                 schemaInfo.items.put(table, tableInfo)
             }
             def fieldInfo = tableInfo.items.get(field)
@@ -278,6 +271,7 @@ def loadInputFile(InputStream is, Input input) {
             } else {
                 fieldInfo = new FieldInfo()
                 fieldInfo.name = field
+                fieldInfo.owner = tableInfo
                 fieldInfo.dcs = dcs
                 tableInfo.items.put(field, fieldInfo)
             }
