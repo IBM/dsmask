@@ -52,8 +52,12 @@ class Input {
     final Map<String, DbInfo> data = new TreeMap<>();
 }
 
+String postJsonText(CloseableHttpClient iis, Object input) {
+    return HttpHelper.postJsonText(iis, G.IIS_SEARCH_URL, input.toString())
+}
+
 // Lookup term by its abbreviation
-def directFindTermId(CloseableHttpClient iis, String code) {
+String directFindTermId(CloseableHttpClient iis, String code) {
     def input = new StringBuilder()
     input.append("{\"pageSize\":1,\"properties\":[\"name\",\"abbreviation\"]")
     input.append(",\"types\":[\"term\"]")
@@ -62,7 +66,7 @@ def directFindTermId(CloseableHttpClient iis, String code) {
     input.append(",\"value\": \"").append(code.toUpperCase()).append("\"}]")
     input.append(",\"operator\": \"and\"}}")
 
-    def output = HttpHelper.postJsonText(iis, G.IIS_SEARCH_URL, input.toString())
+    def output = postJsonText(iis, input)
     if (output==null || output.length()==0)
         return null
     def jsonData = new JsonSlurper().parseText(output)
@@ -76,7 +80,7 @@ def directFindTermId(CloseableHttpClient iis, String code) {
 }
 
 // Lookup dataclass by its code
-def directFindDcsId(CloseableHttpClient iis, String code) {
+String directFindDcsId(CloseableHttpClient iis, String code) {
     def input = new StringBuilder()
     input.append("{\"pageSize\":1,\"properties\":[\"name\",\"class_code\"]")
     input.append(",\"types\":[\"data_class\"]")
@@ -85,7 +89,7 @@ def directFindDcsId(CloseableHttpClient iis, String code) {
     input.append(",\"value\": \"").append(code.toUpperCase()).append("\"}]")
     input.append(",\"operator\": \"and\"}}")
 
-    def output = HttpHelper.postJsonText(iis, G.IIS_SEARCH_URL, input.toString())
+    def output = postJsonText(iis, input)
     if (output==null || output.length()==0)
         return null
     def jsonData = new JsonSlurper().parseText(output)
@@ -98,7 +102,7 @@ def directFindDcsId(CloseableHttpClient iis, String code) {
     return retval
 }
 
-def safeFindId(CloseableHttpClient iis, String code) {
+String safeFindId(CloseableHttpClient iis, String code) {
     def retval = G.KNOWN_IDS.get(code)
     if (retval != null)
         return retval
@@ -117,10 +121,113 @@ def safeFindId(CloseableHttpClient iis, String code) {
     return retval
 }
 
+String directFindDb(CloseableHttpClient iis, String name) {
+    def input = new StringBuilder()
+    input.append("{\"pageSize\":1")
+    input.append(",\"types\":[\"database\"]")
+    input.append(",\"where\": {\"conditions\":[")
+    input.append("{\"property\": \"name\",\"operator\": \"=\"")
+    input.append(",\"value\": \"").append(name).append("\"}]")
+    input.append(",\"operator\": \"and\"}}")
+
+    def output = postJsonText(iis, input)
+    if (output==null || output.length()==0)
+        return null
+    def jsonData = new JsonSlurper().parseText(output)
+    def jsonItems = jsonData["items"]
+    if (jsonItems.size()==0)
+        return null
+    def retval = jsonItems[0]["_id"].toString()
+
+    G.LOG.info "Database {} found: {}", name, retval
+    return retval
+}
+
+String findDb(CloseableHttpClient iis, DbInfo info) {
+    if (info.id==null) {
+        info.id = directFindDb(iis, info.name)
+    }
+    if (info.id==null) {
+        throw new Exception("Cannot find database '" + info.name + "'")
+    }
+    return info.id
+}
+
+String directFindSchema(CloseableHttpClient iis, String owner, String name) {
+    def input = new StringBuilder()
+    input.append("{\"pageSize\":1")
+    input.append(",\"types\":[\"database_schema\"]")
+    input.append(",\"where\": {\"conditions\":[")
+    input.append("{\"property\": \"name\",\"operator\": \"=\"")
+    input.append(",\"value\": \"").append(name).append("\"}")
+    input.append(",{\"property\": \"database\",\"operator\": \"=\"")
+    input.append(",\"value\": \"").append(owner).append("\"}")
+    input.append("],\"operator\": \"and\"}}")
+
+    def output = postJsonText(iis, input)
+    if (output==null || output.length()==0)
+        return null
+    def jsonData = new JsonSlurper().parseText(output)
+    def jsonItems = jsonData["items"]
+    if (jsonItems.size()==0)
+        return null
+    def retval = jsonItems[0]["_id"].toString()
+
+    G.LOG.info "Schema {} found: {}", name, retval
+    return retval
+}
+
+String findSchema(CloseableHttpClient iis, DbInfo db, SchemaInfo info) {
+    if (info.id==null) {
+        info.id = directFindSchema(iis, db.id, info.name)
+    }
+    if (info.id==null) {
+        throw new Exception("Cannot find schema '" + info.name + "'")
+    }
+    return info.id
+}
+
+String directFindTable(CloseableHttpClient iis, String owner, String name) {
+    def input = new StringBuilder()
+    input.append("{\"pageSize\":1")
+    input.append(",\"types\":[\"database_table\"]")
+    input.append(",\"where\": {\"conditions\":[")
+    input.append("{\"property\": \"name\",\"operator\": \"=\"")
+    input.append(",\"value\": \"").append(name).append("\"}")
+    input.append(",{\"property\": \"database_schema\",\"operator\": \"=\"")
+    input.append(",\"value\": \"").append(owner).append("\"}")
+    input.append("],\"operator\": \"and\"}}")
+
+    def output = postJsonText(iis, input)
+    if (output==null || output.length()==0)
+        return null
+    def jsonData = new JsonSlurper().parseText(output)
+    def jsonItems = jsonData["items"]
+    if (jsonItems.size()==0)
+        return null
+    def retval = jsonItems[0]["_id"].toString()
+
+    G.LOG.info "Table {} found: {}", name, retval
+    return retval
+}
+
+String findTable(CloseableHttpClient iis, SchemaInfo schema, TableInfo info) {
+    if (info.id==null) {
+        info.id = directFindTable(iis, schema.id, info.name)
+    }
+    if (info.id==null) {
+        throw new Exception("Cannot find table '" + info.name + "'")
+    }
+    return info.id
+}
+
 def mapOne(CloseableHttpClient iis, DbInfo db, SchemaInfo schema,
         TableInfo table, FieldInfo field) {
     G.LOG.info "Mapping {}.{}.{} {} -> {}", db.name, schema.name,
         table.name, field.name, field.dcs
+    findDb iis, db
+    findSchema iis, db, schema
+    findTable iis, schema, table
 }
 
 // Operations sequence using the IIS services connection
