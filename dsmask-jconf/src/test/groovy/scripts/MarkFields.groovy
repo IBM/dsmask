@@ -94,7 +94,7 @@ String directFindTermId(CloseableHttpClient iis, String code) {
         return null
     def retval = jsonItems[0]["_id"].toString()
 
-    G.LOG.info "Label term of type {} found: {}", code, retval
+    G.LOG.debug "Label term of type {} found: {}", code, retval
     return retval
 }
 
@@ -117,7 +117,7 @@ String directFindDcsId(CloseableHttpClient iis, String code) {
         return null
     def retval = jsonItems[0]["_id"].toString()
 
-    G.LOG.info "Label dataclass of type {} found: {}", code, retval
+    G.LOG.debug "Label dataclass of type {} found: {}", code, retval
     return retval
 }
 
@@ -162,7 +162,7 @@ String directFind(CloseableHttpClient iis, String type, String name,
     if (jsonItems.size()==0)
         return null
     final id = jsonItems[0]["_id"].toString()
-    G.LOG.info "FOUND {}/{} at {}/{}: {}", type, name, ownerType, ownerId, id
+    G.LOG.debug "FOUND {}/{} at {}/{}: {}", type, name, ownerType, ownerId, id
     return id
 }
 
@@ -213,10 +213,27 @@ def mapOne(CloseableHttpClient iis, FieldInfo field) {
     final table = field.owner
     final schema = table.owner
     final db = schema.owner
-    G.LOG.info "Mapping {}.{}.{} {} -> {}", db.name, schema.name,
-        table.name, field.name, field.dcs
+    G.LOG.info "Mapping {} -> {}", field.fullName, field.dcs
+
     final fieldId = safeFind iis, field
     final dcsId = safeFindDcs iis, field.dcs
+
+    def input = new StringBuilder()
+    G.LOG.info "{}", input
+    final String updateUrl
+    if (dcsId.startsWith("D:")) {
+        input.append("{\"_id\": \"").
+            append(dcsId.substring(2)).append("\"}")
+        updateUrl = G.IIS_URL + "/ibm/iis/igc-rest/v1/assets/" +
+            fieldId + "/selected_classification"
+    } else {
+        input.append("{\"items\": [{\"_id\": \"").
+            append(dcsId.substring(2)).append("\"}]}")
+        updateUrl = G.IIS_URL + "/ibm/iis/igc-rest/v1/assets/" +
+            fieldId + "/assigned_to_terms"
+    }
+    def output = HttpHelper.putJsonText(iis, updateUrl, input.toString())
+
     G.LOG.info "\t{} -> {}", fieldId, dcsId
 }
 
