@@ -13,12 +13,13 @@
 package net.dsmask.model;
 
 /**
- * Type of the masking transformation. Also see @ItemBase
+ * Type of the masking transformation. See also @StepBase
  * @author zinal
  */
-public enum ItemType {
+public enum StepType {
 
-    Step,
+    Root,
+    Function,
     Script,
     Block,
     Fragment;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,12 +20,12 @@ import java.util.Objects;
  * and delivering the results to its output.
  * @author zinal
  */
-public class ItemStep extends ItemBase {
+public class StepFunction extends StepBase {
 
     private final MaskingFunction function;
 
-    public ItemStep(String name, MaskingFunction function) {
-        super(name);
+    public StepFunction(String name, StepGroup owner, MaskingFunction function) {
+        super(name, owner);
         this.function = function;
     }
 
@@ -33,9 +33,10 @@ public class ItemStep extends ItemBase {
         return function;
     }
 
+
     @Override
-    public ItemType getType() {
-        return ItemType.Step;
+    public StepType getType() {
+        return StepType.Function;
     }
 
     @Override
@@ -45,22 +46,23 @@ public class ItemStep extends ItemBase {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int hash = super.hashCode();
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (! super.equals(obj)) {
             return false;
         }
-        final ItemStep other = (ItemStep) obj;
-        if (!Objects.equals(this.function, other.function)) {
-            return false;
-        }
-        return true;
+        final StepFunction other = (StepFunction) obj;
+        return this.function == other.function;
     }
 
 }

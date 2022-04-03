@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 public class MaskingFragment extends EntityBase {
 
-    private final ItemBlock pipeline = new ItemBlock();
+    private final StepRoot pipeline = new StepRoot();
 
     public MaskingFragment(String name) {
         super(name);
@@ -33,7 +33,7 @@ public class MaskingFragment extends EntityBase {
         return EntityType.Fragment;
     }
 
-    public ItemBlock getPipeline() {
+    public StepRoot getPipeline() {
         return pipeline;
     }
 

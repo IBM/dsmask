@@ -34,7 +34,7 @@ public class MaskingRule extends EntityBase implements AnyRule {
     private final Set<String> contexts = new HashSet<>();
     private final List<MetaReference> inputs = new ArrayList<>();
     private final List<MetaReference> outputs = new ArrayList<>();
-    private final ItemBlock pipeline = new ItemBlock();
+    private final StepRoot pipeline = new StepRoot();
 
     public MaskingRule(String name) {
         super(name);
@@ -74,7 +74,7 @@ public class MaskingRule extends EntityBase implements AnyRule {
         return this;
     }
 
-    public ItemBlock getPipeline() {
+    public StepRoot getPipeline() {
         return pipeline;
     }
 

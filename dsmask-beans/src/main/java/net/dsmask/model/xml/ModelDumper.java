@@ -196,23 +196,25 @@ public class ModelDumper extends XmlNames {
         return el;
     }
 
-    private Element dumpItemSequence(ItemBlock block) {
+    private Element dumpItemSequence(StepGroup block) {
         int counter = 0;
         Element el = new Element(TAG_ItemSequence);
-        for (ItemBase item : block.getItems()) {
+        for (StepBase item : block.getItems()) {
             Element elItem = null;
             switch (item.getType()) {
-                case Step:
-                    elItem = dumpItemStep((ItemStep) item);
+                case Function:
+                    elItem = dumpStepFunction((StepFunction) item);
                     break;
                 case Script:
-                    elItem = dumpItemScript((ItemScript) item);
+                    elItem = dumpStepScript((StepScript) item);
                     break;
                 case Block:
-                    elItem = dumpItemBlock((ItemBlock) item);
+                    elItem = dumpStepBlock((StepBlock) item);
                     break;
                 case Fragment:
-                    elItem = dumpItemFragment((ItemFragment) item);
+                    elItem = dumpStepFragment((StepFragment) item);
+                    break;
+                case Root: /* noop */
                     break;
             }
             if (elItem != null) {
@@ -223,7 +225,7 @@ public class ModelDumper extends XmlNames {
         return (counter == 0) ? null : el;
     }
 
-    private Element dumpItemBase(ItemBase x, String tagName) {
+    private Element dumpStepBase(StepBase x, String tagName) {
         Element el = new Element(tagName);
         el.setAttribute(ATT_NAME, x.getName());
         if (! (x.getPredicates().isEmpty() && x.getInputs().isEmpty()) ) {
@@ -244,8 +246,10 @@ public class ModelDumper extends XmlNames {
 
     private Element dumpReference(ValueRef vr, String tagName) {
         Element el = new Element(tagName);
+        /* TODO: implementation
         el.setAttribute(ATT_NAME, vr.getItem().getName());
         el.setAttribute(ATT_POS, String.valueOf(vr.getPosition()));
+        */
         return el;
     }
 
@@ -269,14 +273,14 @@ public class ModelDumper extends XmlNames {
         return el;
     }
 
-    private Element dumpItemStep(ItemStep x) {
-        Element el = dumpItemBase(x, TAG_ItemFunc);
+    private Element dumpStepFunction(StepFunction x) {
+        Element el = dumpStepBase(x, TAG_StepFunc);
         el.setAttribute(ATT_FUNC, x.getFunction().getName());
         return el;
     }
 
-    private Element dumpItemScript(ItemScript x) {
-        Element el = dumpItemBase(x, TAG_ItemScript);
+    private Element dumpStepScript(StepScript x) {
+        Element el = dumpStepBase(x, TAG_StepScript);
         if (! StringUtils.isBlank(x.getBody()) ) {
             Element elBody = new Element(TAG_ScriptBody);
             elBody.addContent(new CDATA(x.getBody()));
@@ -285,16 +289,16 @@ public class ModelDumper extends XmlNames {
         return el;
     }
 
-    private Element dumpItemBlock(ItemBlock x) {
-        Element el = dumpItemBase(x, TAG_ItemBlock);
+    private Element dumpStepBlock(StepBlock x) {
+        Element el = dumpStepBase(x, TAG_StepBlock);
         Element elSeq = dumpItemSequence(x);
         if (elSeq != null)
             el.addContent(elSeq);
         return el;
     }
 
-    private Element dumpItemFragment(ItemFragment x) {
-        Element el = dumpItemBase(x, TAG_ItemFragment);
+    private Element dumpStepFragment(StepFragment x) {
+        Element el = dumpStepBase(x, TAG_StepFragment);
         if ( x.getFragment() != null )
             el.setAttribute(ATT_FRAGM, x.getFragment().getName());
         return el;

@@ -23,15 +23,15 @@ import java.util.Objects;
  */
 public class ValueRef {
 
-    private final ItemBase item;
+    private final StepAny item;
     private final int position;
 
-    public ValueRef(ItemBase item, int position) {
+    public ValueRef(StepAny item, int position) {
         this.item = item;
         this.position = position;
     }
 
-    public ItemBase getItem() {
+    public StepAny getItem() {
         return item;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -19,12 +19,12 @@ import java.util.Objects;
  * Passes the input to the specified fragment and returns the fragment's output.
  * @author zinal
  */
-public class ItemFragment extends ItemBase {
+public class StepFragment extends StepBase {
 
     private final MaskingFragment fragment;
 
-    public ItemFragment(String name, MaskingFragment fragment) {
-        super(name);
+    public StepFragment(String name, StepGroup owner, MaskingFragment fragment) {
+        super(name, owner);
         this.fragment = fragment;
     }
 
@@ -33,8 +33,8 @@ public class ItemFragment extends ItemBase {
     }
 
     @Override
-    public ItemType getType() {
-        return ItemType.Fragment;
+    public StepType getType() {
+        return StepType.Fragment;
     }
 
     @Override
@@ -44,22 +44,23 @@ public class ItemFragment extends ItemBase {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int hash = super.hashCode();
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (! super.equals(obj)) {
             return false;
         }
-        final ItemFragment other = (ItemFragment) obj;
-        if (!Objects.equals(this.fragment, other.fragment)) {
-            return false;
-        }
-        return true;
+        final StepFragment other = (StepFragment) obj;
+        return this.fragment == other.fragment;
     }
 
 }

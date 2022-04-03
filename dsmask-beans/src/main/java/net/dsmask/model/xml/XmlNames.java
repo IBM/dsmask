@@ -67,10 +67,10 @@ public class XmlNames {
     public static final String TAG_Uniq = "uniq-check";
     public static final String TAG_UniqIn = "uniq-in";
     public static final String TAG_UniqOut = "uniq-out";
-    public static final String TAG_ItemFunc = "item-function";
-    public static final String TAG_ItemScript = "item-script";
-    public static final String TAG_ItemBlock = "item-block";
-    public static final String TAG_ItemFragment = "item-fragment";
+    public static final String TAG_StepFunc = "step-function";
+    public static final String TAG_StepScript = "step-script";
+    public static final String TAG_StepBlock = "step-block";
+    public static final String TAG_StepFragment = "step-fragment";
     public static final String TAG_ScriptBody = "script-body";
     public static final String TAG_RuleMeta = "rule-meta";
     public static final String TAG_RuleIn = "rule-in";

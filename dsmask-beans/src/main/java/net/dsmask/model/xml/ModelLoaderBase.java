@@ -249,18 +249,18 @@ public abstract class ModelLoaderBase extends XmlNames implements ModelAccessor 
         addToPool(e);
     }
 
-    private void handleStepSequence(ItemBlock owner, Element elBase) {
+    private void handleStepSequence(StepGroup owner, Element elBase) {
         for (Element elSeq : elBase.getChildren(TAG_ItemSequence)) {
             for (Element elStep : elSeq.getChildren()) {
-                ItemBase item = null;
-                if ( TAG_ItemFunc.equalsIgnoreCase(elStep.getName()) ) {
-                    item = makeItemFunction(owner, elStep);
-                } else if ( TAG_ItemScript.equalsIgnoreCase(elStep.getName()) ) {
-                    item = makeItemScript(owner, elStep);
-                } else if ( TAG_ItemBlock.equalsIgnoreCase(elStep.getName()) ) {
-                    item = makeItemBlock(owner, elStep);
-                } else if (TAG_ItemFragment.equalsIgnoreCase(elStep.getName()) ) {
-                    item = makeItemFragment(owner, elStep);
+                StepBase item = null;
+                if ( TAG_StepFunc.equalsIgnoreCase(elStep.getName()) ) {
+                    item = makeStepFunction(owner, elStep);
+                } else if ( TAG_StepScript.equalsIgnoreCase(elStep.getName()) ) {
+                    item = makeStepScript(owner, elStep);
+                } else if ( TAG_StepBlock.equalsIgnoreCase(elStep.getName()) ) {
+                    item = makeStepBlock(owner, elStep);
+                } else if (TAG_StepFragment.equalsIgnoreCase(elStep.getName()) ) {
+                    item = makeStepFragment(owner, elStep);
                 }
                 if (item != null)
                     owner.addItem(item);
@@ -279,34 +279,34 @@ public abstract class ModelLoaderBase extends XmlNames implements ModelAccessor 
         throw XmlObject.raise(el, "Missing script body element");
     }
 
-    private void fillStep(ItemBlock owner, ItemBase item, Element el) {
+    private void fillStep(StepBase step, Element el) {
         for ( Element x : el.getChildren(TAG_ItemMeta) ) {
             if ( TAG_ItemArg.equalsIgnoreCase(x.getName()) ) {
-                fillReference(owner, x, item.getInputs());
+                fillReference(step, x, step.getInputs());
             } else if ( TAG_ItemPred.equalsIgnoreCase(x.getName()) ) {
-                fillReference(owner, x, item.getPredicates());
+                fillReference(step, x, step.getPredicates());
             }
         }
         for ( Element x : el.getChildren(TAG_Uniq) ) {
-            fillUniqCheck(item, x);
+            fillUniqCheck(step, x);
         }
     }
 
-    private void fillReference(ItemBlock owner, Element x, List<ValueRef> items) {
+    private void fillReference(StepBase step, Element x, List<ValueRef> items) {
         // here name is optional, and can start with illegal characters
         String name = XmlObject.getAttr(x, ATT_NAME, null);
         int position = XmlObject.getInt(x, ATT_POS);
         if (position < 1 || position > 1000) {
             throw XmlObject.raiseIllegal(x, ATT_POS);
         }
-        ValueRef ref = new ValueRef(owner.findItem(name), position);
+        ValueRef ref = new ValueRef(step.findItem(name), position);
         if (ref.getItem() == null) {
             throw XmlObject.raiseIllegal(x, ATT_NAME);
         }
         items.add(ref);
     }
 
-    private void fillUniqCheck(ItemBase item, Element x) {
+    private void fillUniqCheck(StepBase item, Element x) {
         final UniqCheck uc = new UniqCheck(XmlObject.getAttr(x, ATT_PROV));
         uc.setInputPositions(grabIndexes(x.getChildren(TAG_UniqIn)));
         uc.setInputPositions(grabIndexes(x.getChildren(TAG_UniqOut)));
@@ -336,30 +336,30 @@ public abstract class ModelLoaderBase extends XmlNames implements ModelAccessor 
         return retval;
     }
 
-    private ItemStep makeItemFunction(ItemBlock owner, Element el) {
+    private StepFunction makeStepFunction(StepGroup owner, Element el) {
         MaskingFunction f = resolve(EntityType.Function, el, ATT_FUNC);
-        ItemStep i = new ItemStep(XmlObject.getName(el), f);
-        fillStep(owner, i, el);
+        StepFunction i = new StepFunction(XmlObject.getName(el), owner, f);
+        fillStep(i, el);
         return i;
     }
 
-    private ItemScript makeItemScript(ItemBlock owner, Element el) {
-        ItemScript i = new ItemScript(XmlObject.getName(el), getScriptBody(el));
-        fillStep(owner, i, el);
+    private StepScript makeStepScript(StepGroup owner, Element el) {
+        StepScript i = new StepScript(XmlObject.getName(el), owner, getScriptBody(el));
+        fillStep(i, el);
         return i;
     }
 
-    private ItemBlock makeItemBlock(ItemBlock owner, Element el) {
-        ItemBlock i = new ItemBlock(XmlObject.getName(el), owner);
+    private StepBlock makeStepBlock(StepGroup owner, Element el) {
+        StepBlock i = new StepBlock(XmlObject.getName(el), owner);
         handleStepSequence(i, el);
-        fillStep(owner, i, el);
+        fillStep(i, el);
         return i;
     }
 
-    private ItemFragment makeItemFragment(ItemBlock owner, Element el) {
+    private StepFragment makeStepFragment(StepGroup owner, Element el) {
         MaskingFragment f = resolve(EntityType.Fragment, el, ATT_FRAGM);
-        ItemFragment i = new ItemFragment(XmlObject.getName(el), f);
-        fillStep(owner, i, el);
+        StepFragment i = new StepFragment(XmlObject.getName(el), owner, f);
+        fillStep(i, el);
         return i;
     }
 

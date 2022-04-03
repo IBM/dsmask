@@ -1,5 +1,5 @@
 /*
- * Copyright (c) IBM Corp. 2018, 2021.
+ * Copyright (c) IBM Corp. 2018, 2022.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -18,16 +18,16 @@ import java.util.Objects;
  * Inline script embedded in the masking pipeline.
  * Takes an input vector of values and produces an output vector of values.
  * Inline scripts are typically used for small snippets like predicate computation.
- * Re-usable scripts should be defined as MaskingFunction objects,
- * and called through ItemStep.
+ * Re-usable scripts should be defined as @MaskingFunction objects,
+ * and called through @StepFunction.
  * @author zinal
  */
-public class ItemScript extends ItemBase {
+public class StepScript extends StepBase {
 
     private final String body;
 
-    public ItemScript(String name, String body) {
-        super(name);
+    public StepScript(String name, StepGroup owner, String body) {
+        super(name, owner);
         this.body = body;
     }
 
@@ -36,8 +36,8 @@ public class ItemScript extends ItemBase {
     }
 
     @Override
-    public ItemType getType() {
-        return ItemType.Script;
+    public StepType getType() {
+        return StepType.Script;
     }
 
     @Override
@@ -48,22 +48,24 @@ public class ItemScript extends ItemBase {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int hash = super.hashCode();
+        hash = 13 * hash + Objects.hashCode(this.body);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (super.equals(obj)) {
             return false;
         }
-        final ItemScript other = (ItemScript) obj;
-        if (!Objects.equals(this.body, other.body)) {
-            return false;
-        }
-        return true;
+        final StepScript other = (StepScript) obj;
+        return Objects.equals(this.body, other.body);
     }
 
 }
